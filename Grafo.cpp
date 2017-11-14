@@ -1074,11 +1074,3 @@ int Grafo::getQntdArestas()
         return qntd;
     return qntd/2;
 }
-
-typedef struct indice
-{
-    double val;
-    int indice;
-    bool solucao;
-
-} Indice;

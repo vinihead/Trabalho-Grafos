@@ -53,8 +53,8 @@ void componentesFortementeConexas(Grafo *grafo);
 void arvoreBuscaProfundidade(Grafo *grafo);
 void arvoreBuscaLargura(Grafo *grafo);
 void verificaConexo(Grafo *grafo);
-void caminhoMinimoDijkstra(Grafo *grafo);
-void caminhoMinimoFloyd(Grafo *grafo);
+//void caminhoMinimoDijkstra(Grafo *grafo);
+//void caminhoMinimoFloyd(Grafo *grafo);
 
 ///Variaveis globais criadas para facilitar a escrita de arquivos
 ofstream outFile;
