@@ -67,12 +67,13 @@ int main(int argc, char **argv)
     bool digrafo;
     string inFileName;
     string outFileName;
+    argc = 3;
     if(argc == 3)
     {
-        inFileName = argv[1];
-        outFileName = argv[2];
-        //inFileName =  "bipartido";//"infile_1";////"instance1534";//
-        //outFileName = "outfile";
+        //inFileName = argv[1];
+        //outFileName = argv[2];
+        inFileName =  "instanceTestePCVPB";//"infile_1";////"instance1534";//
+        outFileName = "outfile";
         outFileName += ".txt";
         inFileName += ".txt";
         inFile.open(inFileName);
@@ -80,12 +81,12 @@ int main(int argc, char **argv)
         ///Testar se os arquivos foram inseridos corretamente
         if(!inFile || !outFile)
         {
-            cout << "ERRO! Tente novamente!" << endl;
-            cout << "NAO eh necessario informat o \".txt\", informe apenas o nome do arquivo" << endl;
+            cerr << "ERRO! Tente novamente!" << endl;
+            cerr << "NAO eh necessario informat o \".txt\", informe apenas o nome do arquivo" << endl;
             if(!inFile)
                 cerr << "ERRO! O arquivo de ENTRADA \"" << inFileName << "\" NAO foi encontrado!" << endl;
             if(!outFile)
-                cout << "ERRO! Nao foi possivel criar o arquivo de SAIDA \"" << outFileName << "\"!" << endl;
+                cerr << "ERRO! Nao foi possivel criar o arquivo de SAIDA \"" << outFileName << "\"!" << endl;
             pausarTela(false);
             exit(30);
         }
@@ -319,6 +320,13 @@ int main(int argc, char **argv)
                 grafo.imprime();
                 break;
             }
+            case 40:
+            {
+                cout << "Chamando Algoritmo GULOSO." << endl;
+                grafo.algConstrutGuloso();
+                cout << "--------------------------" << endl;
+                break;
+            }
         }
     } while (opcao != 0);
     ///Fechando streams de entrada e saida
@@ -378,6 +386,7 @@ int menuShow()
         cout << "|     37 - Arvores de busca em largura              |" << endl;
         cout << "|     38 - Gerar Grafo em linguagem DOT             |" << endl;
         cout << "|     39 - Imprimir grafo                           |" << endl;
+        cout << "|     40 - Algoritmo Guloso                         |" << endl;
         cout << "-----------------------------------------------------" << endl << endl;
 
         if(passouMenu)
@@ -389,7 +398,7 @@ int menuShow()
         }
         cin >> opc;
         cout << endl;
-    }while(opc < 0 || opc > 39);
+    }while(opc < 0 || opc > 40);
     return opc;
 }
 
@@ -492,7 +501,7 @@ void adicionaAresta(Grafo *grafo)
         cout << "Peso da aresta: ";
         cin >> peso;
     }
-    grafo->adicionaAresta(idOrig, idDest, peso);
+    grafo->adicionaAresta(idOrig, idDest, peso, 0);
     cout << "Aresta (" << idOrig << ", " << idDest << ") adicionada."<< endl;
     outFile << endl << "Aresta (" << idOrig << ", " << idDest << ") adicionada."<< endl;
     cout << "-------------------------------------------" << endl;

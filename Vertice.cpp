@@ -15,11 +15,12 @@ Vertice::Vertice()
 
 }
 
-Vertice::Vertice(int id)
+Vertice::Vertice(int id, char corPB)
 {
     grauEntrada = 0;
     grauSaida = 0;
     this->id = id;
+    this->corPB = corPB;
 }
 
 void Vertice::setVisita(bool visitado)
@@ -143,6 +144,8 @@ void Vertice::adicionaListaAdj(list<Aresta> adj)
     this->adj = adj;
 }
 
+
+
 void Vertice::setCor(int cor)
 {
     this->cor = cor;
@@ -152,7 +155,7 @@ int Vertice::getCor()
 {
     return cor;
 }
-
+/*
 bool Vertice::getDisponivel() {
     return disp;
 }
@@ -176,3 +179,5 @@ long Vertice::getAntecessor() const {
 void Vertice::setAntecessor(int ant) {
     this->ant = ant;
 }
+
+ */

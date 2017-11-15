@@ -36,9 +36,9 @@ private:
 public:
     Grafo(ifstream *inFile, bool digrafo);
     Grafo(bool digrafo, bool ponderado);
-    list<Vertice>::iterator adicionaVertice(int id);
+    list<Vertice>::iterator adicionaVertice(int id, char corPB);
     bool removeVertice(int idVert);
-    void adicionaAresta(int idOrigem, int idDestino, float peso);
+    void adicionaAresta(int idOrigem, int idDestino, float peso, char corPB);
     bool removeAresta(int v1, int v2);
     bool verificaTrivial();
     bool kRegularidade(int k);
@@ -79,6 +79,12 @@ public:
     void auxFechoTransitivoIndireto(Grafo *grafoAux, int id, set<int> *percorridos);
 
     void geraLinguagemDot();
+
+    void algConstrutGuloso();
+
+    void algConstrutGulRandReativo();
+
+    void algConstrutGulRandomizado();
 };
 
 

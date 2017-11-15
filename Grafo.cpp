@@ -19,6 +19,10 @@
 #define AZUL 0
 #define VERMELHO 1
 
+///Constantes usadas no problema do caixeiro viajante preto e branco
+#define PRETO 0
+#define BRANCO 1
+
 //Construtor padrão, para no caso de precisar criar um grafo vazio.
 Grafo::Grafo(bool digrafo, bool ponderado) {
     this->digrafo = digrafo;
@@ -30,7 +34,9 @@ Grafo::Grafo(bool digrafo, bool ponderado) {
 Grafo::Grafo(ifstream *inFile, bool digrafo)
 {
     this->digrafo = digrafo;
-    int v1, v2, peso;
+    int v1, v2;
+    float peso = 1.0;
+    char corPB;
     string line;
     stringstream copiaDados;
     getline(*inFile, line);
@@ -51,8 +57,8 @@ Grafo::Grafo(ifstream *inFile, bool digrafo)
        {
            copiaDados.clear(); //limpar o que tiver na stream, afim de não ter nenhum erro
            copiaDados.str(line);
-           ponderado ? copiaDados >> v1 >> v2 >> peso : copiaDados >> v1 >> v2;
-           ponderado ? this->adicionaAresta(v1, v2, peso) : this->adicionaAresta(v1, v2, 1.0);
+           ponderado ? copiaDados >> v1 >> v2 >> peso >> corPB : copiaDados >> v1 >> v2 >> corPB;
+           this->adicionaAresta(v1, v2, peso, 0);
            ///Se nao for ponderado adiciona aresta com peso 1.0, para facilitar na hora de verificar caminhos minimos
        } while(getline(*inFile, line) && !line.empty());
     }
@@ -75,7 +81,7 @@ Grafo::Grafo(ifstream *inFile, bool digrafo)
        {
            if(!procuraVertice(++v1))
            {
-               this->adicionaVertice(v1);
+               this->adicionaVertice(v1, 0);
                break;
            }
 
@@ -110,12 +116,12 @@ bool Grafo::verificaPonderado(string s)
 
 }
 
-list<Vertice>::iterator Grafo::adicionaVertice(int id)
+list<Vertice>::iterator Grafo::adicionaVertice(int id, char corPB)
 {
     auto itVertice = getVertice(id);
     if(itVertice->getIdVertice() != id) //Se nao encontrar tem que adicionar
     {
-        Vertice v(id);
+        Vertice v(id, corPB);
         vertices.push_back(v);
         ordem++;
         return --vertices.end(); //retorna o ultimo vertice, o que foi adicionado
@@ -130,7 +136,7 @@ bool Grafo::adicionaVerticeNaMain(int id)
     auto itVertice = getVertice(id);
     if(itVertice->getIdVertice() != id) //Se nao encontrar tem que adicionar
     {
-        Vertice v(id);
+        Vertice v(id, 0);
         vertices.push_back(v);
         ordem++;
         return true; //retorna o ultimo vertice, o que foi adicionado
@@ -140,10 +146,10 @@ bool Grafo::adicionaVerticeNaMain(int id)
 
 }
 
-void Grafo::adicionaAresta(int idOrigem, int idDestino, float peso)
+void Grafo::adicionaAresta(int idOrigem, int idDestino, float peso, char corPB)
 {
-    auto itOrigem = adicionaVertice(idOrigem);
-    auto itDestino = adicionaVertice(idDestino);
+    auto itOrigem = adicionaVertice(idOrigem, corPB);
+    auto itDestino = adicionaVertice(idDestino, 0);
     itOrigem->adicionaAresta(itDestino, peso, digrafo);
     if(!digrafo)
     {
@@ -516,14 +522,14 @@ Grafo * Grafo::subgrafoInduzido(vector<int> subconjuntoVertices)
     Grafo *grafoCopy = retornaInstanciaGrafo();
     for(auto itSubconjVert : subconjuntoVertices)
     {
-        subgrafo->adicionaVertice(itSubconjVert);
+        subgrafo->adicionaVertice(itSubconjVert, 0);
         list<Aresta> listAdj = grafoCopy->getVertice(itSubconjVert)->getAdjacencia();
 
         for(auto itAdj : listAdj){
             for (auto it : subconjuntoVertices) {
                 if (itAdj.getIdAdj() == it)
                 {
-                    subgrafo->adicionaAresta(itSubconjVert, itAdj.getIdAdj(), itAdj.getPeso());
+                    subgrafo->adicionaAresta(itSubconjVert, itAdj.getIdAdj(), itAdj.getPeso(), 0);
                     grafoCopy->removeAresta(itSubconjVert, itAdj.getIdAdj());
                 }
             }
@@ -550,7 +556,7 @@ Grafo * Grafo::complementar()
             for (auto k : idVertices)
             {
                 if(k!=it.getIdVertice() &&!it.procuraAdjacencia(k)) //so procura a adjacencia se o indice for diferente
-                    complementar->adicionaAresta(it.getIdVertice(), k, 1.0);//cout << it->getIdVertice() << " " << k << endl;
+                    complementar->adicionaAresta(it.getIdVertice(), k, 1.0, 0);//cout << it->getIdVertice() << " " << k << endl;
             }
         }
     }
@@ -563,8 +569,8 @@ Grafo * Grafo::complementar()
             {
                 if(k!=itVertice->getIdVertice() &&!itVertice->procuraAdjacencia(k)) //so procura a adjacencia se o indice for diferente
                 {
-                    grafoCopy->adicionaAresta(itVertice->getIdVertice(), k, 1.0);
-                    complementar->adicionaAresta(itVertice->getIdVertice(), k, 1.0);
+                    grafoCopy->adicionaAresta(itVertice->getIdVertice(), k, 1.0, 0);
+                    complementar->adicionaAresta(itVertice->getIdVertice(), k, 1.0, 0);
                 }
             }
         }
@@ -1028,10 +1034,10 @@ string Grafo::verificaVerticesArticulacao()
             dados += " ";
             dados += itVert->getIdVertice();
         }
-        adicionaVertice(auxVert);
+        adicionaVertice(auxVert, 0);
         for(auto i = listAresta.begin(); i != listAresta.end(); i++)
         {
-            adicionaAresta(auxVert, i->getIdAdj(), i->getPeso());
+            adicionaAresta(auxVert, i->getIdAdj(), i->getPeso(), 0);
         }
     }
     return dados;
@@ -1060,7 +1066,7 @@ void Grafo::verificaArestasPonte(ofstream *outFile)
                 cout << "Ponte: " << itVert->getIdVertice() << " " << adj.getIdAdj() << endl;
                 *outFile << "Ponte: " << itVert->getIdVertice() << " " << adj.getIdAdj() << endl;
             }
-            adicionaAresta(id1, id2, peso);
+            adicionaAresta(id1, id2, peso, 0);
         }
     }
 }
@@ -1073,4 +1079,21 @@ int Grafo::getQntdArestas()
     if(digrafo)
         return qntd;
     return qntd/2;
+}
+
+
+
+void Grafo::algConstrutGuloso()
+{
+
+}
+
+void Grafo::algConstrutGulRandomizado()
+{
+
+}
+
+void Grafo::algConstrutGulRandReativo()
+{
+
 }

@@ -22,23 +22,23 @@ class Vertice
 {
 private:
     Vertice();
-
     list<Aresta>::iterator k;
     list<Aresta> adj;
     int id;
+    char corPB; ///Variavel que contem a cor do vertice (preto ou branco)
     unsigned int grauEntrada;
     unsigned int grauSaida;
     bool visitado;
 
 
-    ///RUAN
+    /*///RUAN
     bool disp;
     long dist;
-    long ant;
+    long ant;*/
     int cor; ///SEMCOR, AZUL, VERMELHO
 
 public:
-    Vertice(int id);
+    Vertice(int id, char corPB);
     int getIdVertice();
     bool procuraAdjacencia(int vert);
     unsigned int getGrau();
@@ -52,12 +52,12 @@ public:
     unsigned int getGrauEntrada();
     unsigned int getGrauSaida();
     bool getVisitado();
-    bool getDisponivel();
+    /*bool getDisponivel();
     void setDisponivel(bool d);
     long getDistancia() const;
     void setDistancia(int dist);
     long getAntecessor() const;
-    void setAntecessor(int ant);
+    void setAntecessor(int ant);*/
     void adicionaListaAdj(list<Aresta> adj);
     void setCor(int cor);
     int getCor();
