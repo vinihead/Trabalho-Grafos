@@ -54,42 +54,37 @@ Grafo::Grafo(ifstream *inFile)
     //ponderado = verificaPonderado(line); Será sempre ponderado.
 
     //Primeiro vou adicionar os vertices
-    if(inFile->good())
-    {
-       do
+    //if(inFile->good())
+    //{
+        while(getline(*inFile, line) && !line.empty());
        {
            copiaDados.clear(); //limpar o que tiver na stream, afim de não ter nenhum erro
            copiaDados.str(line);
            copiaDados >> vert >> x >> y >> corPB;
+           this->adicionaVertice(vert, x, y, corPB);
            //this->adicionaAresta(v1, v2, peso, 0);
            ///Se nao for ponderado adiciona aresta com peso 1.0, para facilitar na hora de verificar caminhos minimos
-       } while(getline(*inFile, line) && !line.empty());
-    }
+       }
+    //}
     ///No caso de termos um arquivo de entrada informando quantidade errada de vertices, o programa eh finalizado
-    if(this->ordem > numVertices)
+    if(this->ordem != numVertices)
     {
        cout << "ERRO! Arquivo de entrada com quantidade de vertices errada." << endl;
        cout << "Numero de vertices no arquivo de entrada eh menor que a quantidade real.\nAlgoritmo FINALIZADO." << endl;
        getchar();
        exit(-1);
     }
-    /**
-    Neste caso adicionamos os vertices isolados
-    Caso o numero de vertices instanciados for menor, existe vertices isolados
-    Portando, o algoritmo adiciona os vertices faltantes
-    */
-    /*while(this->ordem < numVertices)
-    {
-       while(true)
-       {
-           if(!procuraVertice(++v1))
-           {
-               this->adicionaVertice(v1, 0, 0, 0);
-               break;
-           }
 
-       }
-    }*/
+    ///Criar matriz de adjacencias
+    
+
+
+
+    ///Criar Arestas
+
+
+
+
     cout << "\n---------------------------------------" << endl;
     cout << "Grafo Criado e instanciado com sucesso!" << endl;
     cout << "Quantidade de Vertices: " << getOrdem() << endl;
@@ -126,7 +121,7 @@ list<Vertice>::iterator Grafo::adicionaVertice(int id, int x, int y, char corPB)
     {
         //Vertice v(id, x, y, corPB);
         vertices.emplace_back(id, x, y, corPB);//push_back(v);
-        //ordem++;
+        ordem++;
         return --vertices.end(); //retorna o ultimo vertice, o que foi adicionado
     }
     else
