@@ -24,18 +24,20 @@
 #define BRANCO 1
 
 //Construtor padrão, para no caso de precisar criar um grafo vazio.
-Grafo::Grafo(bool digrafo, bool ponderado) {
+Grafo::Grafo(bool digrafo, bool ponderado, const float maxCusto, const float maxVertBranco)
+        : maxCusto(maxCusto), maxVertBranco(maxVertBranco){
     this->digrafo = digrafo;
     this->ponderado = ponderado;
     this->ordem = 0;
 }
 
+
 //Já cria o grafo lendo do arquivo de entrada
-Grafo::Grafo(ifstream *inFile, bool digrafo)
+Grafo::Grafo(ifstream *inFile)
 {
-    this->digrafo = digrafo;
-    int v1, v2;
-    float peso = 1.0;
+    this->digrafo = false;
+    int vert, x, y;
+    //float peso = 1.0;
     char corPB;
     string line;
     stringstream copiaDados;
@@ -43,22 +45,23 @@ Grafo::Grafo(ifstream *inFile, bool digrafo)
     int numVertices = atoi(line.c_str());
     ordem = 0;
 
-    cout << "------------------------------" << endl;
-    cout << "Instanciando o grafo . . . . ." << endl;
-    cout << "------------------------------" << endl;
+    cout << "--------------------------------------" << endl;
+    cout << "Instanciando o grafo do PCVPB. . . . ." << endl;
+    cout << "--------------------------------------" << endl;
 
     getline(*inFile, line); ///Ja pega proxima linha depois da ordem do grago para verificar se eh ponderado
     ///Detectar se eh ponderado, pra isso precisa fazer um getline e "entender o line para saber se tem 3 numeros ou 2
-    ponderado = verificaPonderado(line);
+    //ponderado = verificaPonderado(line); Será sempre ponderado.
 
+    //Primeiro vou adicionar os vertices
     if(inFile->good())
     {
        do
        {
            copiaDados.clear(); //limpar o que tiver na stream, afim de não ter nenhum erro
            copiaDados.str(line);
-           ponderado ? copiaDados >> v1 >> v2 >> peso >> corPB : copiaDados >> v1 >> v2 >> corPB;
-           this->adicionaAresta(v1, v2, peso, 0);
+           copiaDados >> vert >> x >> y >> corPB;
+           //this->adicionaAresta(v1, v2, peso, 0);
            ///Se nao for ponderado adiciona aresta com peso 1.0, para facilitar na hora de verificar caminhos minimos
        } while(getline(*inFile, line) && !line.empty());
     }
@@ -75,18 +78,18 @@ Grafo::Grafo(ifstream *inFile, bool digrafo)
     Caso o numero de vertices instanciados for menor, existe vertices isolados
     Portando, o algoritmo adiciona os vertices faltantes
     */
-    while(this->ordem < numVertices)
+    /*while(this->ordem < numVertices)
     {
        while(true)
        {
            if(!procuraVertice(++v1))
            {
-               this->adicionaVertice(v1, 0);
+               this->adicionaVertice(v1, 0, 0, 0);
                break;
            }
 
        }
-    }
+    }*/
     cout << "\n---------------------------------------" << endl;
     cout << "Grafo Criado e instanciado com sucesso!" << endl;
     cout << "Quantidade de Vertices: " << getOrdem() << endl;
@@ -94,7 +97,7 @@ Grafo::Grafo(ifstream *inFile, bool digrafo)
     cout << "---------------------------------------" << endl;
 }
 
-
+/*
 bool Grafo::verificaPonderado(string s)
 {
     int palavras = 1;
@@ -109,29 +112,28 @@ bool Grafo::verificaPonderado(string s)
         return true;
     else
     {
-        cout << "Erro! Quantidade de \"palavras\" esperadas eh 2 ou 3." << endl;
+        cout << "Erro! Quantidade de \"palavras\" esperadas eh 2 (nao ponderado) ou 3 (ponderado)." << endl;
         cout << "Conclusao: arquivo de entrada nao esta no formato esperado.\n\n";
         exit(-1);
     }
 
 }
-
-list<Vertice>::iterator Grafo::adicionaVertice(int id, char corPB)
+*/
+list<Vertice>::iterator Grafo::adicionaVertice(int id, int x, int y, char corPB)
 {
     auto itVertice = getVertice(id);
     if(itVertice->getIdVertice() != id) //Se nao encontrar tem que adicionar
     {
-        Vertice v(id, corPB);
-        vertices.push_back(v);
-        ordem++;
+        //Vertice v(id, x, y, corPB);
+        vertices.emplace_back(id, x, y, corPB);//push_back(v);
+        //ordem++;
         return --vertices.end(); //retorna o ultimo vertice, o que foi adicionado
     }
     else
         return itVertice; //retorna o vertice encontrado, que ja foi adicionado
-
 }
 
-bool Grafo::adicionaVerticeNaMain(int id)
+/*bool Grafo::adicionaVerticeNaMain(int id)
 {
     auto itVertice = getVertice(id);
     if(itVertice->getIdVertice() != id) //Se nao encontrar tem que adicionar
@@ -145,11 +147,11 @@ bool Grafo::adicionaVerticeNaMain(int id)
         return false; //retorna o vertice encontrado, que ja foi adicionado
 
 }
-
+*/
 void Grafo::adicionaAresta(int idOrigem, int idDestino, float peso, char corPB)
 {
-    auto itOrigem = adicionaVertice(idOrigem, corPB);
-    auto itDestino = adicionaVertice(idDestino, 0);
+    auto itOrigem = adicionaVertice(idOrigem, 0, 0, corPB);
+    auto itDestino = adicionaVertice(idDestino, 0, 0, 0);
     itOrigem->adicionaAresta(itDestino, peso, digrafo);
     if(!digrafo)
     {
@@ -386,7 +388,7 @@ unsigned int Grafo::getOrdem()
 }
 
 Grafo *Grafo::retornaInstanciaGrafo() {
-    Grafo *grafoInstancia = new Grafo(false, false);
+    Grafo *grafoInstancia = new Grafo(false, false, 0, 0);
     grafoInstancia->ponderado = this->ponderado;
     grafoInstancia->ordem = this->ordem;
     grafoInstancia->digrafo = this->digrafo;
@@ -518,11 +520,11 @@ bool Grafo::procuraVertice(int idVert) //Retorna true caso ache uma adjacencia c
 
 Grafo * Grafo::subgrafoInduzido(vector<int> subconjuntoVertices)
 {
-    Grafo *subgrafo = new Grafo(digrafo, ponderado);
+    Grafo *subgrafo = new Grafo(digrafo, ponderado, 0, 0);
     Grafo *grafoCopy = retornaInstanciaGrafo();
     for(auto itSubconjVert : subconjuntoVertices)
     {
-        subgrafo->adicionaVertice(itSubconjVert, 0);
+        subgrafo->adicionaVertice(itSubconjVert, 0, 0, 0);
         list<Aresta> listAdj = grafoCopy->getVertice(itSubconjVert)->getAdjacencia();
 
         for(auto itAdj : listAdj){
@@ -542,7 +544,7 @@ Grafo * Grafo::subgrafoInduzido(vector<int> subconjuntoVertices)
 Grafo * Grafo::complementar()
 {
     list<int> idVertices;
-    Grafo *complementar = new Grafo(digrafo, false);
+    Grafo *complementar = new Grafo(digrafo, false, 0, 0);
 
     for(auto it : vertices)
     {
@@ -1034,7 +1036,7 @@ string Grafo::verificaVerticesArticulacao()
             dados += " ";
             dados += itVert->getIdVertice();
         }
-        adicionaVertice(auxVert, 0);
+        adicionaVertice(auxVert, 0, 0, 0);
         for(auto i = listAresta.begin(); i != listAresta.end(); i++)
         {
             adicionaAresta(auxVert, i->getIdAdj(), i->getPeso(), 0);

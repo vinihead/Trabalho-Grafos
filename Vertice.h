@@ -25,6 +25,8 @@ private:
     list<Aresta>::iterator k;
     list<Aresta> adj;
     int id;
+    int x;
+    int y;
     char corPB; ///Variavel que contem a cor do vertice (preto ou branco)
     unsigned int grauEntrada;
     unsigned int grauSaida;
@@ -38,7 +40,7 @@ private:
     int cor; ///SEMCOR, AZUL, VERMELHO
 
 public:
-    Vertice(int id, char corPB);
+    Vertice(int id, int y, int x, char corPB);
     int getIdVertice();
     bool procuraAdjacencia(int vert);
     unsigned int getGrau();

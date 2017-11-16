@@ -27,16 +27,18 @@ private:
     unsigned int ordem;
     bool digrafo;
     bool ponderado;
-    bool verificaPonderado(string s);
+    float maxCusto;
+    float maxVertBranco;
+    //bool verificaPonderado(string s);
     Grafo * retornaInstanciaGrafo();
     void auxFechoTransitivoDireto(int _idVertice, set<int> *percorridos);
     void numComponentesConexasAux(list<Vertice>::iterator);
     bool verificaBipartidoAux(list<Vertice>::iterator itVert, int c);
 
 public:
-    Grafo(ifstream *inFile, bool digrafo);
-    Grafo(bool digrafo, bool ponderado);
-    list<Vertice>::iterator adicionaVertice(int id, char corPB);
+    Grafo(ifstream *inFile);
+    Grafo(bool digrafo, bool ponderado, const float maxCusto, const float maxVertBranco);
+    list<Vertice>::iterator adicionaVertice(int id, int x, int y, char corPB);
     bool removeVertice(int idVert);
     void adicionaAresta(int idOrigem, int idDestino, float peso, char corPB);
     bool removeAresta(int v1, int v2);
