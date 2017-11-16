@@ -45,6 +45,7 @@ Grafo::Grafo(ifstream *inFile)
     getline(*inFile, line);
     int numVertices = atoi(line.c_str());
     ordem = 0;//oioioiooi
+    //oi
 
     cout << "--------------------------------------" << endl;
     cout << "Instanciando o grafo do PCVPB. . . . ." << endl;
