@@ -10,12 +10,13 @@
 
 #include <algorithm>
 #include "Grafo.h"
-#include <set>
+//#include <set>
 #include <queue>
 #include <climits>
+#include <cmath>
 
 #define INFINITO LONG_MAX
-#define SEMCOR -1
+#define SEMCOR (-1)
 #define AZUL 0
 #define VERMELHO 1
 
@@ -75,12 +76,11 @@ Grafo::Grafo(ifstream *inFile)
        exit(-1);
     }
 
-    ///Criar matriz de adjacencias
-    
-
-
+    ///Criar matriz de pesos
+    this->criaMatrizPeso();
 
     ///Criar Arestas
+    this->criaTodasArestas();
 
 
 
@@ -89,8 +89,29 @@ Grafo::Grafo(ifstream *inFile)
     cout << "Grafo Criado e instanciado com sucesso!" << endl;
     cout << "Quantidade de Vertices: " << getOrdem() << endl;
     cout << "Quantidade de Arestas: " << getQntdArestas() << endl;
+    cout << "Cardinalidade Maxima de Vertices Brancos (Q): " << this->maxVertBranco << endl;
+    cout << "Comprimento/Custo Maximo (L): " << this->maxCusto << endl;
     cout << "---------------------------------------" << endl;
 }
+
+void Grafo::criaMatrizPeso()
+{
+    vector<vector<float>> matriz(this->ordem, std::vector<float>(this->ordem));
+    matrizPesos = matriz;
+    for(int i=0; i<this->ordem; i++)
+    {
+        for(int j=0; j<this->ordem; i++)
+        {
+
+        }
+    }
+}
+
+void Grafo::criaTodasArestas()
+{
+
+}
+
 
 /*
 bool Grafo::verificaPonderado(string s)
@@ -204,11 +225,11 @@ bool Grafo::verificaTrivial()
     return (ordem == 1);
 }
 
-bool Grafo::getPonderado()
+/*bool Grafo::getPonderado()
 {
     return ponderado;
 }
-
+*/
 bool Grafo::kRegularidade(int k)
 {
     for(auto i = vertices.begin(); i != vertices.end(); i++)
@@ -383,7 +404,7 @@ unsigned int Grafo::getOrdem()
 }
 
 Grafo *Grafo::retornaInstanciaGrafo() {
-    Grafo *grafoInstancia = new Grafo(false, false, 0, 0);
+    auto *grafoInstancia = new Grafo(false, false, 0, 0);
     grafoInstancia->ponderado = this->ponderado;
     grafoInstancia->ordem = this->ordem;
     grafoInstancia->digrafo = this->digrafo;
@@ -515,8 +536,8 @@ bool Grafo::procuraVertice(int idVert) //Retorna true caso ache uma adjacencia c
 
 Grafo * Grafo::subgrafoInduzido(vector<int> subconjuntoVertices)
 {
-    Grafo *subgrafo = new Grafo(digrafo, ponderado, 0, 0);
-    Grafo *grafoCopy = retornaInstanciaGrafo();
+    auto *subgrafo = new Grafo(digrafo, ponderado, 0, 0);
+    auto *grafoCopy = retornaInstanciaGrafo();
     for(auto itSubconjVert : subconjuntoVertices)
     {
         subgrafo->adicionaVertice(itSubconjVert, 0, 0, 0);
@@ -539,7 +560,7 @@ Grafo * Grafo::subgrafoInduzido(vector<int> subconjuntoVertices)
 Grafo * Grafo::complementar()
 {
     list<int> idVertices;
-    Grafo *complementar = new Grafo(digrafo, false, 0, 0);
+    auto *complementar = new Grafo(digrafo, false, 0, 0);
 
     for(auto it : vertices)
     {
@@ -737,11 +758,12 @@ string Grafo::arvoreBuscaLargura(int idVert)
     return textoSalvar;
 }
 
+/*
 bool Grafo::verificaOrdenado()
 {
     return digrafo;
 }
-
+*/
 
 
 /*
@@ -991,7 +1013,7 @@ string Grafo::fechoTransitivoDireto(int id) {
 
 }
 */
-int Grafo::numComponentesConexas()
+/*int Grafo::numComponentesConexas()
 {
     int componenteConexa = 0;
     for(auto itVert = vertices.begin(); itVert!=vertices.end(); itVert++)
@@ -1012,7 +1034,7 @@ void Grafo::numComponentesConexasAux(list<Vertice>::iterator itVert)
         itVert->setVisita(true);
     }
 }
-
+*/
 string Grafo::verificaVerticesArticulacao()
 {
     int auxVert;
@@ -1042,7 +1064,7 @@ string Grafo::verificaVerticesArticulacao()
 
 void Grafo::verificaArestasPonte(ofstream *outFile)
 {
-    int auxVert;
+    //int auxVert;
     vector<int> vertPonte;
     list<Aresta> listAre;
     int id1, id2;
