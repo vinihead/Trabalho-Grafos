@@ -44,14 +44,13 @@ Grafo::Grafo(ifstream *inFile)
     stringstream copiaDados;
     getline(*inFile, line);
     int numVertices = atoi(line.c_str());
-    ordem = 0;//oioioiooi
-    //oi
+    ordem = 0;
 
     cout << "--------------------------------------" << endl;
     cout << "Instanciando o grafo do PCVPB. . . . ." << endl;
     cout << "--------------------------------------" << endl;
 
-    getline(*inFile, line); ///Ja pega proxima linha depois da ordem do grago para verificar se eh ponderado
+    //getline(*inFile, line); ///Ja pega proxima linha depois da ordem do grago para verificar se eh ponderado
     ///Detectar se eh ponderado, pra isso precisa fazer um getline e "entender o line para saber se tem 3 numeros ou 2
     //ponderado = verificaPonderado(line); Será sempre ponderado.
 
@@ -120,7 +119,12 @@ double Grafo::calculaPesoAresta(int id1, int id2)
 
 void Grafo::criaTodasArestas()
 {
-    
+    for(auto vert = vertices.begin(); vert != vertices.end(); vert++) {
+        for (auto adj = vertices.begin(); adj != vertices.end(); adj++) {
+            if (adj->getIdVertice() != vert->getIdVertice())
+                vert->adicionaAresta(adj, 0, false);
+        }
+    }
 }
 
 
