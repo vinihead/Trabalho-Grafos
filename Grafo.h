@@ -29,19 +29,29 @@ private:
     bool ponderado;
     float maxCusto;
     float maxVertBranco;
+    double **matrizPesos;
+    //vector<vector<flot>> matrizPesos;
     //bool verificaPonderado(string s);
     Grafo * retornaInstanciaGrafo();
     void auxFechoTransitivoDireto(int _idVertice, set<int> *percorridos);
-    void numComponentesConexasAux(list<Vertice>::iterator);
+    //void numComponentesConexasAux(list<Vertice>::iterator);
     bool verificaBipartidoAux(list<Vertice>::iterator itVert, int c);
 
-public:
-    Grafo(ifstream *inFile);
-    Grafo(bool digrafo, bool ponderado, const float maxCusto, const float maxVertBranco);
     list<Vertice>::iterator adicionaVertice(int id, int x, int y, char corPB);
     bool removeVertice(int idVert);
     void adicionaAresta(int idOrigem, int idDestino, float peso, char corPB);
     bool removeAresta(int v1, int v2);
+
+
+    void criaMatrizPeso();
+    void criaTodasArestas();
+    double calculaPesoAresta(int id1, int id2);
+
+
+public:
+    Grafo(ifstream *inFile);
+    Grafo(bool digrafo, bool ponderado, const float maxCusto, const float maxVertBranco);
+
     bool verificaTrivial();
     bool kRegularidade(int k);
     int grauVertice(int idVert, bool mostraGrau, ofstream *outFile, bool imprimir);
@@ -61,32 +71,32 @@ public:
     string arvoreBuscaProfundidade(int idVert);
     bool verificaConexo();
     bool verificaEuleriano();
-    bool verificaOrdenado();
+    //bool verificaOrdenado();
     string verificaVerticesArticulacao();
     string fechoTransitivoDireto(int v);
-    string fechoTransitivoIndireto(int v);
+    //string fechoTransitivoIndireto(int v);
     string arvoreBuscaProfundidadeAux(int idVert);
-    int caminhoMinimoDijkstra(int orig, int dest);
+    //int caminhoMinimoDijkstra(int orig, int dest);
     bool verificaBipartido();
     Grafo *subgrafoInduzido(vector<int> vetorVertices);
     void verificaArestasPonte(ofstream *outFile);
     long caminhoMinimoFloyd(long _idVerticeOrigem, long _idVerticeDestino);
     int getQntdArestas();
     unsigned int getOrdem();
-    bool getPonderado();
-    bool adicionaVerticeNaMain(int id);
+    //bool getPonderado();
+    //bool adicionaVerticeNaMain(int id);
     void saveGrafoAdjacencia(ofstream *outFile);
-    int numComponentesConexas();
+    //int numComponentesConexas();
 
     void auxFechoTransitivoIndireto(Grafo *grafoAux, int id, set<int> *percorridos);
 
     void geraLinguagemDot();
 
     void algConstrutGuloso();
-
     void algConstrutGulRandReativo();
-
     void algConstrutGulRandomizado();
+
+
 };
 
 
