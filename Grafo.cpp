@@ -96,20 +96,30 @@ Grafo::Grafo(ifstream *inFile)
 
 void Grafo::criaMatrizPeso()
 {
-    vector<vector<float>> matriz(this->ordem, std::vector<float>(this->ordem));
-    matrizPesos = matriz;
+    //vector<vector<float>> matriz(this->ordem, std::vector<float>(this->ordem));
+    //matrizPesos = matriz;
+    matrizPesos = new double*[this->ordem];
+
     for(int i=0; i<this->ordem; i++)
     {
+        matrizPesos[i] = new double[this->ordem];
         for(int j=0; j<this->ordem; i++)
         {
-
+            matrizPesos[i][j] = calculaPesoAresta(i+1, j+1);
         }
     }
 }
 
+double Grafo::calculaPesoAresta(int id1, int id2)
+{
+    auto vert1 = getVertice(id1);
+    auto vert2 = getVertice(id1);
+    return sqrt(pow(vert2->getX()-vert1->getY(),2) + pow(vert2->getY()-vert1->getY(),2));
+}
+
 void Grafo::criaTodasArestas()
 {
-
+    
 }
 
 

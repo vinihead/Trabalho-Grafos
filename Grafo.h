@@ -29,12 +29,12 @@ private:
     bool ponderado;
     float maxCusto;
     float maxVertBranco;
-    //float *matrizPesos;
-    vector<vector<float>> matrizPesos;
+    double **matrizPesos;
+    //vector<vector<flot>> matrizPesos;
     //bool verificaPonderado(string s);
     Grafo * retornaInstanciaGrafo();
     void auxFechoTransitivoDireto(int _idVertice, set<int> *percorridos);
-    void numComponentesConexasAux(list<Vertice>::iterator);
+    //void numComponentesConexasAux(list<Vertice>::iterator);
     bool verificaBipartidoAux(list<Vertice>::iterator itVert, int c);
 
     list<Vertice>::iterator adicionaVertice(int id, int x, int y, char corPB);
@@ -45,6 +45,7 @@ private:
 
     void criaMatrizPeso();
     void criaTodasArestas();
+    double calculaPesoAresta(int id1, int id2);
 
 
 public:
@@ -94,6 +95,8 @@ public:
     void algConstrutGuloso();
     void algConstrutGulRandReativo();
     void algConstrutGulRandomizado();
+
+
 };
 
 

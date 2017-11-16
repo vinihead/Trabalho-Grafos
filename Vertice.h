@@ -65,6 +65,10 @@ public:
     int getCor();
     void setVisita(bool visitado);
     string retornaListAdjacencia(bool ponderado);
+
+    int getY();
+
+    int getX();
 };
 
 

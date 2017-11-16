@@ -36,6 +36,16 @@ bool Vertice::getVisitado()
 
 }
 
+int Vertice::getX()
+{
+    return x;
+}
+
+int Vertice::getY()
+{
+    return y;
+}
+
 void Vertice::adicionaAresta(list<Vertice>::iterator vert, float peso, bool digrafo) //metodo para adicionar aresta em grafo orientado
 {
     adj.emplace_back(vert->getIdVertice(), peso);
