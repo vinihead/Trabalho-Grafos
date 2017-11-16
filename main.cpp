@@ -15,6 +15,11 @@
  obs: sem utilizar ".txt", apenas o nome do arquivo
  */
 
+/**
+Consideramos um grafo nao direcionado e completo
+ *
+ */
+
 #include <iostream>
 #include <algorithm>
 #include "Grafo.h"
@@ -26,10 +31,10 @@ void cabecalho();
 void escreveCabecalhoArquivo();
 void pausarTela(bool continuar);
 void finalizaPrograma();
-void excluiAresta(Grafo *grafo);
-void excluiVertice(Grafo *grafo);
-void adicionaAresta(Grafo *grafo);
-void adicionaVertice(Grafo *grafo);
+//void excluiAresta(Grafo *grafo);
+//void excluiVertice(Grafo *grafo);
+//void adicionaAresta(Grafo *grafo);
+//void adicionaVertice(Grafo *grafo);
 void verificaGrauVertice(Grafo *grafo);
 void verificaGrauGrafo(Grafo *grafo);
 void informaOrdem(Grafo *grafo);
@@ -56,7 +61,8 @@ void verificaConexo(Grafo *grafo);
 //void caminhoMinimoDijkstra(Grafo *grafo);
 //void caminhoMinimoFloyd(Grafo *grafo);
 
-///Variaveis globais criadas para facilitar a escrita de arquivos
+///Variaveis globais criadas para facilitar a escrita de arquivos, sem possibilidade de excluir ou incluir arestas e vertices
+///Como as instancias são comportadas não preciso me preocupar com algumas coisas que me preocupei na primeira fase
 ofstream outFile;
 ifstream inFile;
 
@@ -67,12 +73,11 @@ int main(int argc, char **argv)
     bool digrafo;
     string inFileName;
     string outFileName;
-    argc = 3;
     if(argc == 3)
     {
-        //inFileName = argv[1];
-        //outFileName = argv[2];
-        inFileName =  "instanceTestePCVPB";//"infile_1";////"instance1534";//
+        inFileName = argv[1];
+        outFileName = argv[2];
+        //inFileName =  "instanceTestePCVPB";//"infile_1";////"instance1534";//
         outFileName = "outfile";
         outFileName += ".txt";
         inFileName += ".txt";
@@ -104,13 +109,14 @@ int main(int argc, char **argv)
     cout << "Arquivo de entrada: " << inFileName << endl;
     cout << "Arquivo de saida: " << outFileName << endl << endl;
 
-    do {
+    /*do {
         cout << "O Grafo eh Direcionado? Se for, tecle '1', se nao tecle '0': ";
         cin >> opcao;
     }
     while(opcao!=0 && opcao!=1);
-    digrafo = (opcao==1);
-    Grafo grafo(&inFile, digrafo);
+    digrafo = (opcao==1);*/
+
+    Grafo grafo(&inFile);
 
     do {
 
@@ -136,22 +142,22 @@ int main(int argc, char **argv)
             }
             case 3:
             {
-                excluiAresta(&grafo);
+                //excluiAresta(&grafo);
                 break;
             }
             case 4:
             {
-                excluiVertice(&grafo);
+                //excluiVertice(&grafo);
                 break;
             }
             case 5:
             {
-                adicionaAresta(&grafo);
+                //adicionaAresta(&grafo);
                 break;
             }
             case 6:
             {
-                adicionaVertice(&grafo);
+                //adicionaVertice(&grafo);
                 break;
             }
             case 7:
@@ -345,22 +351,22 @@ int menuShow()
     {
         if(!passouMenu)
             pausarTela(true);
-        cout << "---------------------- MENU -------------------------" << endl;
-        cout << "|     00 - Sair                                     |" << endl;
-        cout << "|     01 - Salvar grafo em arquivo                  |" << endl;
-        cout << "|     02 - Salvar grafo em modo lista de adjacencia |" << endl;
-        cout << "|     03 - Exclusao de Aresta                       |" << endl;
-        cout << "|     04 - Exclusao de Vertice                      |" << endl;
-        cout << "|     05 - Adicionar Aresta                         |" << endl;
-        cout << "|     06 - Adicionar Vertice                        |" << endl;
-        cout << "|     07 - Verificar Grau de um dado Vertice        |" << endl;
-        cout << "|     08 - Verificar Grau do Grafo                  |" << endl;
-        cout << "|     09 - Verificar Ordem do Grafo                 |" << endl;
-        cout << "|     10 - Verificar se eh Grafo Trivial            |" << endl;
-        cout << "|     11 - Verificar se eh Grafo Nulo               |" << endl;
-        cout << "|     12 - Verificar se o grafo eh k-regular        |" << endl;
-        cout << "|     13 - Verificar se o grafo eh Multigrafo       |" << endl;
-        cout << "|     14 - Verificar se o grafo eh Completo         |" << endl;
+        cout << "------ PROBLEMA DO CAIXEIRA VIAJANTE PRETO E BRANCO ------" << endl;
+        cout << "-------------------------- MENU --------------------------" << endl;
+        cout << "|     00 - Sair                                          |" << endl;
+        cout << "|     01 - Salvar grafo em arquivo                       |" << endl;
+        cout << "|     02 - Salvar grafo em modo lista de adjacencia      |" << endl;
+        cout << "|     03 - Algoritmo do PCVPB Guloso                     |" << endl;
+        cout << "|     03 - Algoritmo do PCVPB Guloso Randomizado         |" << endl;
+        cout << "|     03 - Algoritmo do PCVPB Guloso Randomizado Reativo |" << endl;
+        cout << "|     07 - Verificar Grau de um dado Vertice             |" << endl;
+        cout << "|     08 - Verificar Grau do Grafo                       |" << endl;
+        cout << "|     09 - Verificar Ordem do Grafo                      |" << endl;
+        cout << "|     10 - Verificar se eh Grafo Trivial                 |" << endl;
+        cout << "|     11 - Verificar se eh Grafo Nulo                |" << endl;
+        cout << "|     12 - Verificar se o grafo eh k-regular         |" << endl;
+        cout << "|     13 - Verificar se o grafo eh Multigrafo        |" << endl;
+        cout << "|     14 - Verificar se o grafo eh Completo          |" << endl;
         cout << "|     15 - Verificar se o grafo eh bipartido        |" << endl;
         cout << "|     16 - Verificar se o grafo eh conexo           |" << endl;
         cout << "|     17 - Verificar se eh grafo euleriano          |" << endl;
@@ -386,7 +392,6 @@ int menuShow()
         cout << "|     37 - Arvores de busca em largura              |" << endl;
         cout << "|     38 - Gerar Grafo em linguagem DOT             |" << endl;
         cout << "|     39 - Imprimir grafo                           |" << endl;
-        cout << "|     40 - Algoritmo Guloso                         |" << endl;
         cout << "-----------------------------------------------------" << endl << endl;
 
         if(passouMenu)
@@ -450,7 +455,7 @@ void finalizaPrograma()
     cout << "Os dados foram armazenados no arquivo de saida." << endl;
     pausarTela(false);
 }
-
+/*
 void excluiAresta(Grafo *grafo)
 {
     int id1, id2;
@@ -526,7 +531,7 @@ void adicionaVertice(Grafo *grafo)
     }
     cout << "-------------------------------------------" << endl;
 }
-
+*/
 void verificaGrauVertice(Grafo *grafo)
 {
     int idVertice;

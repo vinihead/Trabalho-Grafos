@@ -15,11 +15,13 @@ Vertice::Vertice()
 
 }
 
-Vertice::Vertice(int id, char corPB)
+Vertice::Vertice(int id, int y, int x, char corPB)
 {
     grauEntrada = 0;
     grauSaida = 0;
     this->id = id;
+    this->x = x;
+    this->y = y;
     this->corPB = corPB;
 }
 
