@@ -28,8 +28,9 @@ private:
     bool digrafo;
     bool ponderado;
     float maxCusto;
-    float maxVertBranco;
+    int maxVertBranco;
     double **matrizPesos;
+    int numPretos;
     //vector<vector<flot>> matrizPesos;
     //bool verificaPonderado(string s);
     Grafo * retornaInstanciaGrafo();
@@ -50,7 +51,7 @@ private:
 
 public:
     Grafo(ifstream *inFile);
-    Grafo(bool digrafo, bool ponderado, const float maxCusto, const float maxVertBranco);
+    Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco);
 
     bool verificaTrivial();
     bool kRegularidade(int k);

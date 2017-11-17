@@ -9,7 +9,7 @@
 
 /**
  Para COMPILAR, uitlize:
- ./gafosGrupo1 instanciaArquivoEntrada TrabalhoGrafos
+ g++ *.cpp -o TrabalhoGrafos
  Para EXECUTAR, utilize:
  <.\executavel> <arqEntrada> <arqSaida>
  obs: sem utilizar ".txt", apenas o nome do arquivo
@@ -142,22 +142,20 @@ int main(int argc, char **argv)
             }
             case 3:
             {
-                //excluiAresta(&grafo);
+                cout << "Chamando Algoritmo GULOSO." << endl;
+                grafo.algConstrutGuloso();
                 break;
             }
             case 4:
             {
-                //excluiVertice(&grafo);
+                cout << "Chamando Algoritmo GULOSO RANDOMIZADO." << endl;
+                grafo.algConstrutGulRandomizado();
                 break;
             }
             case 5:
             {
-                //adicionaAresta(&grafo);
-                break;
-            }
-            case 6:
-            {
-                //adicionaVertice(&grafo);
+                cout << "Chamando Algoritmo GULOSO RANDOMIZADO REATIVO." << endl;
+                grafo.algConstrutGulRandReativo();
                 break;
             }
             case 7:
@@ -326,13 +324,6 @@ int main(int argc, char **argv)
                 grafo.imprime();
                 break;
             }
-            case 40:
-            {
-                cout << "Chamando Algoritmo GULOSO." << endl;
-                grafo.algConstrutGuloso();
-                cout << "--------------------------" << endl;
-                break;
-            }
         }
     } while (opcao != 0);
     ///Fechando streams de entrada e saida
@@ -359,40 +350,28 @@ int menuShow()
         cout << "|     03 - Algoritmo do PCVPB Guloso                     |" << endl;
         cout << "|     03 - Algoritmo do PCVPB Guloso Randomizado         |" << endl;
         cout << "|     03 - Algoritmo do PCVPB Guloso Randomizado Reativo |" << endl;
-        cout << "|     07 - Verificar Grau de um dado Vertice             |" << endl;
-        cout << "|     08 - Verificar Grau do Grafo                       |" << endl;
-        cout << "|     09 - Verificar Ordem do Grafo                      |" << endl;
-        cout << "|     10 - Verificar se eh Grafo Trivial                 |" << endl;
-        cout << "|     11 - Verificar se eh Grafo Nulo                |" << endl;
-        cout << "|     12 - Verificar se o grafo eh k-regular         |" << endl;
-        cout << "|     13 - Verificar se o grafo eh Multigrafo        |" << endl;
-        cout << "|     14 - Verificar se o grafo eh Completo          |" << endl;
-        cout << "|     15 - Verificar se o grafo eh bipartido        |" << endl;
-        cout << "|     16 - Verificar se o grafo eh conexo           |" << endl;
-        cout << "|     17 - Verificar se eh grafo euleriano          |" << endl;
-        cout << "|     18 - Mostraz vizinhanca aberta de um vertice  |" << endl;
-        cout << "|     19 - Mostraz vizinhanca fechada de um vertice |" << endl;
-        cout << "|     20 - Mostrar Caminho Minimo (Dijkstra)        |" << endl;
-        cout << "|     21 - Mostrar Caminho Minimo (Floyd)           |" << endl;
-        cout << "|     22 - Fecho transitivo direto de um Vertice    |" << endl;
-        cout << "|     23 - Fecho transitivo indireto de um Vertice  |" << endl;
-        cout << "|     24 - Apresentar sequencia de graus            |" << endl;
-        cout << "|     25 - Apresentar um subgrafo induzido          |" << endl;
-        cout << "|     26 - Apresentar o complementar do grafo       |" << endl;
-        cout << "|     27 - Apresentar os Vertices de articulacao    |" << endl;
-        cout << "|     28 - Apresentar as Arestas ponte              |" << endl;
-        cout << "|     29 - Raio do grafo                            |" << endl;
-        cout << "|     30 - Diamentro de grafo                       |" << endl;
-        cout << "|     31 - Centro do grafo                          |" << endl;
-        cout << "|     32 - Periferia do grafo                       |" << endl;
-        cout << "|     33 - Componentes fortemente conexas (digrafo) |" << endl;
-        cout << "|     34 - Apresentar a AGM do grafo                |" << endl;
-        cout << "|     35 - Apresentar as florestas de custo minimo  |" << endl;
-        cout << "|     36 - Arvores de busca em profundidade         |" << endl;
-        cout << "|     37 - Arvores de busca em largura              |" << endl;
-        cout << "|     38 - Gerar Grafo em linguagem DOT             |" << endl;
-        cout << "|     39 - Imprimir grafo                           |" << endl;
-        cout << "-----------------------------------------------------" << endl << endl;
+        cout << "|     38 - Gerar Grafo em linguagem DOT                  |" << endl;
+        cout << "|     39 - Imprimir grafo                                |" << endl;
+        cout << "----------------------------------------------------------" << endl << endl;
+        //cout << "|     07 - Verificar Grau de um dado Vertice             |" << endl;
+        //cout << "|     08 - Verificar Grau do Grafo                       |" << endl;
+        //cout << "|     09 - Verificar Ordem do Grafo                      |" << endl;
+        //cout << "|     10 - Verificar se eh Grafo Trivial                 |" << endl;
+        //cout << "|     11 - Verificar se eh Grafo Nulo                |" << endl;
+        //cout << "|     12 - Verificar se o grafo eh k-regular         |" << endl;
+        //cout << "|     13 - Verificar se o grafo eh Multigrafo        |" << endl;
+        //cout << "|     14 - Verificar se o grafo eh Completo          |" << endl;
+        //cout << "|     15 - Verificar se o grafo eh bipartido        |" << endl;
+        //cout << "|     16 - Verificar se o grafo eh conexo           |" << endl;
+        //cout << "|     17 - Verificar se eh grafo euleriano          |" << endl;
+        //cout << "|     18 - Mostraz vizinhanca aberta de um vertice  |" << endl;
+        //cout << "|     19 - Mostraz vizinhanca fechada de um vertice |" << endl;
+        //cout << "|     22 - Fecho transitivo direto de um Vertice    |" << endl;
+        //cout << "|     23 - Fecho transitivo indireto de um Vertice  |" << endl;
+        //cout << "|     24 - Apresentar sequencia de graus            |" << endl;
+        //cout << "|     25 - Apresentar um subgrafo induzido          |" << endl;
+        //cout << "|     36 - Arvores de busca em profundidade         |" << endl;
+        //cout << "|     37 - Arvores de busca em largura              |" << endl;
 
         if(passouMenu)
             cout << "Opcao Invalida.\nDigite uma opcao de 0 a 39: ";

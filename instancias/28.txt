@@ -1,13 +1,4 @@
-NOME_i-9-gil262.tsp-3x3.txt
-TYPE_PCVPB
-COMMENT_http://www.iwr.uni-heidelberg.de/groups/comopt/software/TSPLIB95/
-DIMENSION_262
-EDGE_WEIGHT_TYPE_EUC_2D
-n: 262 
-|P|: 52
-Q: 14
-L: 122
-vertice_x_y_cor
+262 52 14 122
 1 99 97 1 
 2 59 50 1 
 3 0 14 1 

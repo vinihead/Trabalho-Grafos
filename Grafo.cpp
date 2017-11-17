@@ -25,7 +25,7 @@
 #define BRANCO 1
 
 //Construtor padrão, para no caso de precisar criar um grafo vazio.
-Grafo::Grafo(bool digrafo, bool ponderado, const float maxCusto, const float maxVertBranco)
+Grafo::Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco)
         : maxCusto(maxCusto), maxVertBranco(maxVertBranco){
     this->digrafo = digrafo;
     this->ponderado = ponderado;
@@ -38,36 +38,42 @@ Grafo::Grafo(ifstream *inFile)
 {
     this->digrafo = false;
     int vert, x, y;
+    int numVertices;
     //float peso = 1.0;
     char corPB;
     string line;
     stringstream copiaDados;
     getline(*inFile, line);
-    int numVertices = atoi(line.c_str());
+    copiaDados.str(line);
+    copiaDados >> numVertices >> numPretos >> maxVertBranco >> maxCusto;
     ordem = 0;
 
     cout << "--------------------------------------" << endl;
     cout << "Instanciando o grafo do PCVPB. . . . ." << endl;
     cout << "--------------------------------------" << endl;
-
-    //getline(*inFile, line); ///Ja pega proxima linha depois da ordem do grago para verificar se eh ponderado
+    cout <<  "linha de fora: "<<line << endl;
+    getline(*inFile, line); ///Ja pega proxima linha depois da ordem do grago para verificar se eh ponderado
     ///Detectar se eh ponderado, pra isso precisa fazer um getline e "entender o line para saber se tem 3 numeros ou 2
     //ponderado = verificaPonderado(line); Será sempre ponderado.
-
+    cout <<  "linha de fora: "<<line << endl;
     //Primeiro vou adicionar os vertices
     //if(inFile->good())
     //{
-        while(getline(*inFile, line) && !line.empty());
+        do
        {
+           cout <<  "linha: "<<line << endl;
            copiaDados.clear(); //limpar o que tiver na stream, afim de não ter nenhum erro
            copiaDados.str(line);
            copiaDados >> vert >> x >> y >> corPB;
            this->adicionaVertice(vert, x, y, corPB);
+           cout << "vert add: " << vert << endl;
            //this->adicionaAresta(v1, v2, peso, 0);
            ///Se nao for ponderado adiciona aresta com peso 1.0, para facilitar na hora de verificar caminhos minimos
-       }
+       } while(getline(*inFile, line) && !line.empty());
     //}
     ///No caso de termos um arquivo de entrada informando quantidade errada de vertices, o programa eh finalizado
+    cout << numVertices << " " << ordem << endl;
+    cout << numPretos << " " << maxVertBranco << " " << maxCusto << endl;
     if(this->ordem != numVertices)
     {
        cout << "ERRO! Arquivo de entrada com quantidade de vertices errada." << endl;
@@ -78,17 +84,13 @@ Grafo::Grafo(ifstream *inFile)
 
     ///Criar matriz de pesos
     this->criaMatrizPeso();
-
     ///Criar Arestas
     this->criaTodasArestas();
-
-
-
 
     cout << "\n---------------------------------------" << endl;
     cout << "Grafo Criado e instanciado com sucesso!" << endl;
     cout << "Quantidade de Vertices: " << getOrdem() << endl;
-    cout << "Quantidade de Arestas: " << getQntdArestas() << endl;
+    cout << "Quantidade de Vertices Pretos: " << this->numPretos << endl;
     cout << "Cardinalidade Maxima de Vertices Brancos (Q): " << this->maxVertBranco << endl;
     cout << "Comprimento/Custo Maximo (L): " << this->maxCusto << endl;
     cout << "---------------------------------------" << endl;
@@ -103,7 +105,7 @@ void Grafo::criaMatrizPeso()
     for(int i=0; i<this->ordem; i++)
     {
         matrizPesos[i] = new double[this->ordem];
-        for(int j=0; j<this->ordem; i++)
+        for(int j=0; j<this->ordem; j++)
         {
             matrizPesos[i][j] = calculaPesoAresta(i+1, j+1);
         }
