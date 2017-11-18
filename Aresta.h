@@ -17,13 +17,13 @@ class Vertice;
 
 class Aresta {
 private:
-    float peso;
+    double peso;
     int idVerticeAdj;
 
 public:
-    Aresta(int idAdj, float peso);
+    Aresta(int idAdj, double peso);
     int getIdAdj();
-    float getPeso();
+    double getPeso();
 };
 
 

@@ -43,13 +43,13 @@ void verificaNulo(Grafo *grafo);
 void verificaKRegularidade(Grafo *grafo);
 void verificaMultigrafo(Grafo *grafo);
 void verificaGrafoCompleto(Grafo *grafo);
-void verificaBipartido(Grafo *grafo);
+//void verificaBipartido(Grafo *grafo);
 void verificaEuleriano(Grafo *grafo);
 void mostraVizinhancaAberta(Grafo *grafo);
 void mostraVizinhancaFechada(Grafo *grafo);
 void apresentaSequenciaGraus(Grafo *grafo);
-void fechoTransitivoDireto(Grafo *grafo);
-void fechoTransitivoIndireto(Grafo *grafo);
+//void fechoTransitivoDireto(Grafo *grafo);
+//void fechoTransitivoIndireto(Grafo *grafo);
 void subgrafoInduzido(Grafo *grafo);
 void grafoComplementar(Grafo *grafo);
 void verificaVerticesArticulacao(Grafo *grafo);
@@ -189,7 +189,7 @@ int main(int argc, char **argv)
                 verificaKRegularidade(&grafo);
                 break;
             }
-            case 13:
+/*            case 13:
             {
                 verificaMultigrafo(&grafo);
                 break;
@@ -201,7 +201,7 @@ int main(int argc, char **argv)
             }
             case 15:
             {
-                verificaBipartido(&grafo);
+                //verificaBipartido(&grafo);
                 break;
             }
             case 16:
@@ -236,12 +236,12 @@ int main(int argc, char **argv)
             }
             case 22:
             {
-                fechoTransitivoDireto(&grafo);
+                //fechoTransitivoDireto(&grafo);
                 break;
             }
             case 23:
             {
-                fechoTransitivoIndireto(&grafo);
+                //fechoTransitivoIndireto(&grafo);
                 break;
             }
             case 24:
@@ -311,10 +311,10 @@ int main(int argc, char **argv)
             }
             case 37:
             {
-                arvoreBuscaLargura(&grafo);
+                //arvoreBuscaLargura(&grafo);
                 break;
             }
-            case 38:
+*/            case 38:
             {
                 grafo.geraLinguagemDot();
                 break;
@@ -661,6 +661,7 @@ void apresentaSequenciaGraus(Grafo *grafo)
     cout << "--------------------------------------------------------------" << endl;
 }
 
+/*
 void fechoTransitivoDireto(Grafo *grafo)
 {
     string fechoTransDireto;
@@ -909,15 +910,16 @@ void verificaArestasPonte(Grafo *grafo)
     cout << "---------------------------------------------" << endl;
     outFile << "---------------------------------------------" << endl;
 }
-/*
+
 void caminhoMinimoDijkstra(Grafo *grafo)
 {
     cout << "Dijkstra: " << grafo->caminhoMinimoDijkstra(1,7) << endl;
     cout << "Verificado e salvo." << endl;
 }
-*/
+
 void caminhoMinimoFloyd(Grafo *grafo)
 {
     cout << "Floyd: " << grafo->caminhoMinimoFloyd(1,7) << endl;
     cout << "Verificado e salvo." << endl;
 }
+*/

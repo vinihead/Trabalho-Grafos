@@ -121,10 +121,12 @@ double Grafo::calculaPesoAresta(int id1, int id2)
 
 void Grafo::criaTodasArestas()
 {
-    for(auto vert = vertices.begin(); vert != vertices.end(); vert++) {
-        for (auto adj = vertices.begin(); adj != vertices.end(); adj++) {
+    int i,j;
+    i=j=0;
+    for(auto vert = vertices.begin(); vert != vertices.end(); vert++, i++) {
+        for (auto adj = vertices.begin(); adj != vertices.end(); adj++, j++) {
             if (adj->getIdVertice() != vert->getIdVertice())
-                vert->adicionaAresta(adj, 0, false);
+                vert->adicionaAresta(adj, matrizPesos[i][j], digrafo);
         }
     }
 }
@@ -834,6 +836,8 @@ int Grafo::caminhoMinimoDijkstra(int orig, int dest)
 /**
  * Algoritmo de caminho minimo: Floyd
  */
+
+/*
 long Grafo::caminhoMinimoFloyd(long _idVerticeOrigem, long _idVerticeDestino) {
 
     long distancias[ordem][ordem];
@@ -917,6 +921,7 @@ bool Grafo::verificaBipartidoAux(list<Vertice>::iterator itVert, int c)//(int ve
     }
     return true;
 }
+
 void Grafo::auxFechoTransitivoDireto(int id, set<int> *percorridos) {
 
     if(id<0 || id>= vertices.size())
@@ -1029,8 +1034,8 @@ string Grafo::fechoTransitivoDireto(int id) {
     return fechoIntransitivo;
 
 }
-*/
-/*int Grafo::numComponentesConexas()
+
+int Grafo::numComponentesConexas()
 {
     int componenteConexa = 0;
     for(auto itVert = vertices.begin(); itVert!=vertices.end(); itVert++)

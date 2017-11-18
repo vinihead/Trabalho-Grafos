@@ -9,7 +9,7 @@
 
 #include "Aresta.h"
 
-Aresta::Aresta(int idAdj, float peso)
+Aresta::Aresta(int idAdj, double peso)
 {
     this->idVerticeAdj = idAdj;
     this->peso = peso;
@@ -20,7 +20,7 @@ int Aresta::getIdAdj()
     return idVerticeAdj;
 }
 
-float Aresta::getPeso()
+double Aresta::getPeso()
 {
     return peso;
 }

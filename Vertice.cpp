@@ -9,12 +9,12 @@
 
 #include "Vertice.h"
 #include <algorithm> // função find
-
+/*
 Vertice::Vertice()
 {
 
 }
-
+*/
 Vertice::Vertice(int id, int y, int x, char corPB)
 {
     grauEntrada = 0;
@@ -46,7 +46,7 @@ int Vertice::getY()
     return y;
 }
 
-void Vertice::adicionaAresta(list<Vertice>::iterator vert, float peso, bool digrafo) //metodo para adicionar aresta em grafo orientado
+void Vertice::adicionaAresta(list<Vertice>::iterator vert, double peso, bool digrafo) //metodo para adicionar aresta em grafo orientado
 {
     adj.emplace_back(vert->getIdVertice(), peso);
 
@@ -151,6 +151,13 @@ void Vertice::aumentaGrauEntrada()
     grauEntrada++;
 }
 
+int Vertice::getCorPB()
+{
+    return corPB;
+}
+
+
+/*
 void Vertice::adicionaListaAdj(list<Aresta> adj)
 {
     this->adj = adj;
@@ -163,11 +170,8 @@ void Vertice::setCor(int cor)
     this->cor = cor;
 }
 
-int Vertice::getCor()
-{
-    return cor;
-}
-/*
+
+
 bool Vertice::getDisponivel() {
     return disp;
 }

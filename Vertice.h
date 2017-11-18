@@ -47,7 +47,7 @@ public:
     void imprimeListAdjacencia(bool ponderado);
     unsigned int contaAdjacencia(int vert);
     list<Aresta> getAdjacencia();
-    void adicionaAresta(list<Vertice>::iterator vert, float peso, bool digrafo);
+    void adicionaAresta(list<Vertice>::iterator vert, double peso, bool digrafo);
     bool removeAresta(list<Vertice>::iterator vert, bool digrafo);
     void diminuiGrauEntrada();
     void aumentaGrauEntrada();
@@ -69,6 +69,8 @@ public:
     int getY();
 
     int getX();
+
+    int getCorPB();
 };
 
 
