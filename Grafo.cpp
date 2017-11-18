@@ -1121,7 +1121,9 @@ int Grafo::getQntdArestas()
 
 void Grafo::algConstrutGuloso()
 {
-
+    vector<int> listCandidatos; //pode ser feito com vector<Vertice> se for melhor
+    vector<int> solucaoInicial; //pode ser feito com vector<Vertice> se for melhor
+    double menorCusto;
 }
 
 void Grafo::algConstrutGulRandomizado()
