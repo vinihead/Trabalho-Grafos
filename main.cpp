@@ -142,17 +142,23 @@ int main(int argc, char **argv)
             }
             case 3:
             {
+                cout << "Matriz de Distancias:" << endl;
+                grafo.imprimeMatrizDistancia();
+                break;
+            }
+            case 4:
+            {
                 cout << "Chamando Algoritmo GULOSO." << endl;
                 grafo.algConstrutGuloso();
                 break;
             }
-            case 4:
+            case 5:
             {
                 cout << "Chamando Algoritmo GULOSO RANDOMIZADO." << endl;
                 grafo.algConstrutGulRandomizado();
                 break;
             }
-            case 5:
+            case 6:
             {
                 cout << "Chamando Algoritmo GULOSO RANDOMIZADO REATIVO." << endl;
                 grafo.algConstrutGulRandReativo();
@@ -160,13 +166,7 @@ int main(int argc, char **argv)
             }
             case 7:
             {
-                verificaGrauVertice(&grafo);
-                break;
-            }
-            case 8:
-            {
-                verificaGrauGrafo(&grafo);
-
+                grafo.caixeiroViajante();
                 break;
             }
             case 9:
@@ -347,9 +347,10 @@ int menuShow()
         cout << "|     00 - Sair                                          |" << endl;
         cout << "|     01 - Salvar grafo em arquivo                       |" << endl;
         cout << "|     02 - Salvar grafo em modo lista de adjacencia      |" << endl;
-        cout << "|     03 - Algoritmo do PCVPB Guloso                     |" << endl;
-        cout << "|     03 - Algoritmo do PCVPB Guloso Randomizado         |" << endl;
-        cout << "|     03 - Algoritmo do PCVPB Guloso Randomizado Reativo |" << endl;
+        cout << "|     03 - Imprime Matriz de distancias                  |" << endl;
+        cout << "|     04 - Algoritmo do PCVPB Guloso                     |" << endl;
+        cout << "|     05 - Algoritmo do PCVPB Guloso Randomizado         |" << endl;
+        cout << "|     06 - Algoritmo do PCVPB Guloso Randomizado Reativo |" << endl;
         cout << "|     38 - Gerar Grafo em linguagem DOT                  |" << endl;
         cout << "|     39 - Imprimir grafo                                |" << endl;
         cout << "----------------------------------------------------------" << endl << endl;

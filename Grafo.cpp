@@ -14,6 +14,7 @@
 #include <queue>
 #include <climits>
 #include <cmath>
+#include <iomanip>
 
 #define INFINITO LONG_MAX
 #define SEMCOR (-1)
@@ -37,6 +38,7 @@ Grafo::Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco)
 Grafo::Grafo(ifstream *inFile)
 {
     this->digrafo = false;
+    this->ponderado = true;
     int vert, x, y;
     int numVertices;
     //float peso = 1.0;
@@ -85,7 +87,9 @@ Grafo::Grafo(ifstream *inFile)
     ///Criar matriz de pesos
     this->criaMatrizPeso();
     ///Criar Arestas
+    cout <<"erro1" <<endl;
     this->criaTodasArestas();
+    cout <<"erro2" <<endl;
 
     cout << "\n---------------------------------------" << endl;
     cout << "Grafo Criado e instanciado com sucesso!" << endl;
@@ -100,14 +104,17 @@ void Grafo::criaMatrizPeso()
 {
     //vector<vector<float>> matriz(this->ordem, std::vector<float>(this->ordem));
     //matrizPesos = matriz;
-    matrizPesos = new double*[this->ordem];
+    matrizDistancia = new double*[this->ordem];
 
     for(int i=0; i<this->ordem; i++)
     {
-        matrizPesos[i] = new double[this->ordem];
+        matrizDistancia[i] = new double[this->ordem];
         for(int j=0; j<this->ordem; j++)
         {
-            matrizPesos[i][j] = calculaPesoAresta(i+1, j+1);
+            if(i!=j)
+                matrizDistancia[i][j] = calculaPesoAresta(i+1, j+1);
+            else
+                matrizDistancia[i][j] = 0;
         }
     }
 }
@@ -115,20 +122,25 @@ void Grafo::criaMatrizPeso()
 double Grafo::calculaPesoAresta(int id1, int id2)
 {
     auto vert1 = getVertice(id1);
-    auto vert2 = getVertice(id1);
-    return sqrt(pow(vert2->getX()-vert1->getY(),2) + pow(vert2->getY()-vert1->getY(),2));
+    auto vert2 = getVertice(id2);
+    return sqrt(pow(vert2->getX()-vert1->getX(),2) + pow(vert2->getY()-vert1->getY(),2));
 }
 
 void Grafo::criaTodasArestas()
 {
+    cout <<"erro EPSOSso" <<endl;
+    cout <<"erro EPSOSso2" <<endl;
     int i,j;
     i=j=0;
     for(auto vert = vertices.begin(); vert != vertices.end(); vert++, i++) {
         for (auto adj = vertices.begin(); adj != vertices.end(); adj++, j++) {
+            cout <<"matriz " << i+1 << " " << j+1 << endl;
             if (adj->getIdVertice() != vert->getIdVertice())
-                vert->adicionaAresta(adj, matrizPesos[i][j], digrafo);
+                vert->adicionaAresta(adj, matrizDistancia[i][j], digrafo);
         }
+        j=0;
     }
+    cout <<"erro EPSOSso3" <<endl;
 }
 
 
@@ -1126,9 +1138,52 @@ int Grafo::getQntdArestas()
 
 void Grafo::algConstrutGuloso()
 {
+    Grafo *grafoAux = retornaInstanciaGrafo();
+    grafoAux->imprime();
+    double mediaPeso=0;
+    double mediaPesoP=0;
+    double mediaPesoB=0;
+    /*for(int i=0; i<ordem; i++)
+        for(int j=0; j<ordem; j++)
+            mediaPeso += matrizDistancia[i][j];*/
+    for (auto & itVert : grafoAux->vertices)
+        for (auto & itAdj : itVert.getAdjacencia())
+        {
+            mediaPeso += itAdj.getPeso();
+            if(itVert.getCorPB()==BRANCO && grafoAux->getCorPB(itAdj.getIdAdj()) == BRANCO)
+                mediaPesoB+=itAdj.getPeso();
+            else if(itVert.getCorPB()==PRETO && grafoAux->getCorPB(itAdj.getIdAdj()) == PRETO)
+                mediaPesoP+=itAdj.getPeso();
+        }
+
+    mediaPeso/=(ordem*(ordem-1))/2.0;
+    mediaPesoP = (numPretos*(numPretos-1))/2.0;
+    mediaPesoB = ((ordem-numPretos)*(ordem-numPretos-1))/2.0;
+
+    cout << "Media Peso: " <<mediaPeso << endl;
+    cout << "Media Peso Brancos: " <<mediaPesoB << endl;
+    cout << "Media Peso Pretos: " <<mediaPesoP << endl;
+
+    for (auto & itVert : grafoAux->vertices)//(auto itVert = grafoAux->vertices.begin(); itVert != grafoAux->vertices.end(); itVert++)//
+    {
+        for (auto & itAdj : itVert.getAdjacencia())//(auto itAdj = itVert->getAdjacencia().begin(); itAdj != itVert->getAdjacencia().end(); itAdj++)//
+        {
+            if(itAdj.getPeso()>maxCusto)
+            {
+                cout << "mais uma" << endl;
+                grafoAux->removeAresta(itVert.getIdVertice(), itAdj.getIdAdj());
+            }
+        }
+    }
+    grafoAux->imprime();
+    //grafoAux->geraLinguagemDot();
     vector<int> listCandidatos; //pode ser feito com vector<Vertice> se for melhor
     vector<int> solucaoInicial; //pode ser feito com vector<Vertice> se for melhor
     double menorCusto;
+    Grafo grafoSolucao(digrafo, ponderado, maxCusto, maxVertBranco);
+    //escolhe primeiro vertice aleatoriamente ou com alguma regra especifica
+
+    delete grafoAux;
 }
 
 void Grafo::algConstrutGulRandomizado()
@@ -1139,4 +1194,77 @@ void Grafo::algConstrutGulRandomizado()
 void Grafo::algConstrutGulRandReativo()
 {
 
+}
+
+void Grafo::caixeiroViajante()
+{
+    int inicial = 1;
+    auto *tempSolucao = new int[ordem];
+    auto *melhorSolucao = new int[ordem];
+    double valorMelhorSolucao = INFINITO;
+    double valorSolucaoAtual = 0;
+    auto *visitados = new bool[ordem];
+    visitados[inicial] = true;
+    tempSolucao[0] = inicial;
+    caixeiroViajanteAux(1, valorSolucaoAtual, valorMelhorSolucao, tempSolucao, melhorSolucao, visitados);
+    if (valorMelhorSolucao < INFINITO) cout << "Melhor Solucao: "<< valorMelhorSolucao << endl;
+    else cout << "Solucao: Infinito!" << endl;
+    for(int i=0; i<ordem; i++)
+        cout << melhorSolucao[i]+1 << " ";
+}
+
+void Grafo::caixeiroViajanteAux(int i, double &valorSolucaoAtual, double &valorMelhorSolucao, int tempSolucao[], int melhorSolucao[], bool visitados[]) {
+    if (valorSolucaoAtual > valorMelhorSolucao) return;
+    if (i == this->ordem) {
+        double dist = matrizDistancia[tempSolucao[i - 1]][tempSolucao[0]];
+        if (dist < INFINITO && valorSolucaoAtual + dist < valorMelhorSolucao) {
+            cout << "\t" << valorMelhorSolucao << " -> " << (valorSolucaoAtual + dist) << endl;
+            valorMelhorSolucao = valorSolucaoAtual + dist;
+            for(int k=0;k<ordem;k++) melhorSolucao[k] = tempSolucao[k];
+        }
+        return;
+    }
+    int ultimo = tempSolucao[i - 1];
+    for (int t = 0; t < this->ordem; t++) {
+        if (!visitados[t] && matrizDistancia[ultimo][t] < INFINITO) {
+            visitados[t] = true;
+            tempSolucao[i] = t;
+            valorSolucaoAtual += matrizDistancia[ultimo][t];
+            caixeiroViajanteAux(i + 1, valorSolucaoAtual, valorMelhorSolucao, tempSolucao, melhorSolucao, visitados);
+            valorSolucaoAtual -= matrizDistancia[ultimo][t];
+            visitados[t] = false;
+        }
+    }
+}
+
+void Grafo::imprimeMatrizDistancia()
+{
+    cout << "Vert|";
+    cout << fixed;
+    cout.precision(2);
+    cout.setf(ios::fixed);
+    for(int i=0; i<=this->ordem; i++)
+    {
+        for(int j=0; j<this->ordem; j++)
+        {
+            if(i==0)
+                cout << setw(10) << j+1;
+            else
+            {
+                if(j==0)
+                    cout <<  i << "   |";
+                cout << setw(10) <<matrizDistancia[i-1][j];
+            }
+        }
+        cout << endl;
+    }
+}
+
+
+int Grafo::getCorPB(int idVert)
+{
+    for(auto itVert : vertices)
+        if(itVert.getIdVertice() == idVert)
+            return itVert.getCorPB();
+    return -1;
 }

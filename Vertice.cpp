@@ -9,6 +9,8 @@
 
 #include "Vertice.h"
 #include <algorithm> // função find
+#include <iomanip>
+
 /*
 Vertice::Vertice()
 {
@@ -104,9 +106,11 @@ unsigned int Vertice::contaAdjacencia(int vert)
 
 void Vertice::imprimeListAdjacencia(bool ponderado)
 {
+    cout.precision(2);
+    cout.setf(ios::fixed);
     for(k = adj.begin(); k != adj.end(); k++)
     {
-        ponderado ? cout << k->getIdAdj() << "|" << k->getPeso() : cout << k->getIdAdj();
+        ponderado ? cout << right << setw(2) << k->getIdAdj() << "|" << k->getPeso() << fixed : cout << setw(2) << k->getIdAdj();
         if(++k != adj.end())
         {
             cout << " ";

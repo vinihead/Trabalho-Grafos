@@ -27,16 +27,16 @@ private:
     unsigned int ordem;
     bool digrafo;
     bool ponderado;
-    float maxCusto;
+    double maxCusto;
     int maxVertBranco;
-    double **matrizPesos;
+    double **matrizDistancia;
     int numPretos;
     //vector<vector<flot>> matrizPesos;
     //bool verificaPonderado(string s);
     Grafo * retornaInstanciaGrafo();
-    void auxFechoTransitivoDireto(int _idVertice, set<int> *percorridos);
+    //void auxFechoTransitivoDireto(int _idVertice, set<int> *percorridos);
     //void numComponentesConexasAux(list<Vertice>::iterator);
-    bool verificaBipartidoAux(list<Vertice>::iterator itVert, int c);
+    //bool verificaBipartidoAux(list<Vertice>::iterator itVert, int c);
 
     list<Vertice>::iterator adicionaVertice(int id, int x, int y, char corPB);
     bool removeVertice(int idVert);
@@ -74,14 +74,14 @@ public:
     bool verificaEuleriano();
     //bool verificaOrdenado();
     string verificaVerticesArticulacao();
-    string fechoTransitivoDireto(int v);
+    //string fechoTransitivoDireto(int v);
     //string fechoTransitivoIndireto(int v);
     string arvoreBuscaProfundidadeAux(int idVert);
     //int caminhoMinimoDijkstra(int orig, int dest);
-    bool verificaBipartido();
+    //bool verificaBipartido();
     Grafo *subgrafoInduzido(vector<int> vetorVertices);
     void verificaArestasPonte(ofstream *outFile);
-    long caminhoMinimoFloyd(long _idVerticeOrigem, long _idVerticeDestino);
+    //long caminhoMinimoFloyd(long _idVerticeOrigem, long _idVerticeDestino);
     int getQntdArestas();
     unsigned int getOrdem();
     //bool getPonderado();
@@ -89,7 +89,7 @@ public:
     void saveGrafoAdjacencia(ofstream *outFile);
     //int numComponentesConexas();
 
-    void auxFechoTransitivoIndireto(Grafo *grafoAux, int id, set<int> *percorridos);
+    //void auxFechoTransitivoIndireto(Grafo *grafoAux, int id, set<int> *percorridos);
 
     void geraLinguagemDot();
 
@@ -98,6 +98,24 @@ public:
     void algConstrutGulRandomizado();
 
 
+    void caixeiroViajante();
+
+    //void caixeiroViajanteGulosoAux();
+
+    //void caixeiroViajanteGulosoAux(int i);
+
+    void caixeiroViajanteGulosoAux(int i, double &valorSolucaoAtual, double &valorMelhorSolucao, int *tempSolucao,
+                                   int *melhorSolucao, bool *visitados);
+
+    void imprimeMatrizDistancia();
+
+    void
+    caixeiroViajanteAux(int i, double &valorSolucaoAtual, double &valorMelhorSolucao, int *tempSolucao, int *melhorSolucao,
+                        bool *visitados);
+
+    int getCorPB();
+
+    int getCorPB(int idVert);
 };
 
 
