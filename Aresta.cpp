@@ -24,3 +24,4 @@ double Aresta::getPeso()
 {
     return peso;
 }
+

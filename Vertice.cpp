@@ -11,12 +11,6 @@
 #include <algorithm> // função find
 #include <iomanip>
 
-/*
-Vertice::Vertice()
-{
-
-}
-*/
 Vertice::Vertice(int id, int y, int x, char corPB)
 {
     grauEntrada = 0;
@@ -160,44 +154,18 @@ int Vertice::getCorPB()
     return corPB;
 }
 
-
-/*
-void Vertice::adicionaListaAdj(list<Aresta> adj)
-{
-    this->adj = adj;
+bool Vertice::operator<(const Vertice &rhs) const {
+    return id < rhs.id;
 }
 
-
-
-void Vertice::setCor(int cor)
-{
-    this->cor = cor;
+bool Vertice::operator>(const Vertice &rhs) const {
+    return rhs < *this;
 }
 
-
-
-bool Vertice::getDisponivel() {
-    return disp;
+bool Vertice::operator<=(const Vertice &rhs) const {
+    return !(rhs < *this);
 }
 
-void Vertice::setDisponivel(bool _d) {
-    disp = _d;
+bool Vertice::operator>=(const Vertice &rhs) const {
+    return !(*this < rhs);
 }
-
-long Vertice::getDistancia() const {
-    return dist;
-}
-
-void Vertice::setDistancia(int dist) {
-    this->dist = dist;
-}
-
-long Vertice::getAntecessor() const {
-    return ant;
-}
-
-void Vertice::setAntecessor(int ant) {
-    this->ant = ant;
-}
-
- */
