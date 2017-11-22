@@ -76,7 +76,8 @@ Grafo::Grafo(ifstream *inFile)
     if(this->ordem != numVertices)
     {
        cout << "ERRO! Arquivo de entrada com quantidade de vertices errada." << endl;
-       cout << "Numero de vertices no arquivo de entrada eh menor que a quantidade real.\nAlgoritmo FINALIZADO." << endl;
+       cout << "Numero de vertices no arquivo de entrada eh " << ((ordem<numVertices)?"menor":"maior");
+        cout << " que a quantidade real.\nAlgoritmo FINALIZADO." << endl;
        getchar();
        exit(-1);
     }
@@ -462,7 +463,8 @@ void Grafo::algConstrutGuloso()
     double peso;
     bool existeSolucao;
 
-    Grafo grafoPreto(digrafo, ponderado, maxCusto, maxVertBranco); ///Necessário para a solucao inicial de vertices pretos
+    ///Necessário para a solucao inicial de vertices pretos ser gerada mais rápida
+    Grafo grafoPreto(digrafo, ponderado, maxCusto, maxVertBranco);
     for(auto it : vertices)
         if(it.getCorPB() == PRETO)
             grafoPreto.adicionaVertice(it.getIdVertice(), it.getX(), it.getY(), PRETO);
@@ -482,11 +484,12 @@ void Grafo::algConstrutGuloso()
 
     ///Pensar se vai precisar mesmo do grafoAux <- Dependerá de como será construida a lista de candidatos
     ///Escolha da solucao inicial Gulosa de menor custo com Vértices pretos
-    for(int i=0; i<numPretos;i++)//for(auto itVert : grafoPreto.vertices)
+    for(auto itVert : grafoPreto.vertices)//for(int i=0; i<numPretos;i++)//
     {
         existeSolucao = false;
         peso=INFINITO;
-        for(auto itAdj : grafoAux->getVertice(solucaoInicial[i])->getAdjacencia())
+        ///Solucao caminho pelos vertices
+        /*for(auto itAdj : grafoPreto.getVertice(solucaoInicial[i])->getAdjacencia())
         {
             //if(getCorPB(itAdj.getIdAdj()) == PRETO) /// Primeiro vertice eh preto e os proximos também
             //{
@@ -498,9 +501,9 @@ void Grafo::algConstrutGuloso()
                     existeSolucao = true;
                 }
             //}
-        }
-
-        /*for(auto itAdj : itVert.getAdjacencia())
+        }*/
+        ///Solucao melhor aresta de cada vertice
+        for(auto itAdj : itVert.getAdjacencia())
         {
             //if(itVert.getCorPB()==PRETO && getCorPB(itAdj.getIdAdj()) == PRETO)
             //{
@@ -514,7 +517,7 @@ void Grafo::algConstrutGuloso()
                     existeSolucao = true;
                 }
             //}
-        }*/
+        }
         if(existeSolucao)
         {
             solucaoInicial.push_back(adj);
@@ -527,7 +530,8 @@ void Grafo::algConstrutGuloso()
     }
     //grafoAux->imprime();
 
-
+    ///Custo da ultima aresta, do ultimo vertice ao primeiro vertice do ciclo
+    custoSolucaoInicial += grafoPreto.getVertice(solucaoInicial[solucaoInicial.size()-1])->getAresta(solucaoInicial[0])->getPeso();
 
     cout << endl << "Solucao inicial: ";
     for(auto it : solucaoInicial)

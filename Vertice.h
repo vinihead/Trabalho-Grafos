@@ -73,6 +73,8 @@ public:
     int getAntecessor() const;
 
     void setAntecessor(int _antecessor);
+
+    list<Aresta>::iterator getAresta(int id);
 };
 
 

@@ -186,3 +186,11 @@ int Vertice::getAntecessor() const {
 void Vertice::setAntecessor(int _antecessor) {
     antecessor = _antecessor;
 }
+
+list<Aresta>::iterator Vertice::getAresta(int id)
+{
+    for(k = adj.begin(); k != adj.end(); k++)
+        if(k->getIdAdj() == id)
+            break;
+    return k;
+}
