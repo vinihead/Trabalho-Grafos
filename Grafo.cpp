@@ -249,10 +249,8 @@ unsigned int Grafo::getOrdem()
 }
 
 Grafo *Grafo::retornaInstanciaGrafo() {
-    auto *grafoInstancia = new Grafo(false, false, 0, 0);
-    grafoInstancia->ponderado = this->ponderado;
+    auto *grafoInstancia = new Grafo(this->digrafo, this->ponderado, this->maxCusto, this->maxVertBranco);
     grafoInstancia->ordem = this->ordem;
-    grafoInstancia->digrafo = this->digrafo;
     grafoInstancia->vertices = this->vertices;
     return grafoInstancia;
 }
