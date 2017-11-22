@@ -442,11 +442,18 @@ bool Grafo::verificaEuleriano()
 
 void Grafo::algConstrutGuloso()
 {
+    if((ordem-numPretos) > (maxCusto*numPretos))
+    {
+        cout << "A restricao de cardinalidade nao pode ser satisfeita" << endl;
+        return;
+    }
+
+
     Grafo *grafoAux = retornaInstanciaGrafo();
 
     //grafoAux->imprime();
 
-    //vector<int> listCandidatos; //pode ser feito com vector<Vertice> se for melhor
+    vector<int> candidatos;
     //vector<int,double> listPretos;
     //vector<int> solucaoInicial; //pode ser feito com vector<Vertice> se for melhor
     Grafo grafoSolucao(digrafo, ponderado, maxCusto, maxVertBranco);
@@ -475,28 +482,13 @@ void Grafo::algConstrutGuloso()
 
     ///Pensar se vai precisar mesmo do grafoAux <- Dependerá de como será construida a lista de candidatos
     ///Escolha da solucao inicial Gulosa de menor custo com Vértices pretos
-    for(auto itVert : grafoPreto.vertices)//for(int i=0; i<numPretos;i++)
+    for(int i=0; i<numPretos;i++)//for(auto itVert : grafoPreto.vertices)
     {
         existeSolucao = false;
         peso=INFINITO;
-        /*for(auto itAdj : grafoAux->getVertice(solucaoInicial[i])->getAdjacencia())
+        for(auto itAdj : grafoAux->getVertice(solucaoInicial[i])->getAdjacencia())
         {
-            if(getCorPB(itAdj.getIdAdj()) == PRETO) /// Primeiro vertice eh preto e os proximos também
-            {
-                auto it = find (solucaoInicial.begin(), solucaoInicial.end(), itAdj.getIdAdj());
-                if(itAdj.getPeso() < peso && *it!=itAdj.getIdAdj())
-                {
-                    peso = itAdj.getPeso();
-                    adj=itAdj.getIdAdj();
-                    existeSolucao = true;
-                    custoSolucaoInicial += peso;
-                }
-            }
-        }*/
-
-        for(auto itAdj : itVert.getAdjacencia())
-        {
-            //if(itVert.getCorPB()==PRETO && getCorPB(itAdj.getIdAdj()) == PRETO)
+            //if(getCorPB(itAdj.getIdAdj()) == PRETO) /// Primeiro vertice eh preto e os proximos também
             //{
                 auto it = find (solucaoInicial.begin(), solucaoInicial.end(), itAdj.getIdAdj());
                 if(itAdj.getPeso() < peso && *it!=itAdj.getIdAdj())
@@ -504,14 +496,30 @@ void Grafo::algConstrutGuloso()
                     peso = itAdj.getPeso();
                     adj=itAdj.getIdAdj();
                     existeSolucao = true;
-                    custoSolucaoInicial += peso;
                 }
             //}
         }
+
+        /*for(auto itAdj : itVert.getAdjacencia())
+        {
+            //if(itVert.getCorPB()==PRETO && getCorPB(itAdj.getIdAdj()) == PRETO)
+            //{
+                auto it = find (solucaoInicial.begin(), solucaoInicial.end(), itAdj.getIdAdj());
+                if(itAdj.getPeso() < peso && *it!=itAdj.getIdAdj())
+                {
+                    peso = itAdj.getPeso();
+                    if(peso > maxCusto)
+                        cout << "JA ERA!!!!!!!!!!!!!!!! " << "maxCusto: " << maxCusto << " - pesoAresta: " << peso << endl;
+                    adj=itAdj.getIdAdj();
+                    existeSolucao = true;
+                }
+            //}
+        }*/
         if(existeSolucao)
         {
             solucaoInicial.push_back(adj);
             //cout << "- ";
+            custoSolucaoInicial += peso;
         }
         if(solucaoInicial.size() == this->numPretos)
             break;
@@ -528,9 +536,14 @@ void Grafo::algConstrutGuloso()
     }
     cout << endl << "Custo solucao inicial: " << custoSolucaoInicial << endl;
 
-
+    /// Antes da lista de candidatos, remover os pretos ou remover as arestas incidentes a pretos?
     ///Fazer lista de candidadtos: tirar os pretos? tirar as arestas adjacentes aos pretos? colocar ja visitado?
-
+    for(auto it :  vertices)
+    {
+        if(it.getCorPB() == BRANCO)
+            candidatos.emplace_back(it.getIdVertice());
+    }
+    cout << "Vertices totais: " << (candidatos.size()+solucaoInicial.size()) << endl;
 
 
 
