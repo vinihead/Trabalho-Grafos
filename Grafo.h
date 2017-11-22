@@ -45,7 +45,7 @@ public:
     bool removeVertice(int idVert);
 
 
-    Grafo(ifstream *inFile);
+    explicit Grafo(ifstream *inFile);
     Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco);
 
     void imprime();

@@ -666,7 +666,6 @@ int Grafo::getCorPB(int idVert)
 
 
 void Grafo::caminhoMinimoDijkstra(int _idVerticeOrigem, int _idVerticeDestino) {
-    pair<int,int> aux;
     vector<pair<int,int>> abertos;
     vector<int> fechados;
     list<Vertice>::iterator vtcAtual;

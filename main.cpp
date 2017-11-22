@@ -141,6 +141,8 @@ int main(int argc, char **argv)
             case 10:
                 grafo.caminhoMinimoDijkstra(4,2);
                 break;
+            default:
+                break;
         }
     } while (opcao != 0);
     ///Fechando streams de entrada e saida
