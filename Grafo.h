@@ -32,9 +32,9 @@ private:
     double **matrizDistancia;
     int numPretos;
     Grafo * retornaInstanciaGrafo();
-    list<Vertice>::iterator adicionaVertice(int id, int x, int y, char corPB);
-    bool removeVertice(int idVert);
-    void adicionaAresta(int idOrigem, int idDestino, float peso, char corPB);
+    list<Vertice>::iterator adicionaVertice(int id, int x, int y, int corPB);
+
+    void adicionaAresta(int idOrigem, int idDestino, float peso, int corPB);
     bool removeAresta(int v1, int v2);
     void criaMatrizPeso();
     void criaTodasArestas();
@@ -42,6 +42,9 @@ private:
 
 
 public:
+    bool removeVertice(int idVert);
+
+
     Grafo(ifstream *inFile);
     Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco);
 
@@ -59,6 +62,20 @@ public:
     void imprimeMatrizDistancia();
     void caixeiroViajanteAux(int i, double &valorSolucaoAtual, double &valorMelhorSolucao, int *tempSolucao, int *melhorSolucao, bool *visitados);
     int getCorPB(int idVert);
+
+    bool verificaEuleriano();
+
+    bool verificaConexo();
+
+    string arvoreBuscaProfundidadeAux(int idVert);
+
+    string arvoreBuscaProfundidade(int idVert);
+
+    long caminhoMinimoDijkstra(long _idVerticeOrigem, long _idVerticeDestino);
+
+    void caminhoMinimoDijkstra(int _idVerticeOrigem, int _idVerticeDestino);
+
+    list <Aresta> getAdjacencia(int idVert);
 };
 
 

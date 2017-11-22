@@ -32,16 +32,13 @@ void escreveCabecalhoArquivo();
 void pausarTela(bool continuar);
 void finalizaPrograma();
 
-///Variaveis globais criadas para facilitar a escrita de arquivos, sem possibilidade de excluir ou incluir arestas e vertices
-///Como as instancias são comportadas não preciso me preocupar com algumas coisas que me preocupei na primeira fase
-ofstream outFile;
-ifstream inFile;
-
 int main(int argc, char **argv)
 {
     cabecalho();
     int opcao;
     bool digrafo;
+    ofstream outFile;
+    ifstream inFile;
     string inFileName;
     string outFileName;
     if(argc == 3)
@@ -80,7 +77,6 @@ int main(int argc, char **argv)
     cout << "Arquivo de saida: " << outFileName << endl << endl;
 
     Grafo grafo(&inFile);
-
     do {
         opcao = menuShow();
         switch (opcao) {
@@ -142,6 +138,9 @@ int main(int argc, char **argv)
                 grafo.imprime();
                 break;
             }
+            case 10:
+                grafo.caminhoMinimoDijkstra(4,2);
+                break;
         }
     } while (opcao != 0);
     ///Fechando streams de entrada e saida

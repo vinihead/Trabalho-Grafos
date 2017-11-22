@@ -26,13 +26,15 @@ private:
     int id;
     int x;
     int y;
-    char corPB; ///Variavel que contem a cor do vertice (preto ou branco)
+    int corPB; ///Variavel que contem a cor do vertice (preto ou branco)
     unsigned int grauEntrada;
     unsigned int grauSaida;
     bool visitado;
+    double distancia;
+    int antecessor;
 
 public:
-    Vertice(int id, int y, int x, char corPB);
+    Vertice(int id, int y, int x, int corPB);
     int getIdVertice();
     bool procuraAdjacencia(int vert);
     unsigned int getGrau();
@@ -63,6 +65,14 @@ public:
 
     bool operator>=(const Vertice &rhs) const;
 
+
+    double getDistancia() const;
+
+    void setDistancia(double _distancia);
+
+    int getAntecessor() const;
+
+    void setAntecessor(int _antecessor);
 };
 
 

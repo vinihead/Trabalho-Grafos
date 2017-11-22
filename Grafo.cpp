@@ -19,8 +19,8 @@
 #define INFINITO LONG_MAX
 
 ///Constantes usadas no problema do caixeiro viajante preto e branco
-#define PRETO 0
-#define BRANCO 1
+#define PRETO 1
+#define BRANCO 0
 
 //Construtor padrão, para no caso de precisar criar um grafo vazio.
 Grafo::Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco)
@@ -39,7 +39,7 @@ Grafo::Grafo(ifstream *inFile)
     int vert, x, y;
     int numVertices;
     //float peso = 1.0;
-    char corPB;
+    int corPB;
     string line;
     stringstream copiaDados;
     getline(*inFile, line);
@@ -50,29 +50,29 @@ Grafo::Grafo(ifstream *inFile)
     cout << "--------------------------------------" << endl;
     cout << "Instanciando o grafo do PCVPB. . . . ." << endl;
     cout << "--------------------------------------" << endl;
-    cout <<  "linha de fora: "<<line << endl;
+    //cout <<  "linha de fora: "<<line << endl;
     getline(*inFile, line); ///Ja pega proxima linha depois da ordem do grago para verificar se eh ponderado
     ///Detectar se eh ponderado, pra isso precisa fazer um getline e "entender o line para saber se tem 3 numeros ou 2
     //ponderado = verificaPonderado(line); Será sempre ponderado.
-    cout <<  "linha de fora: "<<line << endl;
+    //cout <<  "linha de fora: "<<line << endl;
     //Primeiro vou adicionar os vertices
     //if(inFile->good())
     //{
         do
        {
-           cout <<  "linha: "<<line << endl;
+           //cout <<  "linha: "<<line << endl;
            copiaDados.clear(); //limpar o que tiver na stream, afim de não ter nenhum erro
            copiaDados.str(line);
            copiaDados >> vert >> x >> y >> corPB;
            this->adicionaVertice(vert, x, y, corPB);
-           cout << "vert add: " << vert << endl;
+           //cout << "vert add: " << vert << endl;
            //this->adicionaAresta(v1, v2, peso, 0);
            ///Se nao for ponderado adiciona aresta com peso 1.0, para facilitar na hora de verificar caminhos minimos
        } while(getline(*inFile, line) && !line.empty());
     //}
     ///No caso de termos um arquivo de entrada informando quantidade errada de vertices, o programa eh finalizado
-    cout << numVertices << " " << ordem << endl;
-    cout << numPretos << " " << maxVertBranco << " " << maxCusto << endl;
+    //cout << numVertices << " " << ordem << endl;
+    //cout << numPretos << " " << maxVertBranco << " " << maxCusto << endl;
     if(this->ordem != numVertices)
     {
        cout << "ERRO! Arquivo de entrada com quantidade de vertices errada." << endl;
@@ -84,9 +84,9 @@ Grafo::Grafo(ifstream *inFile)
     ///Criar matriz de pesos
     this->criaMatrizPeso();
     ///Criar Arestas
-    cout <<"erro1" <<endl;
+    //cout <<"erro1" <<endl;
     this->criaTodasArestas();
-    cout <<"erro2" <<endl;
+    //cout <<"erro2" <<endl;
 
     cout << "\n---------------------------------------" << endl;
     cout << "Grafo Criado e instanciado com sucesso!" << endl;
@@ -130,7 +130,6 @@ void Grafo::criaTodasArestas()
     i=j=0;
     for(auto vert = vertices.begin(); vert != vertices.end(); vert++, i++) {
         for (auto adj = vertices.begin(); adj != vertices.end(); adj++, j++) {
-            cout <<"matriz " << i+1 << " " << j+1 << endl;
             if (adj->getIdVertice() != vert->getIdVertice())
                 vert->adicionaAresta(adj, matrizDistancia[i][j], digrafo);
         }
@@ -138,7 +137,7 @@ void Grafo::criaTodasArestas()
     }
 }
 
-list<Vertice>::iterator Grafo::adicionaVertice(int id, int x, int y, char corPB)
+list<Vertice>::iterator Grafo::adicionaVertice(int id, int x, int y, int corPB)
 {
     auto itVertice = getVertice(id);
     if(itVertice->getIdVertice() != id) //Se nao encontrar tem que adicionar
@@ -152,7 +151,7 @@ list<Vertice>::iterator Grafo::adicionaVertice(int id, int x, int y, char corPB)
         return itVertice; //retorna o vertice encontrado, que ja foi adicionado
 }
 
-void Grafo::adicionaAresta(int idOrigem, int idDestino, float peso, char corPB)
+void Grafo::adicionaAresta(int idOrigem, int idDestino, float peso, int corPB)
 {
     auto itOrigem = adicionaVertice(idOrigem, 0, 0, corPB);
     auto itDestino = adicionaVertice(idDestino, 0, 0, 0);
@@ -191,17 +190,17 @@ bool Grafo::removeVertice(int idVert)
             {
                 for(auto itAdj : itVert->getAdjacencia())
                     removeAresta(itVert->getIdVertice(), itAdj.getIdAdj());
-                auto aux=itVert;
-                itVert--;
-                vertices.erase(aux);
+                //auto aux=itVert;
+                //itVert--;
+                itVert = vertices.erase(itVert);
                 ordem--;
-            }
+            }/*
             else if(digrafo) //se for digrafo, tem que remover todas arestas  adjacentes ao vertice removido
             {
                 for(auto itAdj : itVert->getAdjacencia())
                     if(itAdj.getIdAdj() == idVert)
                         removeAresta(itVert->getIdVertice(), idVert);
-            }
+            }*/
         }
         return true;
     }
@@ -378,16 +377,173 @@ bool Grafo::procuraVertice(int idVert) //Retorna true caso ache uma adjacencia c
     return false;
 }
 
+
+string Grafo::arvoreBuscaProfundidade(int idVert)
+{
+    string textoSalvar = "Arvore de Busca em Profundidade (em pre-ordem):";
+    for(auto itVert = vertices.begin(); itVert != vertices.end(); itVert++)
+        itVert->setVisita(false);
+
+    textoSalvar += arvoreBuscaProfundidadeAux(idVert);
+    return textoSalvar;
+}
+
+string Grafo::arvoreBuscaProfundidadeAux(int idVert)
+{
+    auto itVert = getVertice(idVert);
+    string textoSalvar;
+    if(!itVert->getVisitado())
+    {
+        textoSalvar = " -> " + to_string(itVert->getIdVertice());
+        itVert->setVisita(true);
+        for(auto itAdj : itVert->getAdjacencia())
+        {
+
+            textoSalvar += arvoreBuscaProfundidadeAux(itAdj.getIdAdj());
+        }
+    }
+    return textoSalvar;
+}
+
+
+bool Grafo::verificaConexo()
+{
+    for(auto itVert: vertices)
+        itVert.setVisita(false);
+
+    arvoreBuscaProfundidade(vertices.begin()->getIdVertice());
+
+    for(auto itVert : vertices)
+    {
+        if (!itVert.getVisitado())
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Grafo::verificaEuleriano()
+{
+    ///Verifica se todos os vertices tem grau par
+    ///Se tiverem, verifica se o grafo eh conexo
+    bool euleriano = true;
+    for(auto itVert : vertices)
+        if(itVert.getGrau()%2!=0)
+        {
+            euleriano=false;
+            break;
+        }
+
+    if(euleriano)
+        euleriano = verificaConexo();
+    return euleriano;
+}
+
 void Grafo::algConstrutGuloso()
 {
     Grafo *grafoAux = retornaInstanciaGrafo();
-    grafoAux->imprime();
-    double mediaPeso=0;
+
+    //grafoAux->imprime();
+
+    //vector<int> listCandidatos; //pode ser feito com vector<Vertice> se for melhor
+    //vector<int,double> listPretos;
+    //vector<int> solucaoInicial; //pode ser feito com vector<Vertice> se for melhor
+    Grafo grafoSolucao(digrafo, ponderado, maxCusto, maxVertBranco);
+    vector<int> solucaoInicial;
+    int adj;
+    double peso;
+    bool existeSolucao;
+
+    Grafo grafoPreto(digrafo, ponderado, maxCusto, maxVertBranco); ///Necessário para a solucao inicial de vertices pretos
+    for(auto it : vertices)
+        if(it.getCorPB() == PRETO)
+            grafoPreto.adicionaVertice(it.getIdVertice(), it.getX(), it.getY(), PRETO);
+    grafoPreto.criaMatrizPeso(); //é melhor gerar o peso ou clonar o grafo e retirar os vertices brancos?
+    grafoPreto.criaTodasArestas();
+    ///Aqui, seria interessante ordenar os vertices do grafoPreto pela soma dos pesos de suas arestas
+
+    ///Escolher primeiro vertice Preto da solucao
+    //for(auto it : vertices)
+        //if(it.getCorPB() == PRETO)
+        //{
+            solucaoInicial.push_back(grafoPreto.vertices.front().getIdVertice());//(vertices.front().getIdVertice());
+            //break;
+        //}
+
+    int custoSolucaoInicial=0;
+
+    ///Pensar se vai precisar mesmo do grafoAux <- Dependerá de como será construida a lista de candidatos
+    ///Escolha da solucao inicial Gulosa de menor custo com Vértices pretos
+    for(auto itVert : grafoPreto.vertices)//for(int i=0; i<numPretos;i++)
+    {
+        existeSolucao = false;
+        peso=INFINITO;
+        /*for(auto itAdj : grafoAux->getVertice(solucaoInicial[i])->getAdjacencia())
+        {
+            if(getCorPB(itAdj.getIdAdj()) == PRETO) /// Primeiro vertice eh preto e os proximos também
+            {
+                auto it = find (solucaoInicial.begin(), solucaoInicial.end(), itAdj.getIdAdj());
+                if(itAdj.getPeso() < peso && *it!=itAdj.getIdAdj())
+                {
+                    peso = itAdj.getPeso();
+                    adj=itAdj.getIdAdj();
+                    existeSolucao = true;
+                    custoSolucaoInicial += peso;
+                }
+            }
+        }*/
+
+        for(auto itAdj : itVert.getAdjacencia())
+        {
+            //if(itVert.getCorPB()==PRETO && getCorPB(itAdj.getIdAdj()) == PRETO)
+            //{
+                auto it = find (solucaoInicial.begin(), solucaoInicial.end(), itAdj.getIdAdj());
+                if(itAdj.getPeso() < peso && *it!=itAdj.getIdAdj())
+                {
+                    peso = itAdj.getPeso();
+                    adj=itAdj.getIdAdj();
+                    existeSolucao = true;
+                    custoSolucaoInicial += peso;
+                }
+            //}
+        }
+        if(existeSolucao)
+        {
+            solucaoInicial.push_back(adj);
+            //cout << "- ";
+        }
+        if(solucaoInicial.size() == this->numPretos)
+            break;
+
+    }
+    //grafoAux->imprime();
+
+
+
+    cout << endl << "Solucao inicial: ";
+    for(auto it : solucaoInicial)
+    {
+        cout << it << " ";
+    }
+    cout << endl << "Custo solucao inicial: " << custoSolucaoInicial << endl;
+
+
+    ///Fazer lista de candidadtos: tirar os pretos? tirar as arestas adjacentes aos pretos? colocar ja visitado?
+
+
+
+
+
+    double menorCusto;
+    //escolhe primeiro vertice aleatoriamente ou com alguma regra especifica
+
+    /*double mediaPeso=0;
     double mediaPesoP=0;
     double mediaPesoB=0;
-    /*for(int i=0; i<ordem; i++)
-        for(int j=0; j<ordem; j++)
-            mediaPeso += matrizDistancia[i][j];*/
+    //for(int i=0; i<ordem; i++)
+        //for(int j=0; j<ordem; j++)
+            //mediaPeso += matrizDistancia[i][j];
     for (auto & itVert : grafoAux->vertices)
         for (auto & itAdj : itVert.getAdjacencia())
         {
@@ -419,11 +575,7 @@ void Grafo::algConstrutGuloso()
     }
     grafoAux->imprime();
     //grafoAux->geraLinguagemDot();
-    vector<int> listCandidatos; //pode ser feito com vector<Vertice> se for melhor
-    vector<int> solucaoInicial; //pode ser feito com vector<Vertice> se for melhor
-    double menorCusto;
-    Grafo grafoSolucao(digrafo, ponderado, maxCusto, maxVertBranco);
-    //escolhe primeiro vertice aleatoriamente ou com alguma regra especifica
+    */
 
     delete grafoAux;
 }
@@ -509,4 +661,52 @@ int Grafo::getCorPB(int idVert)
         if(itVert.getIdVertice() == idVert)
             return itVert.getCorPB();
     return -1;
+}
+
+
+
+void Grafo::caminhoMinimoDijkstra(int _idVerticeOrigem, int _idVerticeDestino) {
+    pair<int,int> aux;
+    vector<pair<int,int>> abertos;
+    vector<int> fechados;
+    list<Vertice>::iterator vtcAtual;
+    double distanciaIntermediaria;
+
+    getVertice(_idVerticeOrigem)->setDistancia(0);
+    getVertice(_idVerticeOrigem)->setAntecessor(_idVerticeOrigem);
+    abertos.emplace_back(make_pair(0,_idVerticeOrigem));
+
+    //inicializaçao
+    for(auto it : vertices){
+        if(it.getIdVertice() != _idVerticeOrigem) {
+            it.setDistancia(INFINITO);
+            it.setAntecessor(0);
+            abertos.emplace_back(make_pair(INFINITO,it.getIdVertice()));    //insere os vertices a lista de vertices abertos
+        }
+    }
+
+    while(fechados.size() != ordem){
+
+        sort(abertos.begin(), abertos.end());       //ordena por distancia
+        vtcAtual = getVertice(abertos[0].second);   //recebe o de menor
+        abertos.erase(abertos.begin());
+        for(auto itVert = vertices.begin(); itVert!=vertices.end(); itVert++)
+        {
+            for(auto itAdj = vtcAtual->getAdjacencia().begin(); itAdj!= vtcAtual->getAdjacencia().end(); itAdj++)
+            {
+                //se distancia conhecida for maior que a distancia ate o vertice, passando pelo atual, atualizar.
+                distanciaIntermediaria = vtcAtual->getDistancia() + itAdj->getPeso();
+                if(getVertice(itAdj->getIdAdj())->getDistancia() > distanciaIntermediaria)
+                {
+                    getVertice(itAdj->getIdAdj())->setDistancia(distanciaIntermediaria);
+                }
+            }
+        }
+        fechados.push_back(vtcAtual->getIdVertice());
+    }
+
+    cout << "Caminho feito: ";
+    for(auto it : fechados)
+        cout << it << " ";
+    cout << "\nCaminho minimo: " << fixed << getVertice(_idVerticeDestino)->getDistancia() << endl;
 }
