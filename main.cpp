@@ -44,10 +44,12 @@ int main(int argc, char **argv)
     bool digrafo;
     string inFileName;
     string outFileName;
-    if(argc == 3)
+    //argc=2;
+
+    if(argc == 2)
     {
-        inFileName = argv[1];
-        outFileName = argv[2];
+        inFileName = argv[1];//"..\\teste2";
+        //outFileName = argv[2];
         outFileName = "outfile";
         outFileName += ".txt";
         inFileName += ".txt";

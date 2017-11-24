@@ -76,6 +76,18 @@ public:
     void caminhoMinimoDijkstra(int _idVerticeOrigem, int _idVerticeDestino);
 
     list <Aresta> getAdjacencia(int idVert);
+
+    void algConstrutGulosoAntiga();
+
+    void ordenaCandidatos();
+
+    void ordenaCandidatos(vector<int> candidatos, int i, int j);
+
+    bool pesoMinimo(const Vertice &vertInsere, const Vertice &v1, const Vertice &v2);
+
+    void ordenaCandidatos(vector<int, double> candidatos, int i, int j);
+
+    bool ordenaCandidatos(pair<int, double> cand1, pair<int, double> cand2);
 };
 
 

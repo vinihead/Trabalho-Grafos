@@ -22,6 +22,16 @@
 #define PRETO 1
 #define BRANCO 0
 
+///Estrutura auxiliar usada como paramentro na ordenação da lista de candidatos (por custo) usando std::sort
+struct {
+    bool operator()(pair<int, double> cand1, pair<int, double> cand2) const
+    {
+        return cand1.second < cand2.second;
+    }
+} ordenaCusto;
+
+
+
 //Construtor padrão, para no caso de precisar criar um grafo vazio.
 Grafo::Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco)
         : maxCusto(maxCusto), maxVertBranco(maxVertBranco){
@@ -304,10 +314,10 @@ void Grafo::geraLinguagemDot()
     ofstream outFile;
     cout << endl << "---------------- SALVAR GRAFO EM LINGUAGEM DOT ----------------" << endl;
     cout << "----------------   PODE SER USADO NO GRAPHVIZ  ----------------" << endl;
-    cout << "Digite o nome do arquivo de saida desejado (sem a extensao do arquivo): ";
-    cin >> fileName;
-    fileName += ".dot";
-    outFile.open(fileName);
+    //cout << "Digite o nome do arquivo de saida desejado (sem a extensao do arquivo): ";
+    //cin >> fileName;
+    //fileName += ".dot";
+    outFile.open("graphViz.dot");
     if(!outFile)
         cout << endl << "ERRO! Nao foi possivel criar o arquivo de SAIDA \"" << fileName << "\"!" << endl;
     cout << "Gerando em linguagem DOT. . . . . . . . . . . ." << endl;
@@ -439,6 +449,7 @@ bool Grafo::verificaEuleriano()
     return euleriano;
 }
 
+
 void Grafo::algConstrutGuloso()
 {
     if((ordem-numPretos) > (maxCusto*numPretos))
@@ -446,6 +457,180 @@ void Grafo::algConstrutGuloso()
         cout << "A restricao de cardinalidade nao pode ser satisfeita" << endl;
         return;
     }
+
+    vector<pair<int,double>> candidatos;
+    vector<int> solucaoInicial;
+    int indiceInsercao=0;
+    int adj;
+    double peso;
+    bool existeSolucao;
+    double custoSolucaoInicial=0;
+    pair<int,int> aresta;
+
+
+    ///Necessário para a solucao inicial de vertices pretos ser gerada mais rápida
+    Grafo grafoPreto(digrafo, ponderado, maxCusto, maxVertBranco);
+    for(auto it : vertices)
+        if(it.getCorPB() == PRETO)
+            grafoPreto.adicionaVertice(it.getIdVertice(), it.getX(), it.getY(), PRETO);
+    grafoPreto.criaMatrizPeso(); //é melhor gerar o peso ou clonar o grafo e retirar os vertices brancos?
+    grafoPreto.criaTodasArestas();
+
+    grafoPreto.geraLinguagemDot();
+    grafoPreto.imprime();
+    grafoPreto.caixeiroViajante();
+
+    ///loop para escolha do primeira aresta da solucao inicial: a de menor custo
+    peso = INFINITO;
+    for(auto itVert : grafoPreto.vertices)
+        for(auto itAdj : itVert.getAdjacencia())
+            if(itAdj.getPeso() < peso)
+            {
+                peso = itAdj.getPeso();
+                aresta.first = itVert.getIdVertice();
+                aresta.second = itAdj.getIdAdj();
+                cout << aresta.first << " " << aresta.second << endl;
+            }
+
+    solucaoInicial.emplace_back(aresta.first);
+    solucaoInicial.emplace_back(aresta.second);
+    grafoPreto.removeVertice(aresta.first);
+    grafoPreto.removeVertice(aresta.second);
+    cout << "Primeira aresta: ("<< solucaoInicial.front() << ", " << solucaoInicial.back() << ")" << endl;
+
+    grafoPreto.imprime();
+    ///Gerando lista de candidatos
+    for(auto itVert : grafoPreto.vertices)
+        candidatos.emplace_back(make_pair(itVert.getIdVertice(),0));
+    ///Loop para gerar a solucao inicial de pretos Pela Heuristica de Inserção Mais Barata do PCV
+    ///Sem a necessidade de se preocupar com as restrições de cardinalidade e comprimento do PB
+    while(solucaoInicial.size() < numPretos)
+    {
+
+        ///Escolhe a aresta de menor custo que já esta na solucao inicial
+        ///É feita essa escolha para inserir o vertice da lista de candidatos
+        ///entre esse dois vertices dessa aresta de menor custo escolhida
+        //aresta.first = solucaoInicial[0];
+        //aresta.second = solucaoInicial[solucaoInicial.size()-1];
+        //peso = matrizDistancia[aresta.first-1][aresta.second-1];
+        ///Algoritmo refeito ->estava errado (comentado abaixo deste)
+        peso = INFINITO;
+        for(int i=0; i<solucaoInicial.size(); i++)
+        {
+            pair<int,int> arestaAux;
+            arestaAux.first = solucaoInicial[i%solucaoInicial.size()];
+            arestaAux.second = solucaoInicial[(i+1)%solucaoInicial.size()];
+            if(matrizDistancia[arestaAux.first-1][arestaAux.second-1] < peso)
+            {
+                aresta.first = arestaAux.first;
+                aresta.second = arestaAux.second;
+                peso = matrizDistancia[aresta.first-1][aresta.second-1];
+                indiceInsercao = (i+1)%solucaoInicial.size();
+            }
+        }
+        cout << "Aresta escolhida: " << aresta.first << "," << aresta.second << " Peso: " << peso<< endl;
+
+        /*for(auto itVert : grafoPreto.vertices)
+            for(auto itAdj : itVert.getAdjacencia())
+                if(itAdj.getPeso() < peso)
+                {
+                    peso = itAdj.getPeso();
+                    aresta.first = itVert.getIdVertice();
+                    aresta.second = itAdj.getIdAdj();
+                    cout << aresta.first << " " << aresta.second << endl;
+                }*/
+        ///Gerando custo de adicao dos candidatos
+        for(auto & itCand : candidatos)
+        {
+            double distAresta1 = matrizDistancia[itCand.first-1][aresta.first-1];
+            double distAresta2 = matrizDistancia[itCand.first-1][aresta.second-1];
+            //cout << "(" << itCand.first <<"," <<aresta.first<< ") = " << distAresta1 << endl;
+            //cout << "(" << itCand.first <<"," <<aresta.second<< ") = " << distAresta2 << endl;
+            itCand.second = distAresta1 + distAresta2;
+        }
+        ///Proximo passo -> ordenar os candidatos de acordo com o custo e inserir o melhor na solucao inicial
+        cout << "Desordenado: " << endl;
+        for(auto & itCand : candidatos)
+            cout << itCand.first << " " << itCand.second << endl;
+        cout <<endl;
+
+        sort(candidatos.begin(),candidatos.end(), ordenaCusto);
+
+        cout << "Ordenado: " << endl;
+        for(auto & itCand : candidatos)
+            cout << itCand.first << " " << itCand.second << endl;
+        cout <<endl;
+
+
+        ///Inserindo o melhor na solucao inicial entre os vertices da melhor aresta
+        ///E excluindo da lista de candidatos
+        //solucaoInicial.
+        //solucaoInicial[] = candidatos.begin()->first;
+        //(find(solucaoInicial.begin(), solucaoInicial.end(), aresta.second))
+        solucaoInicial.insert(solucaoInicial.begin()+indiceInsercao, candidatos.begin()->first);
+        candidatos.erase(candidatos.begin());
+        ///??????? FAZER A ordenacao em ordem ao contrario e remover sempre com pop_back, no final do vetor
+        /// ????? INTERESSANTE PARA GASTAR MENOS RECURSOS COMPUTACIONAIS??
+
+
+
+
+        cout << "Solucao Parcial: ";
+        for(int i=0; i<solucaoInicial.size(); i++)
+        {
+            cout << solucaoInicial[i] << " ";
+        }
+        cout << endl << endl;
+    }
+
+
+
+    cout << "Solucao Inicial: ";
+    for(int i=0; i<solucaoInicial.size(); i++)
+    {
+        cout << solucaoInicial[i] << " ";
+        //custoSolucaoInicial += matrizDistancia[(i%solucaoInicial.size())-1][((i+1)%solucaoInicial.size())-1];
+        custoSolucaoInicial += matrizDistancia[solucaoInicial[i]-1][solucaoInicial[(i+1)%solucaoInicial.size()]-1];
+    }
+    cout << endl << "Custo Solucao inicial: " << custoSolucaoInicial;
+
+
+
+
+    ///Segunda parte, solucao PCVPB
+
+
+
+
+}
+
+
+/*
+///Função auxiliar usada como paramentro na ordenação da lista de candidatos pelo std::sort
+bool Grafo::ordenaCandidatos(pair<int, double> cand1, pair<int, double> cand2)
+{
+    return cand1.second < cand2.second;
+}
+
+
+
+
+
+bool pesoMinimo(const double& p1, const double& p2)
+{
+    return
+
+    return p1.age < p2.age;
+}*/
+
+void Grafo::algConstrutGulosoAntiga()
+{
+    if((ordem-numPretos) > (maxCusto*numPretos))
+    {
+        cout << "A restricao de cardinalidade nao pode ser satisfeita" << endl;
+        return;
+    }
+
 
 
     Grafo *grafoAux = retornaInstanciaGrafo();
@@ -460,6 +645,7 @@ void Grafo::algConstrutGuloso()
     int adj;
     double peso;
     bool existeSolucao;
+    int custoSolucaoInicial=0;
 
     ///Necessário para a solucao inicial de vertices pretos ser gerada mais rápida
     Grafo grafoPreto(digrafo, ponderado, maxCusto, maxVertBranco);
@@ -468,6 +654,7 @@ void Grafo::algConstrutGuloso()
             grafoPreto.adicionaVertice(it.getIdVertice(), it.getX(), it.getY(), PRETO);
     grafoPreto.criaMatrizPeso(); //é melhor gerar o peso ou clonar o grafo e retirar os vertices brancos?
     grafoPreto.criaTodasArestas();
+    grafoPreto.imprime();
     ///Aqui, seria interessante ordenar os vertices do grafoPreto pela soma dos pesos de suas arestas
 
     ///Escolher primeiro vertice Preto da solucao
@@ -477,8 +664,6 @@ void Grafo::algConstrutGuloso()
             solucaoInicial.push_back(grafoPreto.vertices.front().getIdVertice());//(vertices.front().getIdVertice());
             //break;
         //}
-
-    int custoSolucaoInicial=0;
 
     ///Pensar se vai precisar mesmo do grafoAux <- Dependerá de como será construida a lista de candidatos
     ///Escolha da solucao inicial Gulosa de menor custo com Vértices pretos
@@ -506,7 +691,7 @@ void Grafo::algConstrutGuloso()
             //if(itVert.getCorPB()==PRETO && getCorPB(itAdj.getIdAdj()) == PRETO)
             //{
                 auto it = find (solucaoInicial.begin(), solucaoInicial.end(), itAdj.getIdAdj());
-                if(itAdj.getPeso() < peso && *it!=itAdj.getIdAdj())
+                if(*it!=itAdj.getIdAdj() && itAdj.getPeso() < peso)
                 {
                     peso = itAdj.getPeso();
                     if(peso > maxCusto)
@@ -548,12 +733,11 @@ void Grafo::algConstrutGuloso()
     cout << "Vertices totais: " << (candidatos.size()+solucaoInicial.size()) << endl;
 
 
-
-
     double menorCusto;
     //escolhe primeiro vertice aleatoriamente ou com alguma regra especifica
 
-    /*double mediaPeso=0;
+    /*
+    double mediaPeso=0;
     double mediaPesoP=0;
     double mediaPesoB=0;
     //for(int i=0; i<ordem; i++)
@@ -588,9 +772,9 @@ void Grafo::algConstrutGuloso()
             }
         }
     }
-    grafoAux->imprime();
     //grafoAux->geraLinguagemDot();
-    */
+    cout << grafoAux->vertices.begin()->retornaListAdjacencia(ponderado) << endl;
+*/
 
     delete grafoAux;
 }
@@ -620,6 +804,7 @@ void Grafo::caixeiroViajante()
     else cout << "Solucao: Infinito!" << endl;
     for(int i=0; i<ordem; i++)
         cout << melhorSolucao[i]+1 << " ";
+    cout << endl;
 }
 
 void Grafo::caixeiroViajanteAux(int i, double &valorSolucaoAtual, double &valorMelhorSolucao, int tempSolucao[], int melhorSolucao[], bool visitados[]) {

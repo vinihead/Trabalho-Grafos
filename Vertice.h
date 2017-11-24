@@ -75,6 +75,8 @@ public:
     void setAntecessor(int _antecessor);
 
     list<Aresta>::iterator getAresta(int id);
+
+    double getPeso(int id);
 };
 
 

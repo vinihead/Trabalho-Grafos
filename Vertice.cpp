@@ -194,3 +194,10 @@ list<Aresta>::iterator Vertice::getAresta(int id)
             break;
     return k;
 }
+
+double Vertice::getPeso(int id)
+{
+    for(auto it : adj)
+        if(it.getIdAdj() == id)
+            return  it.getPeso();
+}
