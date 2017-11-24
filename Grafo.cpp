@@ -31,6 +31,18 @@ struct {
 } ordenaCusto;
 
 
+///Estrutura para guardar solução Parcial do PCVPB
+
+typedef struct {
+    vector<int> vert;
+    int cardinalidadeQ;
+    double comprimetoL;
+} Cadeia;
+
+typedef struct {
+    vector<Cadeia> cadeias;
+    //vector<int> solucao;
+} Solucao;
 
 //Construtor padrão, para no caso de precisar criar um grafo vazio.
 Grafo::Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco)
