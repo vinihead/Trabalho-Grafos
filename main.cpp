@@ -48,7 +48,8 @@ int main(int argc, char **argv)
 
     if(argc == 2)
     {
-        inFileName = argv[1];//"..\\teste2";
+        //inFileName = "..\\teste2";
+        inFileName = argv[1];
         //outFileName = argv[2];
         outFileName = "outfile";
         outFileName += ".txt";
@@ -144,7 +145,7 @@ int main(int argc, char **argv)
                 break;
             }
             case 10:
-                grafo.caminhoMinimoDijkstra(4,2);
+                grafo.algConstrutGulosoAntigo();
                 break;
         }
     } while (opcao != 0);
@@ -176,7 +177,7 @@ int menuShow()
         cout << "|     07 - Algoritmo PCV                                 |" << endl;
         cout << "|     08 - Gerar Grafo em linguagem DOT                  |" << endl;
         cout << "|     09 - Imprimir grafo                                |" << endl;
-        cout << "|     10 -                                               |" << endl;
+        cout << "|     10 - Algoritmo Guloso Antigo (vizinho + proximo)   |" << endl;
         cout << "----------------------------------------------------------" << endl << endl;
         if(passouMenu)
             cout << "Opcao Invalida.\nDigite uma opcao de 0 a 39: ";
@@ -195,7 +196,7 @@ void cabecalho()
 {
     cout << "   --------------------------------------------" << endl;
     cout << "   -------  -   Trabalho de Grafos   -  -------" << endl;
-    cout << "   -------   ---      Fase 1      ---   -------" << endl;
+    cout << "   -------   ---      Fase 2      ---   -------" << endl;
     cout << "   --------------------------------------------" << endl << endl;
 
     cout << "--------------------------------------------------" << endl;

@@ -488,9 +488,9 @@ void Grafo::algConstrutGuloso()
     grafoPreto.criaMatrizPeso(); //é melhor gerar o peso ou clonar o grafo e retirar os vertices brancos?
     grafoPreto.criaTodasArestas();
 
-    grafoPreto.geraLinguagemDot();
-    grafoPreto.imprime();
-    grafoPreto.caixeiroViajante();
+    //grafoPreto.geraLinguagemDot();
+    //grafoPreto.imprime();
+    //grafoPreto.caixeiroViajante();
 
     ///loop para escolha do primeira aresta da solucao inicial: a de menor custo
     peso = INFINITO;
@@ -506,14 +506,15 @@ void Grafo::algConstrutGuloso()
 
     solucaoInicial.emplace_back(aresta.first);
     solucaoInicial.emplace_back(aresta.second);
-    grafoPreto.removeVertice(aresta.first);
-    grafoPreto.removeVertice(aresta.second);
+    //grafoPreto.removeVertice(aresta.first);
+    //grafoPreto.removeVertice(aresta.second);
     cout << "Primeira aresta: ("<< solucaoInicial.front() << ", " << solucaoInicial.back() << ")" << endl;
 
     grafoPreto.imprime();
     ///Gerando lista de candidatos
     for(auto itVert : grafoPreto.vertices)
-        candidatos.emplace_back(make_pair(itVert.getIdVertice(),0));
+        if(itVert.getIdVertice()!=solucaoInicial[0] &&itVert.getIdVertice()!=solucaoInicial[1])
+            candidatos.emplace_back(make_pair(itVert.getIdVertice(),0));
     ///Loop para gerar a solucao inicial de pretos Pela Heuristica de Inserção Mais Barata do PCV
     ///Sem a necessidade de se preocupar com as restrições de cardinalidade e comprimento do PB
     while(solucaoInicial.size() < numPretos)
@@ -566,6 +567,7 @@ void Grafo::algConstrutGuloso()
             cout << itCand.first << " " << itCand.second << endl;
         cout <<endl;
 
+        ///Ordena candidatos por custo de insercao
         sort(candidatos.begin(),candidatos.end(), ordenaCusto);
 
         cout << "Ordenado: " << endl;
@@ -587,7 +589,7 @@ void Grafo::algConstrutGuloso()
 
 
 
-        cout << "Solucao Parcial: ";
+        cout << "Solucao inicial Parcial: ";
         for(int i=0; i<solucaoInicial.size(); i++)
         {
             cout << solucaoInicial[i] << " ";
@@ -595,6 +597,7 @@ void Grafo::algConstrutGuloso()
         cout << endl << endl;
     }
 
+    grafoPreto.imprimeMatrizDistancia();
 
 
     cout << "Solucao Inicial: ";
@@ -610,6 +613,7 @@ void Grafo::algConstrutGuloso()
 
 
     ///Segunda parte, solucao PCVPB
+
 
 
 
@@ -635,7 +639,7 @@ bool pesoMinimo(const double& p1, const double& p2)
     return p1.age < p2.age;
 }*/
 
-void Grafo::algConstrutGulosoAntiga()
+void Grafo::algConstrutGulosoAntigo()
 {
     if((ordem-numPretos) > (maxCusto*numPretos))
     {
@@ -657,7 +661,7 @@ void Grafo::algConstrutGulosoAntiga()
     int adj;
     double peso;
     bool existeSolucao;
-    int custoSolucaoInicial=0;
+    double custoSolucaoInicial=0;
 
     ///Necessário para a solucao inicial de vertices pretos ser gerada mais rápida
     Grafo grafoPreto(digrafo, ponderado, maxCusto, maxVertBranco);
@@ -706,8 +710,8 @@ void Grafo::algConstrutGulosoAntiga()
                 if(*it!=itAdj.getIdAdj() && itAdj.getPeso() < peso)
                 {
                     peso = itAdj.getPeso();
-                    if(peso > maxCusto)
-                        cout << "JA ERA!!!!!!!!!!!!!!!! " << "maxCusto: " << maxCusto << " - pesoAresta: " << peso << endl;
+                    //if(peso > maxCusto)
+                        //cout << "JA ERA!!!!!!!!!!!!!!!! " << "maxCusto: " << maxCusto << " - pesoAresta: " << peso << endl;
                     adj=itAdj.getIdAdj();
                     existeSolucao = true;
                 }
@@ -716,8 +720,6 @@ void Grafo::algConstrutGulosoAntiga()
         if(existeSolucao)
         {
             solucaoInicial.push_back(adj);
-            //cout << "- ";
-            custoSolucaoInicial += peso;
         }
         if(solucaoInicial.size() == this->numPretos)
             break;
@@ -725,15 +727,12 @@ void Grafo::algConstrutGulosoAntiga()
     }
     //grafoAux->imprime();
 
-    ///Custo da ultima aresta, do ultimo vertice ao primeiro vertice do ciclo
-    custoSolucaoInicial += grafoPreto.getVertice(solucaoInicial[solucaoInicial.size()-1])->getAresta(solucaoInicial[0])->getPeso();
 
     cout << endl << "Solucao inicial: ";
     for(auto it : solucaoInicial)
     {
         cout << it << " ";
     }
-    cout << endl << "Custo solucao inicial: " << custoSolucaoInicial << endl;
 
     /// Antes da lista de candidatos, remover os pretos ou remover as arestas incidentes a pretos?
     ///Fazer lista de candidadtos: tirar os pretos? tirar as arestas adjacentes aos pretos? colocar ja visitado?
@@ -742,7 +741,17 @@ void Grafo::algConstrutGulosoAntiga()
         if(it.getCorPB() == BRANCO)
             candidatos.emplace_back(it.getIdVertice());
     }
-    cout << "Vertices totais: " << (candidatos.size()+solucaoInicial.size()) << endl;
+
+    grafoPreto.imprimeMatrizDistancia();
+
+    cout << "Solucao Inicial: ";
+    for(int i=0; i<solucaoInicial.size(); i++)
+    {
+        cout << solucaoInicial[i] << " ";
+        //custoSolucaoInicial += matrizDistancia[(i%solucaoInicial.size())-1][((i+1)%solucaoInicial.size())-1];
+        custoSolucaoInicial += matrizDistancia[solucaoInicial[i]-1][solucaoInicial[(i+1)%solucaoInicial.size()]-1];
+    }
+    cout << endl << "Custo Solucao inicial: " << custoSolucaoInicial;
 
 
     double menorCusto;

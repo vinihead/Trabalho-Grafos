@@ -77,7 +77,7 @@ public:
 
     list <Aresta> getAdjacencia(int idVert);
 
-    void algConstrutGulosoAntiga();
+    void algConstrutGulosoAntigo();
 
     void ordenaCandidatos();
 
