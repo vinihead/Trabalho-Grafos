@@ -462,6 +462,7 @@ bool Grafo::verificaEuleriano()
 }
 
 
+///Heuristica da Insercao Mais Barata
 void Grafo::algConstrutGuloso()
 {
     if((ordem-numPretos) > (maxCusto*numPretos))
