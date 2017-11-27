@@ -33,16 +33,9 @@ struct {
 
 ///Estrutura para guardar solução Parcial do PCVPB
 
-typedef struct {
-    vector<int> vert;
-    int cardinalidadeQ;
-    double comprimetoL;
-} Cadeia;
 
-typedef struct {
-    vector<Cadeia> cadeias;
-    //vector<int> solucao;
-} Solucao;
+
+
 
 //Construtor padrão, para no caso de precisar criar um grafo vazio.
 Grafo::Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco)
@@ -542,6 +535,7 @@ void Grafo::algConstrutGuloso()
                 indiceInsercao = (i+1)%solucaoInicial.size();
             }
         }
+
         cout << "Aresta escolhida: " << aresta.first << "," << aresta.second << " Peso: " << peso<< endl;
 
         /*for(auto itVert : grafoPreto.vertices)
@@ -615,7 +609,29 @@ void Grafo::algConstrutGuloso()
 
     ///Segunda parte, solucao PCVPB
 
+    Solucao solucao;
+    solucao.solucao = solucaoInicial;
+    for(int i=0; i < solucaoInicial.size(); i++)
+    {
+        Cadeia cadeia;
+        cadeia.cardinalidadeQ=0;
+        cadeia.comprimetoL=matrizDistancia[solucaoInicial[i]-1][solucaoInicial[(i+1)%solucaoInicial.size()]-1];
+        cadeia.vert.emplace_back(solucaoInicial[i]);
+        cadeia.vert.emplace_back(solucaoInicial[(i+1)%solucaoInicial.size()]);
+        solucao.cadeias.emplace_back(cadeia);
+    }
 
+    cout << endl << "Cadeias iniciais: " << endl;
+    for(auto itSolucao : solucao.cadeias)
+    {
+        cout << endl << "Cadeia: " << itSolucao.vert[0] << " " << itSolucao.vert[1];
+    }
+
+    for(auto itSolucao : solucao.cadeias)
+        for(auto itCadeia : itSolucao.vert)
+        {
+
+        }
 
 
 
@@ -930,4 +946,11 @@ void Grafo::caminhoMinimoDijkstra(int _idVerticeOrigem, int _idVerticeDestino) {
     for(auto it : fechados)
         cout << it << " ";
     cout << "\nCaminho minimo: " << fixed << getVertice(_idVerticeDestino)->getDistancia() << endl;
+}
+
+
+
+bool Grafo::viavel(Cadeia cadeia, double dist)
+{
+    return (cadeia.comprimetoL + dist <= maxCusto) && (cadeia.comprimetoL+1 <=maxVertBranco);
 }

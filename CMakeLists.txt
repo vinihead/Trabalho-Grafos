@@ -10,6 +10,6 @@ set(SOURCE_FILES
         Grafo.h
         main.cpp
         Vertice.cpp
-        Vertice.h)
+        Vertice.h CadeiaTeste.cpp CadeiaTeste.h)
 
 add_executable(TrabalhoGrafos ${SOURCE_FILES})

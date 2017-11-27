@@ -13,6 +13,7 @@
 #include <iostream>
 #include <vector>
 #include "Vertice.h"
+#include "CadeiaTeste.h"
 #include <sstream> // Fluxo de strings
 #include <fstream> // Leitura e escrita de arquivo
 #include <cstdlib> //funcao atoi e exit
@@ -42,6 +43,27 @@ private:
 
 
 public:
+
+
+    typedef struct {
+        vector<int> vert;
+        int cardinalidadeQ;
+        double comprimetoL;
+    } Cadeia;
+
+    typedef struct {
+        vector<Cadeia> cadeias;
+        vector<int> solucao;
+        //vector<int> solucao;
+    } Solucao;
+
+
+
+
+
+
+
+
     bool removeVertice(int idVert);
 
 
@@ -88,7 +110,22 @@ public:
     void ordenaCandidatos(vector<int, double> candidatos, int i, int j);
 
     bool ordenaCandidatos(pair<int, double> cand1, pair<int, double> cand2);
+
+    long teste();
+
+    bool viavel(double dist);
+
+    bool viavel(CadeiaTeste cadeia, double dist);
+
+    bool viavel(Cadeia cadeia, double dist);
+
+
+
+
+
+
 };
+
 
 
 #endif //TRABALHOGRAFOSNOVO_GRAFO_H
