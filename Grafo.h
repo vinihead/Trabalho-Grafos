@@ -13,7 +13,7 @@
 #include <iostream>
 #include <vector>
 #include "Vertice.h"
-#include "CadeiaTeste.h"
+
 #include <sstream> // Fluxo de strings
 #include <fstream> // Leitura e escrita de arquivo
 #include <cstdlib> //funcao atoi e exit

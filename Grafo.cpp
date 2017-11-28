@@ -482,10 +482,6 @@ void Grafo::algConstrutGuloso()
     grafoPreto.criaMatrizPeso(); //é melhor gerar o peso ou clonar o grafo e retirar os vertices brancos?
     grafoPreto.criaTodasArestas();
 
-    //grafoPreto.geraLinguagemDot();
-    //grafoPreto.imprime();
-    //grafoPreto.caixeiroViajante();
-
     ///loop para escolha do primeira aresta da solucao inicial: a de menor custo
     peso = INFINITO;
     for(auto itVert : grafoPreto.vertices)
@@ -517,9 +513,6 @@ void Grafo::algConstrutGuloso()
         ///Escolhe a aresta de menor custo que já esta na solucao inicial
         ///É feita essa escolha para inserir o vertice da lista de candidatos
         ///entre esse dois vertices dessa aresta de menor custo escolhida
-        //aresta.first = solucaoInicial[0];
-        //aresta.second = solucaoInicial[solucaoInicial.size()-1];
-        //peso = matrizDistancia[aresta.first-1][aresta.second-1];
         ///Algoritmo refeito ->estava errado (comentado abaixo deste)
         peso = INFINITO;
         for(int i=0; i<solucaoInicial.size(); i++)
@@ -538,31 +531,21 @@ void Grafo::algConstrutGuloso()
 
         cout << "Aresta escolhida: " << aresta.first << "," << aresta.second << " Peso: " << peso<< endl;
 
-        /*for(auto itVert : grafoPreto.vertices)
-            for(auto itAdj : itVert.getAdjacencia())
-                if(itAdj.getPeso() < peso)
-                {
-                    peso = itAdj.getPeso();
-                    aresta.first = itVert.getIdVertice();
-                    aresta.second = itAdj.getIdAdj();
-                    cout << aresta.first << " " << aresta.second << endl;
-                }*/
-        ///Gerando custo de adicao dos candidatos
+        /// Gerando custo de adicao dos candidatos
         for(auto & itCand : candidatos)
         {
             double distAresta1 = matrizDistancia[itCand.first-1][aresta.first-1];
             double distAresta2 = matrizDistancia[itCand.first-1][aresta.second-1];
-            //cout << "(" << itCand.first <<"," <<aresta.first<< ") = " << distAresta1 << endl;
-            //cout << "(" << itCand.first <<"," <<aresta.second<< ") = " << distAresta2 << endl;
+
             itCand.second = distAresta1 + distAresta2;
         }
-        ///Proximo passo -> ordenar os candidatos de acordo com o custo e inserir o melhor na solucao inicial
+        /// Proximo passo -> ordenar os candidatos de acordo com o custo e inserir o melhor na solucao inicial
         cout << "Desordenado: " << endl;
         for(auto & itCand : candidatos)
             cout << itCand.first << " " << itCand.second << endl;
         cout <<endl;
 
-        ///Ordena candidatos por custo de insercao
+        /// Ordena candidatos por custo de insercao
         sort(candidatos.begin(),candidatos.end(), ordenaCusto);
 
         cout << "Ordenado: " << endl;
@@ -570,19 +553,11 @@ void Grafo::algConstrutGuloso()
             cout << itCand.first << " " << itCand.second << endl;
         cout <<endl;
 
+        /// Inserindo o melhor na solucao inicial entre os vertices da melhor aresta
+        /// E excluindo da lista de candidatos
 
-        ///Inserindo o melhor na solucao inicial entre os vertices da melhor aresta
-        ///E excluindo da lista de candidatos
-        //solucaoInicial.
-        //solucaoInicial[] = candidatos.begin()->first;
-        //(find(solucaoInicial.begin(), solucaoInicial.end(), aresta.second))
         solucaoInicial.insert(solucaoInicial.begin()+indiceInsercao, candidatos.begin()->first);
         candidatos.erase(candidatos.begin());
-        ///??????? FAZER A ordenacao em ordem ao contrario e remover sempre com pop_back, no final do vetor
-        /// ????? INTERESSANTE PARA GASTAR MENOS RECURSOS COMPUTACIONAIS??
-
-
-
 
         cout << "Solucao inicial Parcial: ";
         for(int i=0; i<solucaoInicial.size(); i++)
@@ -594,7 +569,6 @@ void Grafo::algConstrutGuloso()
 
     grafoPreto.imprimeMatrizDistancia();
 
-
     cout << "Solucao Inicial: ";
     for(int i=0; i<solucaoInicial.size(); i++)
     {
@@ -605,9 +579,14 @@ void Grafo::algConstrutGuloso()
     cout << endl << "Custo Solucao inicial: " << custoSolucaoInicial;
 
 
-
-
     ///Segunda parte, solucao PCVPB
+
+    bool viavel = false;
+    vector<Vertice> solucaoBrancos;
+
+    for(auto it : vertices)
+        if(it.getCorPB() == BRANCO)
+            solucaoBrancos.emplace_back(it);
 
     Solucao solucao;
     solucao.solucao = solucaoInicial;
@@ -627,14 +606,36 @@ void Grafo::algConstrutGuloso()
         cout << endl << "Cadeia: " << itSolucao.vert[0] << " " << itSolucao.vert[1];
     }
 
-    for(auto itSolucao : solucao.cadeias)
-        for(auto itCadeia : itSolucao.vert)
+    /// Variaveis teste
+
+    int cardinalidadeOficial = 2;
+    double comprimentoOficial = 15;
+    double comprimentoBacaninha = 0;
+    vector<Vertice> candidatosBrancos;
+
+    /// IEB
+    while (solucaoBrancos.size() != 0)
+    {
+        candidatosBrancos.emplace_back(solucaoBrancos);
+
+        for(auto itSolucao : solucao.cadeias)
         {
+            for(auto itBranco : candidatosBrancos)
+            {
+                comprimentoBacaninha = itBranco.getPeso(itSolucao.vert[0]) + itBranco.getPeso(itSolucao.vert[1]);
 
+                if(comprimentoBacaninha <= comprimentoOficial && itSolucao.cardinalidadeQ < cardinalidadeOficial &&
+                        itBranco.getPeso(itSolucao.vert[0]) < itSolucao.comprimetoL  &&
+                            itBranco.getPeso(itSolucao.vert[1]) < itSolucao.comprimetoL)
+                {
+                    //itSolucao.vert.
+                    // Acho que precisa criar mais um indice pra alocar entre os dois vertices pretos da cadeia
+                    //indiceInsercao = (i+1)%solucaoInicial.size(); Nao sei fazer isso
+                    viavel = true;
+                }
+            }
         }
-
-
-
+    }
 }
 
 
