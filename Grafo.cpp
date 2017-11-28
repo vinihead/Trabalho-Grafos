@@ -520,7 +520,6 @@ void Grafo::algConstrutGuloso()
             ///Escolhe a aresta de menor custo que já esta na solucao inicial
             ///É feita essa escolha para inserir o vertice da lista de candidatos
             ///entre esse dois vertices dessa aresta de menor custo escolhida
-            ///Algoritmo refeito ->estava errado (comentado abaixo deste)
             peso = INFINITO;
             double distAresta1;
             double distAresta2;
@@ -534,17 +533,17 @@ void Grafo::algConstrutGuloso()
 
                 distAresta1 = matrizDistancia[itCand.first-1][arestaAux.first-1];
                 distAresta2 = matrizDistancia[itCand.first-1][arestaAux.second-1];
-                if((distAresta1+distAresta2) < peso && (distAresta1+distAresta2) < maxCusto)
+                if(((distAresta1+distAresta2)-matrizDistancia[arestaAux.first-1][arestaAux.second-1]) < peso && (distAresta1+distAresta2) < maxCusto)
                 {
                     aresta.first = arestaAux.first;
                     aresta.second = arestaAux.second;
-                    peso = distAresta1 + distAresta2;
+                    peso = ((distAresta1+distAresta2)-matrizDistancia[arestaAux.first-1][arestaAux.second-1]) ;
                     indiceInsercao = (i+1)%solucaoInicial.size();
                 }
             }
 
 
-            itCand.second = distAresta1 + distAresta2;
+            itCand.second = ((distAresta1+distAresta2)-matrizDistancia[aresta.first-1][aresta.second-1]) ;
         }
         /// Proximo passo -> ordenar os candidatos de acordo com o custo e inserir o melhor na solucao inicial
         cout << "Desordenado: " << endl;
