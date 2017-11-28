@@ -13,6 +13,7 @@
 #include <iostream>
 #include <vector>
 #include "Vertice.h"
+#include "Cadeia.h"
 
 #include <sstream> // Fluxo de strings
 #include <fstream> // Leitura e escrita de arquivo
@@ -44,12 +45,12 @@ private:
 
 public:
 
-
+/*
     typedef struct {
         vector<int> vert;
         int cardinalidadeQ;
         double comprimetoL;
-    } Cadeia;
+    } Cadeia;*/
 
     typedef struct {
         vector<Cadeia> cadeias;
@@ -115,7 +116,7 @@ public:
 
     bool viavel(double dist);
 
-    bool viavel(CadeiaTeste cadeia, double dist);
+    //bool viavel(CadeiaTeste cadeia, double dist);
 
     bool viavel(Cadeia cadeia, double dist);
 

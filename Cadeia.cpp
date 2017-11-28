@@ -16,7 +16,7 @@ void Cadeia::setComprimento(double c)
 
 void Cadeia::setVertice(int v)
 {
-    vert.emplace_back(v);
+    vertices.emplace_back(v);
 }
 
 int Cadeia::getCardinalidade()
@@ -31,5 +31,12 @@ double Cadeia::getComprimento()
 
 int Cadeia::getQuantVertice()
 {
-    return vert.size();
+    return vertices.size();
+}
+
+void Cadeia::insereVertice(int indiceInsercao, int idVertice, double custo)
+{
+    this->comprimetoL++;
+    this->comprimetoL+=custo;
+    vertices.insert(vertices.begin()+indiceInsercao, idVertice);
 }

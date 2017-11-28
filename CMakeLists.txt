@@ -10,6 +10,8 @@ set(SOURCE_FILES
         Grafo.h
         main.cpp
         Vertice.cpp
-        Vertice.h Cadeia.cpp Cadeia.h)
+        Vertice.h
+        Cadeia.cpp
+        Cadeia.h)
 
 add_executable(TrabalhoGrafos ${SOURCE_FILES})

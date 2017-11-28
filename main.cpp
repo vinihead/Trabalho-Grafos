@@ -48,10 +48,10 @@ int main(int argc, char **argv)
 
     if(argc == 2)
     {
-        inFileName = "teste1";
+        inFileName = "instancias\\12";
         //inFileName = argv[1];
         //outFileName = argv[2];
-        outFileName = "teste2";
+        outFileName = "saida";
         outFileName += ".txt";
         inFileName += ".txt";
         inFile.open(inFileName);

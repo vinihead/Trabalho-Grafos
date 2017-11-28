@@ -18,14 +18,16 @@ using namespace std;
 class Cadeia
 {
 private:
-    vector<int> vert;
+    vector<int> vertices;
     int cardinalidadeQ;
     double comprimetoL;
 
 public:
+    Cadeia(int cardinalidadeQ, double comprimentoL);
     void setCardinalidade(int c);
     void setComprimento(double c);
     void setVertice(int v);
+    void insereVertice(int indiceInsercao, int idVertice, double custo);
     int getCardinalidade();
     double getComprimento();
     int getQuantVertice();

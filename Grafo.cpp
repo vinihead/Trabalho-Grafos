@@ -510,32 +510,39 @@ void Grafo::algConstrutGuloso()
     while(solucaoInicial.size() < numPretos)
     {
 
-        ///Escolhe a aresta de menor custo que já esta na solucao inicial
-        ///É feita essa escolha para inserir o vertice da lista de candidatos
-        ///entre esse dois vertices dessa aresta de menor custo escolhida
-        ///Algoritmo refeito ->estava errado (comentado abaixo deste)
-        peso = INFINITO;
-        for(int i=0; i<solucaoInicial.size(); i++)
-        {
-            pair<int,int> arestaAux;
-            arestaAux.first = solucaoInicial[i%solucaoInicial.size()];
-            arestaAux.second = solucaoInicial[(i+1)%solucaoInicial.size()];
-            if(matrizDistancia[arestaAux.first-1][arestaAux.second-1] < peso)
-            {
-                aresta.first = arestaAux.first;
-                aresta.second = arestaAux.second;
-                peso = matrizDistancia[aresta.first-1][aresta.second-1];
-                indiceInsercao = (i+1)%solucaoInicial.size();
-            }
-        }
+
 
         cout << "Aresta escolhida: " << aresta.first << "," << aresta.second << " Peso: " << peso<< endl;
 
-        /// Gerando custo de adicao dos candidatos
+        /// Gerando custo de adicao dos candidatos as arestas
         for(auto & itCand : candidatos)
         {
-            double distAresta1 = matrizDistancia[itCand.first-1][aresta.first-1];
-            double distAresta2 = matrizDistancia[itCand.first-1][aresta.second-1];
+            ///Escolhe a aresta de menor custo que já esta na solucao inicial
+            ///É feita essa escolha para inserir o vertice da lista de candidatos
+            ///entre esse dois vertices dessa aresta de menor custo escolhida
+            ///Algoritmo refeito ->estava errado (comentado abaixo deste)
+            peso = INFINITO;
+            double distAresta1;
+            double distAresta2;
+            for(int i=0; i<solucaoInicial.size(); i++)
+            {
+
+
+                pair<int,int> arestaAux;
+                arestaAux.first = solucaoInicial[i%solucaoInicial.size()];
+                arestaAux.second = solucaoInicial[(i+1)%solucaoInicial.size()];
+
+                distAresta1 = matrizDistancia[itCand.first-1][arestaAux.first-1];
+                distAresta2 = matrizDistancia[itCand.first-1][arestaAux.second-1];
+                if((distAresta1+distAresta2) < peso && (distAresta1+distAresta2) < maxCusto)
+                {
+                    aresta.first = arestaAux.first;
+                    aresta.second = arestaAux.second;
+                    peso = distAresta1 + distAresta2;
+                    indiceInsercao = (i+1)%solucaoInicial.size();
+                }
+            }
+
 
             itCand.second = distAresta1 + distAresta2;
         }
@@ -558,6 +565,8 @@ void Grafo::algConstrutGuloso()
 
         solucaoInicial.insert(solucaoInicial.begin()+indiceInsercao, candidatos.begin()->first);
         candidatos.erase(candidatos.begin());
+        ///??????? FAZER A ordenacao em ordem ao contrario e remover sempre com pop_back, no final do vetor
+        /// ????? INTERESSANTE PARA GASTAR MENOS RECURSOS COMPUTACIONAIS??
 
         cout << "Solucao inicial Parcial: ";
         for(int i=0; i<solucaoInicial.size(); i++)
@@ -580,23 +589,23 @@ void Grafo::algConstrutGuloso()
 
 
     ///Segunda parte, solucao PCVPB
-
+/*
     bool viavel = false;
-    vector<Vertice> solucaoBrancos;
 
     for(auto it : vertices)
         if(it.getCorPB() == BRANCO)
-            solucaoBrancos.emplace_back(it);
+            candidatos.emplace_back(make_pair(it.getIdVertice(),0));
 
+    ///Gerando cadeias da solução
     Solucao solucao;
     solucao.solucao = solucaoInicial;
     for(int i=0; i < solucaoInicial.size(); i++)
     {
-        Cadeia cadeia;
-        cadeia.cardinalidadeQ=0;
-        cadeia.comprimetoL=matrizDistancia[solucaoInicial[i]-1][solucaoInicial[(i+1)%solucaoInicial.size()]-1];
-        cadeia.vert.emplace_back(solucaoInicial[i]);
-        cadeia.vert.emplace_back(solucaoInicial[(i+1)%solucaoInicial.size()]);
+        Cadeia cadeia(0,matrizDistancia[solucaoInicial[i]-1][solucaoInicial[(i+1)%solucaoInicial.size()]-1]);
+        //cadeia.cardinalidadeQ=0;
+        //cadeia.comprimetoL=matrizDistancia[solucaoInicial[i]-1][solucaoInicial[(i+1)%solucaoInicial.size()]-1];
+        //cadeia.vert.emplace_back(solucaoInicial[i]);
+        //cadeia.vert.emplace_back(solucaoInicial[(i+1)%solucaoInicial.size()]);
         solucao.cadeias.emplace_back(cadeia);
     }
 
@@ -614,9 +623,9 @@ void Grafo::algConstrutGuloso()
     vector<Vertice> candidatosBrancos;
 
     /// IEB
-    while (solucaoBrancos.size() != 0)
+    while (candidatos.size() != 0)
     {
-        candidatosBrancos.emplace_back(solucaoBrancos);
+        //candidatosBrancos.emplace_back(solucaoBrancos);
 
         for(auto itSolucao : solucao.cadeias)
         {
@@ -636,6 +645,7 @@ void Grafo::algConstrutGuloso()
             }
         }
     }
+    */
 }
 
 
@@ -950,8 +960,9 @@ void Grafo::caminhoMinimoDijkstra(int _idVerticeOrigem, int _idVerticeDestino) {
 }
 
 
-
+/*
 bool Grafo::viavel(Cadeia cadeia, double dist)
 {
     return (cadeia.comprimetoL + dist <= maxCusto) && (cadeia.comprimetoL+1 <=maxVertBranco);
 }
+ */
