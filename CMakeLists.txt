@@ -12,6 +12,6 @@ set(SOURCE_FILES
         Vertice.cpp
         Vertice.h
         Cadeia.cpp
-        Cadeia.h)
+        Cadeia.h Solucao.cpp Solucao.h)
 
-add_executable(TrabalhoGrafos ${SOURCE_FILES})
+add_executable(TrabalhoGrafos ${SOURCE_FILES} Solucao.cpp Solucao.h)

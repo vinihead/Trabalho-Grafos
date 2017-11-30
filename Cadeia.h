@@ -31,6 +31,8 @@ public:
     int getCardinalidade();
     double getComprimento();
     int getQuantVertice();
+
+    vector<int> getCadeia()const;
 };
 
 #endif //TRABALHOGRAFOS_CADEIA_H

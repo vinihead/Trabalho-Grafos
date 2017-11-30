@@ -36,7 +36,16 @@ int Cadeia::getQuantVertice()
 
 void Cadeia::insereVertice(int indiceInsercao, int idVertice, double custo)
 {
-    this->comprimetoL++;
+    this->cardinalidadeQ++;
     this->comprimetoL+=custo;
     vertices.insert(vertices.begin()+indiceInsercao, idVertice);
+}
+
+vector<int> Cadeia::getCadeia() const {
+    return vertices;
+}
+
+Cadeia::Cadeia(int cardinalidadeQ, double comprimentoL) {
+    this->cardinalidadeQ = cardinalidadeQ;
+    this->comprimetoL = comprimentoL;
 }

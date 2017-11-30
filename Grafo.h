@@ -88,9 +88,9 @@ public:
 
 
 
-    bool viavel(double dist);
+    //bool viavel(double dist);
     //bool viavel(CadeiaTeste cadeia, double dist);
-    bool viavel(Cadeia cadeia, double dist);
+    //bool viavel(Cadeia cadeia, double dist);
 
 
 
