@@ -104,7 +104,7 @@ void Vertice::imprimeListAdjacencia(bool ponderado)
     cout.setf(ios::fixed);
     for(k = adj.begin(); k != adj.end(); k++)
     {
-        ponderado ? cout << right << setw(2) << k->getIdAdj() << "|" << k->getPeso() << fixed : cout << setw(2) << k->getIdAdj();
+        ponderado ? cout << right << setw(2) << k->getIdAdj()+1 << "|" << k->getPeso() << fixed : cout << setw(2) << k->getIdAdj()+1;
         if(++k != adj.end())
         {
             cout << " ";

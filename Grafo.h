@@ -45,12 +45,12 @@ private:
 
 public:
 
-/*
+
     typedef struct {
         vector<int> vert;
         int cardinalidadeQ;
         double comprimetoL;
-    } Cadeia;*/
+    } CadeiaStrct;
 
     typedef struct {
         vector<Cadeia> cadeias;
@@ -86,38 +86,10 @@ public:
     void caixeiroViajanteAux(int i, double &valorSolucaoAtual, double &valorMelhorSolucao, int *tempSolucao, int *melhorSolucao, bool *visitados);
     int getCorPB(int idVert);
 
-    bool verificaEuleriano();
 
-    bool verificaConexo();
-
-    string arvoreBuscaProfundidadeAux(int idVert);
-
-    string arvoreBuscaProfundidade(int idVert);
-
-    long caminhoMinimoDijkstra(long _idVerticeOrigem, long _idVerticeDestino);
-
-    void caminhoMinimoDijkstra(int _idVerticeOrigem, int _idVerticeDestino);
-
-    list <Aresta> getAdjacencia(int idVert);
-
-    void algConstrutGulosoAntigo();
-
-    void ordenaCandidatos();
-
-    void ordenaCandidatos(vector<int> candidatos, int i, int j);
-
-    bool pesoMinimo(const Vertice &vertInsere, const Vertice &v1, const Vertice &v2);
-
-    void ordenaCandidatos(vector<int, double> candidatos, int i, int j);
-
-    bool ordenaCandidatos(pair<int, double> cand1, pair<int, double> cand2);
-
-    long teste();
 
     bool viavel(double dist);
-
     //bool viavel(CadeiaTeste cadeia, double dist);
-
     bool viavel(Cadeia cadeia, double dist);
 
 

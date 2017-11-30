@@ -21,7 +21,6 @@ Consideramos um grafo nao direcionado e completo
  */
 
 #include <iostream>
-#include <algorithm>
 #include "Grafo.h"
 
 using namespace std;
@@ -48,9 +47,9 @@ int main(int argc, char **argv)
 
     if(argc == 2)
     {
-        inFileName = "instancias\\12";
-        //inFileName = argv[1];
+        inFileName = argv[1];
         //outFileName = argv[2];
+        //inFileName = "instancias\\12";
         outFileName = "saida";
         outFileName += ".txt";
         inFileName += ".txt";
@@ -144,9 +143,6 @@ int main(int argc, char **argv)
                 grafo.imprime();
                 break;
             }
-            case 10:
-                grafo.algConstrutGulosoAntigo();
-                break;
         }
     } while (opcao != 0);
     ///Fechando streams de entrada e saida
@@ -178,6 +174,7 @@ int menuShow()
         cout << "|     08 - Gerar Grafo em linguagem DOT                  |" << endl;
         cout << "|     09 - Imprimir grafo                                |" << endl;
         cout << "|     10 - Algoritmo Guloso Antigo (vizinho + proximo)   |" << endl;
+        cout << "|     11 - Informações sobre a instância                 |" << endl;
         cout << "----------------------------------------------------------" << endl << endl;
         if(passouMenu)
             cout << "Opcao Invalida.\nDigite uma opcao de 0 a 39: ";
