@@ -29,10 +29,6 @@ private:
     int corPB; ///Variavel que contem a cor do vertice (preto ou branco)
     unsigned int grauEntrada;
     unsigned int grauSaida;
-    bool visitado;
-    double distancia;
-    int antecessor;
-
 public:
     Vertice(int id, int y, int x, int corPB);
     int getIdVertice();
@@ -47,36 +43,14 @@ public:
     void aumentaGrauEntrada();
     unsigned int getGrauEntrada();
     unsigned int getGrauSaida();
-    bool getVisitado();
-    void setVisita(bool visitado);
     string retornaListAdjacencia(bool ponderado);
-
     int getY();
-
     int getX();
-
     int getCorPB();
-
     bool operator<(const Vertice &rhs) const;
-
     bool operator>(const Vertice &rhs) const;
-
     bool operator<=(const Vertice &rhs) const;
-
     bool operator>=(const Vertice &rhs) const;
-
-
-    double getDistancia() const;
-
-    void setDistancia(double _distancia);
-
-    int getAntecessor() const;
-
-    void setAntecessor(int _antecessor);
-
-    list<Aresta>::iterator getAresta(int id);
-
-    double getPeso(int id);
 };
 
 

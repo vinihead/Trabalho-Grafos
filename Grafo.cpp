@@ -10,8 +10,6 @@
 
 #include <algorithm>
 #include "Grafo.h"
-//#include <set>
-#include <queue>
 #include <climits>
 #include <cmath>
 #include <iomanip>
@@ -23,21 +21,6 @@
 #define BRANCO 0
 
 ///Estrutura auxiliar usada como paramentro na ordenação da lista de candidatos (por custo) usando std::sort
-/*struct {
-    bool operator()(pair<int, double> cand1, pair<int, double> cand2) const
-    {
-        return cand1.second < cand2.second;
-    }
-} ordenaCusto;
-
-struct {
-    bool operator()(pair<pair<int, double>,int> cand1, pair<pair<int, double>,int> cand2) const
-    {
-        return cand1.first.second < cand2.first.second;
-    }
-} ordenaCusto;
-*/
-
 struct {
     bool operator()(pair<pair<int, double>,int> cand1, pair<pair<int, double>,int> cand2) const
     {
@@ -401,14 +384,6 @@ bool Grafo::procuraVertice(int idVert) //Retorna true caso ache uma adjacencia c
     return false;
 }
 
-
-/*
- * tuple<int, int, int> oi;
-    get<0>(oi) = 0;
-    get<1>(oi) = 0;
-    get<2>(oi) = 0;
- */
-
 ///Heuristica da Insercao Mais Barata
 void Grafo::algConstrutGuloso()
 {
@@ -551,7 +526,6 @@ void Grafo::algConstrutGuloso()
 
     ///Gerando cadeias da solução
     Solucao solucao;
-    solucao.solucao = solucaoInicial;
     for(int i=0; i < solucaoInicial.size(); i++)
     {
         double peso = matrizDistancia[solucaoInicial[i]][solucaoInicial[(i+1)%solucaoInicial.size()]];
@@ -600,8 +574,8 @@ void Grafo::algConstrutGuloso()
                 itCand.second.first = indiceInsercaoCadeia;
                 itCand.second.second = indiceInsercao;
             }
-            cout << "Aresta escolhida: " << aresta.first << ", " << aresta.second << " Peso: " << matrizDistancia[aresta.first][aresta.second]<< endl;
             itCand.first.second = custo;
+            cout << "Aresta escolhida: " << aresta.first << ", " << aresta.second << " Peso: " << matrizDistancia[aresta.first][aresta.second]<< endl;
         }
 
         if(!viavel)
@@ -691,7 +665,7 @@ void Grafo::algConstrutGuloso()
         }
         cout << endl << "Custo cadeia: " << solucao.cadeias[i].getComprimento() << endl;
         cout << "CUSTO SOLUCAO: " << custoSolucao << endl;
-        cout << "Quantidade de vertices na cadeia: " << solucao.cadeias[i].getCardinalidade() << " ou "<< solucao.cadeias[i].getQuantVertice() << endl;
+        cout << "Quantidade de vertices na cadeia: " << solucao.cadeias[i].getCardinalidade() << endl;
 
     }
     cout << endl << endl;
@@ -708,6 +682,31 @@ void Grafo::algConstrutGuloso()
         custoSolucao += matrizDistancia[solucaoInicial[i]][solucaoInicial[(i+1)%solucaoInicial.size()]];
     }
     cout << endl << "Custo Solucao Final: " << custoSolucao << endl;
+
+
+
+    ///Ao finalizar a construção da solução, é gerado na estrutura solução, o custo e ciclo hamiltoniano.
+    ///Afim da solução ficar disponível e de fácil acesso.
+    solucao.custo = 0;
+    for(const auto& it : solucao.cadeias)//for(int i=0; i<solucao.cadeias.size(); i++)
+    {
+        vector<int> cadeia = it.getCadeia();//solucao.cadeias[i].getCadeia();
+        for(int j=0; j <cadeia.size(); j++)
+        {
+            if(j!=cadeia.size()-1)
+            {
+                solucao.custo += matrizDistancia[cadeia[j]][cadeia[(j+1)]];
+                solucao.listVertices.emplace_back(cadeia[j]);
+            }
+        }
+    }
+    ///Imprime informações sobre a solução
+    cout << endl << "-------------------------------------------------------" << endl;
+    cout << "Solucao Final:";
+    for(const auto& it : solucao.listVertices)
+        cout << " "<< (it+1);
+    cout << endl << "Custo Solucao Final: " << solucao.custo << endl;
+    cout << "-------------------------------------------------------" << endl;
 }
 
 
@@ -788,36 +787,9 @@ void Grafo::imprimeMatrizDistancia()
     }
 }
 
-
-int Grafo::getCorPB(int idVert)
-{
-    for(auto itVert : vertices)
-        if(itVert.getIdVertice() == idVert)
-            return itVert.getCorPB();
-    return -1;
-}
-
-
 /*
 bool Grafo::viavel(Cadeia cadeia, double dist)
 {
     return (cadeia.comprimetoL + dist <= maxCusto) && (cadeia.comprimetoL+1 <=maxVertBranco);
 }
-
-
-///Função auxiliar usada como paramentro na ordenação da lista de candidatos pelo std::sort
-bool Grafo::ordenaCandidatos(pair<int, double> cand1, pair<int, double> cand2)
-{
-    return cand1.second < cand2.second;
-}
-
-
-
-
-
-bool pesoMinimo(const double& p1, const double& p2)
-{
-    return
-
-    return p1.age < p2.age;
-}*/
+ */

@@ -35,7 +35,6 @@ private:
     int numPretos;
     Grafo * retornaInstanciaGrafo();
     list<Vertice>::iterator adicionaVertice(int id, int x, int y, int corPB);
-
     void adicionaAresta(int idOrigem, int idDestino, float peso, int corPB);
     bool removeAresta(int v1, int v2);
     void criaMatrizPeso();
@@ -44,33 +43,16 @@ private:
 
 
 public:
-
-
-    typedef struct {
-        vector<int> vert;
-        int cardinalidadeQ;
-        double comprimetoL;
-    } CadeiaStrct;
-
     typedef struct {
         vector<Cadeia> cadeias;
-        vector<int> solucao;
-        //vector<int> solucao;
+        vector<int> listVertices;
+        double custo;
     } Solucao;
 
 
-
-
-
-
-
-
     bool removeVertice(int idVert);
-
-
     explicit Grafo(ifstream *inFile);
     Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco);
-
     void imprime();
     void saveGrafo(ofstream *outFile);
     list<Vertice>::iterator getVertice(int idVert);
@@ -84,7 +66,6 @@ public:
     void caixeiroViajante();
     void imprimeMatrizDistancia();
     void caixeiroViajanteAux(int i, double &valorSolucaoAtual, double &valorMelhorSolucao, int *tempSolucao, int *melhorSolucao, bool *visitados);
-    int getCorPB(int idVert);
 
 
 

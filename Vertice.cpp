@@ -8,7 +8,6 @@
  */
 
 #include "Vertice.h"
-#include <algorithm> // função find
 #include <iomanip>
 
 Vertice::Vertice(int id, int y, int x, int corPB)
@@ -19,17 +18,6 @@ Vertice::Vertice(int id, int y, int x, int corPB)
     this->x = x;
     this->y = y;
     this->corPB = corPB;
-}
-
-void Vertice::setVisita(bool visitado)
-{
-    this->visitado = visitado;
-}
-
-bool Vertice::getVisitado()
-{
-    return visitado;
-
 }
 
 int Vertice::getX()
@@ -168,36 +156,4 @@ bool Vertice::operator<=(const Vertice &rhs) const {
 
 bool Vertice::operator>=(const Vertice &rhs) const {
     return !(*this < rhs);
-}
-
-
-double Vertice::getDistancia() const {
-    return distancia;
-}
-
-void Vertice::setDistancia(double _distancia) {
-    distancia = _distancia;
-}
-
-int Vertice::getAntecessor() const {
-    return antecessor;
-}
-
-void Vertice::setAntecessor(int _antecessor) {
-    antecessor = _antecessor;
-}
-
-list<Aresta>::iterator Vertice::getAresta(int id)
-{
-    for(k = adj.begin(); k != adj.end(); k++)
-        if(k->getIdAdj() == id)
-            break;
-    return k;
-}
-
-double Vertice::getPeso(int id)
-{
-    for(auto it : adj)
-        if(it.getIdAdj() == id)
-            return  it.getPeso();
 }
