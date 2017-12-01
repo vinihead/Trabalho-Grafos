@@ -464,7 +464,6 @@ void Grafo::algConstrutGuloso()
                 pair<int, int> arestaAux;
                 arestaAux.first = solucaoInicial[i];
                 arestaAux.second = solucaoInicial[(i + 1) % solucaoInicial.size()];
-
                 distAresta1 = matrizDistancia[itCand.first.first][arestaAux.first];
                 distAresta2 = matrizDistancia[itCand.first.first][arestaAux.second];
                 custoInsercao = distAresta1 + distAresta2 - matrizDistancia[arestaAux.first][arestaAux.second];
@@ -536,9 +535,9 @@ void Grafo::algConstrutGuloso()
     }
 
     cout << endl << "Cadeias iniciais: " << endl;
-    for(const auto& itSolucao : solucao.cadeias)
+    for(const auto& itCadeia : solucao.cadeias)
     {
-        cout << "Cadeia: " << itSolucao.getCadeia()[0] << " " << itSolucao.getCadeia()[1] << endl;
+        cout << "Cadeia: " << itCadeia.getCadeia()[0] << " " << itCadeia.getCadeia()[1] << " Peso:" << itCadeia.getComprimento() << endl;
     }
 
     /// IEB
@@ -632,8 +631,8 @@ void Grafo::algConstrutGuloso()
         {
             cout << cadeia[j] << " ";
         }
-        cout << "Quantidade de vertices na cadeia: " << solucao.cadeias[i].getCardinalidade() << endl << endl;
-        cout << endl << "Custo cadeia: " << solucao.cadeias[i].getComprimento() << endl;
+        cout << endl<<"Quantidade de vertices na cadeia: " << solucao.cadeias[i].getCardinalidade() << endl;
+        cout << "Custo cadeia: " << solucao.cadeias[i].getComprimento() << endl << endl;
 
     }
     cout << endl << endl;
@@ -654,11 +653,15 @@ void Grafo::algConstrutGuloso()
         }
     }
     ///Imprime informações sobre a solução
+    double solFinalReal=0;
     cout << endl << "-------------------------------------------------------" << endl;
     cout << "Solucao Final:";
     for(const auto& it : solucao.listVertices)
         cout << " "<< (it+1);
+    for(int i=0; i<ordem; i++)
+        solFinalReal+=matrizDistancia[solucao.listVertices[i]][solucao.listVertices[(i+1)%ordem]];
     cout << endl << "Custo Solucao Final: " << solucao.custo << endl;
+    cout << "Custo solucao final REAL: " << solFinalReal << endl;
     cout << "-------------------------------------------------------" << endl;
 }
 
@@ -671,9 +674,16 @@ void Grafo::algConstrutGulRandomizado()
     double alfa[numAlfas] = {0.15,0.25,0.35};
 }
 
-void Grafo::algConstrutGulRandReativo()
+void Grafo::randomizadoAuxiliar()
 {
 
+}
+
+void Grafo::algConstrutGulRandReativo()
+{
+    int numAlfas = 10, indiceAlfaAtual,op;
+    double alfas[numAlfas] = {0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50};
+    int max_interacoes = 210;   //escolhe alfa
 }
 
 void Grafo::caixeiroViajante()

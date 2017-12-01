@@ -14,4 +14,4 @@ set(SOURCE_FILES
         Cadeia.cpp
         Cadeia.h)
 
-add_executable(TrabalhoGrafos ${SOURCE_FILES} Solucao.cpp Solucao.h)
+add_executable(TrabalhoGrafos ${SOURCE_FILES})

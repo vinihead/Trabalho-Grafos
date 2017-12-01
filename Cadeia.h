@@ -18,8 +18,8 @@ private:
 public:
     Cadeia(int vert1, int vert2, double comprimento);
     void insereVertice(int indiceInsercao, int idVertice, double custo);
-    int getCardinalidade();
-    double getComprimento();
+    int getCardinalidade()const;
+    double getComprimento()const;
     vector<int> getCadeia()const;
 };
 

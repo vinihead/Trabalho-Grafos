@@ -16,13 +16,12 @@ vector<int> Cadeia::getCadeia() const {
     return vertices;
 }
 
-int Cadeia::getCardinalidade()
+int Cadeia::getCardinalidade()const
 {
     return cardinalidadeQ;
 }
 
-double Cadeia::getComprimento()
-{
+double Cadeia::getComprimento()const {
     return comprimetoL;
 }
 
