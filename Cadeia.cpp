@@ -45,7 +45,10 @@ vector<int> Cadeia::getCadeia() const {
     return vertices;
 }
 
-Cadeia::Cadeia(int cardinalidadeQ, double comprimentoL) {
-    this->cardinalidadeQ = cardinalidadeQ;
-    this->comprimetoL = comprimentoL;
+Cadeia::Cadeia(int vert1, int vert2, double comprimento)
+{
+    this->vertices.emplace_back(vert1);
+    this->vertices.emplace_back(vert2);
+    this->cardinalidadeQ = 2;
+    this->comprimetoL = comprimento;
 }

@@ -23,10 +23,29 @@
 #define BRANCO 0
 
 ///Estrutura auxiliar usada como paramentro na ordenação da lista de candidatos (por custo) usando std::sort
-struct {
+/*struct {
     bool operator()(pair<int, double> cand1, pair<int, double> cand2) const
     {
         return cand1.second < cand2.second;
+    }
+} ordenaCusto;
+
+struct {
+    bool operator()(pair<pair<int, double>,int> cand1, pair<pair<int, double>,int> cand2) const
+    {
+        return cand1.first.second < cand2.first.second;
+    }
+} ordenaCusto;
+*/
+
+struct {
+    bool operator()(pair<pair<int, double>,int> cand1, pair<pair<int, double>,int> cand2) const
+    {
+        return cand1.first.second < cand2.first.second;
+    }
+    bool operator()(pair<pair<int, double>,pair<int,int>> cand1, pair<pair<int, double>,pair<int,int>> cand2) const
+    {
+        return cand1.first.second < cand2.first.second;
     }
 } ordenaCusto;
 
@@ -382,24 +401,35 @@ bool Grafo::procuraVertice(int idVert) //Retorna true caso ache uma adjacencia c
     return false;
 }
 
+
+/*
+ * tuple<int, int, int> oi;
+    get<0>(oi) = 0;
+    get<1>(oi) = 0;
+    get<2>(oi) = 0;
+ */
+
 ///Heuristica da Insercao Mais Barata
 void Grafo::algConstrutGuloso()
 {
+    //pair<pair<int, int>,int> oi;
+
     if((ordem-numPretos) > (maxCusto*numPretos))
     {
         cout << "A restricao de cardinalidade nao pode ser satisfeita" << endl;
         return;
     }
 
-    vector<pair<int,double>> candidatosPretos;
-    vector<pair<int,double>> candidatosBrancos;
+    //vector<pair<int,double>> candidatosPretos;
+    //vector<pair<int,double>> candidatosBrancos;
+    vector<pair<pair<int,double>,int>> candidatosPretos;
+    vector<pair<pair<int,double>,pair<int,int>>> candidatosBrancos;
     vector<int> solucaoInicial;
-    int indiceInsercao=0;
-    int indiceInsercaoCadeia=0;
-    int adj;
+    int indiceInsercao;
+    int indiceInsercaoCadeia;
     double custo;
     bool viavel;//existeSolucao
-    double custoSolucaoInicial=0;
+    double custoSolucao=0;
     pair<int,int> aresta;
 
     ///Gera as listas de candidatos pretos e brancos
@@ -407,92 +437,93 @@ void Grafo::algConstrutGuloso()
     {
         if(itVert.getCorPB() == PRETO)
         {
-            candidatosPretos.emplace_back(make_pair(itVert.getIdVertice(),0));
-            cout << "Preto: " << candidatosPretos.crbegin()->first << endl;
+            candidatosPretos.emplace_back(pair<pair<int, double>,int>(make_pair(itVert.getIdVertice(),0), 0));
+            cout << "Preto: " << candidatosPretos.crbegin()->first.first << endl;
         }
         else if(itVert.getCorPB() == BRANCO)
         {
-            candidatosBrancos.emplace_back(make_pair(itVert.getIdVertice(),0));
-            cout << "Branco: " << candidatosBrancos.crbegin()->first << endl;
+            candidatosBrancos.emplace_back(pair<pair<int, double>,pair<int,int>>(make_pair(itVert.getIdVertice(),0), make_pair(0,0)));
+            cout << "Branco: " << candidatosBrancos.crbegin()->first.first << endl;
         }
     }
 
-    ///loop para escolha da primeira aresta da solucao inicial: a de menor custo
+    ///loop para escolha da primeira aresta da solucao inicial: a de menor peso/distancia
     custo = INFINITO;
     for(int i=0; i<candidatosPretos.size()-1; i++)
     {
         for(int j=i+1; j<candidatosPretos.size(); j++)
         {
-            if(matrizDistancia[candidatosPretos[i].first][candidatosPretos[j].first] < custo)
+            if(matrizDistancia[candidatosPretos[i].first.first][candidatosPretos[j].first.first] < custo)
             {
-                custo = matrizDistancia[candidatosPretos[i].first][candidatosPretos[j].first];
-                aresta.first = candidatosPretos[i].first;
-                aresta.second = candidatosPretos[j].first;
-                cout <<  "aresta " <<aresta.first << " " << aresta.second << " " << custo << endl;
+                custo = matrizDistancia[candidatosPretos[i].first.first][candidatosPretos[j].first.first];
+                aresta.first = candidatosPretos[i].first.first;
+                aresta.second = candidatosPretos[j].first.first;
+                cout <<  "Primeira aresta: " <<aresta.first << " " << aresta.second << " " << custo << endl;
             }
         }
     }
+    cout << endl;
 
     solucaoInicial.emplace_back(aresta.first);
     solucaoInicial.emplace_back(aresta.second);
 
     ///Remove da lista de candidatos os dois vertices da aresta inicial
     for(auto it = candidatosPretos.begin();it != candidatosPretos.end();)
-        if(it->first == aresta.first || it->first == aresta.second)
+        if(it->first.first == aresta.first || it->first.first == aresta.second)
             it = candidatosPretos.erase(it);
         else
             it++;
 
     ///Loop para gerar a solucao inicial de pretos Pela Heuristica de Inserção Mais Barata do PCV
     ///Com a necessidade apenas de se preocupar com a restrição comprimento do PCVPB
-
-    while(!candidatosPretos.empty())//(solucaoInicial.size() < numPretos)
-    {
-
-        cout << "Aresta escolhida: " << aresta.first << "," << aresta.second << " Peso: " << custo<< endl;
-
-        /// Gerando custo de adicao dos candidatos as arestas
-        ///É feito o custo de adicao de cada vertice para cada aresta que já esta na solução
-        viavel=false;
-        for(auto & itCand : candidatosPretos)
-        {
+    while(!candidatosPretos.empty()) {
+        /// Gerando custo de adicao dos candidatos
+        ///Para cada vertice candidato, eh escolhido a aresta da solucao que tem o menor custo
+        viavel = false;
+        for (auto &itCand : candidatosPretos) {
             custo = INFINITO;
             double distAresta1;
             double distAresta2;
             double custoInsercao;
-            for(int i=0; i<solucaoInicial.size(); i++)
-            {
-                pair<int,int> arestaAux;
+            for (int i = 0; i < solucaoInicial.size(); i++) {
+                pair<int, int> arestaAux;
                 arestaAux.first = solucaoInicial[i];
-                arestaAux.second = solucaoInicial[(i+1)%solucaoInicial.size()];
+                arestaAux.second = solucaoInicial[(i + 1) % solucaoInicial.size()];
 
-                distAresta1 = matrizDistancia[itCand.first][arestaAux.first];
-                distAresta2 = matrizDistancia[itCand.first][arestaAux.second];
-                custoInsercao = distAresta1+distAresta2-matrizDistancia[arestaAux.first][arestaAux.second];
-                if(custoInsercao<custo && distAresta1<maxCusto && distAresta2<maxCusto)
-                {
+                distAresta1 = matrizDistancia[itCand.first.first][arestaAux.first];
+                distAresta2 = matrizDistancia[itCand.first.first][arestaAux.second];
+                custoInsercao = distAresta1 + distAresta2 - matrizDistancia[arestaAux.first][arestaAux.second];
+                if (custoInsercao < custo && distAresta1 < maxCusto && distAresta2 < maxCusto &&
+                    (distAresta1 + distAresta2) < maxCusto) {
                     aresta.first = arestaAux.first;
                     aresta.second = arestaAux.second;
                     custo = custoInsercao;
                     indiceInsercao = (i+1)%solucaoInicial.size();
+                    //itCand.second = (i + 1) % solucaoInicial.size();
                     viavel = true;
                 }
             }
-            itCand.second = custo;
+            itCand.second = indiceInsercao;
+            itCand.first.second = custo;
         }
+        cout << "Aresta escolhida: " << aresta.first << "," << aresta.second << " Peso: "
+             << matrizDistancia[aresta.first][aresta.second] << endl;
 
-        if(!viavel)
-        {
+        if (!viavel) {
             cout << "NAO EH VIAVEL!!!" << endl;
             return;
         }
 
         /// Ordena candidatos por custo de insercao
-        sort(candidatosPretos.begin(),candidatosPretos.end(), ordenaCusto);
+        sort(candidatosPretos.begin(), candidatosPretos.end(), ordenaCusto);
+
+        cout << "Vertice escolhido: " << candidatosPretos.begin()->first.first << " " << fixed
+             << candidatosPretos.begin()->first.second << endl;
 
         /// Insere o melhor vertice, com o menor custo de insercao na solucao inicial
-        /// E o exclui da lista de candidatos
-        solucaoInicial.insert(solucaoInicial.begin()+indiceInsercao, candidatosPretos.begin()->first);
+        //solucaoInicial.insert(solucaoInicial.begin()+indiceInsercao, candidatosPretos.begin()->first);
+        solucaoInicial.insert(solucaoInicial.begin()+candidatosPretos.begin()->second, candidatosPretos.begin()->first.first);
+        /// Exclui o vertice da lista de candidatos que foi inserido na solução
         candidatosPretos.erase(candidatosPretos.begin());
 
         cout << "Solucao inicial Parcial: ";
@@ -507,9 +538,9 @@ void Grafo::algConstrutGuloso()
     for(int i=0; i<solucaoInicial.size(); i++)
     {
         cout << solucaoInicial[i] << " ";
-        custoSolucaoInicial += matrizDistancia[solucaoInicial[i]][solucaoInicial[(i+1)%solucaoInicial.size()]];
+        custoSolucao += matrizDistancia[solucaoInicial[i]][solucaoInicial[(i+1)%solucaoInicial.size()]];
     }
-    cout << endl << "Custo Solucao inicial: " << custoSolucaoInicial;
+    cout << endl << "Custo Solucao inicial: " << custoSolucao << endl;
 
 
 
@@ -523,13 +554,8 @@ void Grafo::algConstrutGuloso()
     solucao.solucao = solucaoInicial;
     for(int i=0; i < solucaoInicial.size(); i++)
     {
-        Cadeia cadeia(0,matrizDistancia[solucaoInicial[i]][solucaoInicial[(i+1)%solucaoInicial.size()]]);
-        //cadeia.cardinalidadeQ=0;
-        //cadeia.comprimetoL=matrizDistancia[solucaoInicial[i]-1][solucaoInicial[(i+1)%solucaoInicial.size()]-1];
-        //cadeia.vert.emplace_back(solucaoInicial[i]);
-        //cadeia.vert.emplace_back(solucaoInicial[(i+1)%solucaoInicial.size()]);
-        cadeia.setVertice(solucaoInicial[i]);
-        cadeia.setVertice(solucaoInicial[(i+1)%solucaoInicial.size()]);
+        double peso = matrizDistancia[solucaoInicial[i]][solucaoInicial[(i+1)%solucaoInicial.size()]];
+        Cadeia cadeia(solucaoInicial[i],solucaoInicial[(i+1)%solucaoInicial.size()],peso);
         solucao.cadeias.emplace_back(cadeia);
     }
 
@@ -539,16 +565,9 @@ void Grafo::algConstrutGuloso()
         cout << "Cadeia: " << itSolucao.getCadeia()[0] << " " << itSolucao.getCadeia()[1] << endl;
     }
 
-    /// Variaveis teste
-
-    int cardinalidadeOficial = 2;
-    double comprimentoOficial = 15;
-    double comprimentoBacaninha = 0;
-
     /// IEB
     while (!candidatosBrancos.empty())
     {
-        //candidatosBrancos.emplace_back(solucaoBrancos);
         viavel = false;
         for(auto & itCand : candidatosBrancos)
         {
@@ -565,8 +584,8 @@ void Grafo::algConstrutGuloso()
                     arestaAux.first = cadeia[j];
                     arestaAux.second = cadeia[j+1];
 
-                    distAresta1 = matrizDistancia[itCand.first][arestaAux.first];
-                    distAresta2 = matrizDistancia[itCand.first][arestaAux.second];
+                    distAresta1 = matrizDistancia[itCand.first.first][arestaAux.first];
+                    distAresta2 = matrizDistancia[itCand.first.first][arestaAux.second];
                     custoInsercao = distAresta1+distAresta2-matrizDistancia[arestaAux.first][arestaAux.second];
                     if(custoInsercao<custo && distAresta1<maxCusto && distAresta2<maxCusto)
                     {
@@ -574,13 +593,14 @@ void Grafo::algConstrutGuloso()
                         aresta.second = arestaAux.second;
                         custo = custoInsercao;
                         indiceInsercaoCadeia = i;
-                        indiceInsercao = j;
+                        indiceInsercao = j+1;
                         viavel=true;
                     }
                 }
 
             }
-            itCand.second = custo;
+            cout << "Aresta escolhida: " << aresta.first << ", " << aresta.second << " Peso: " << matrizDistancia[aresta.first][aresta.second]<< endl;
+            itCand.first.second = custo;
         }
 
         if(!viavel)
@@ -598,85 +618,98 @@ void Grafo::algConstrutGuloso()
         /// Insere o melhor vertice, com o menor custo de insercao na solucao inicial
         /// E o exclui da lista de candidatos
         //solucaoInicial.insert(solucaoInicial.begin()+indiceInsercao, candidatosPretos.begin()->first);
-        solucao.cadeias[indiceInsercaoCadeia].insereVertice(indiceInsercao,candidatosBrancos.begin()->first,candidatosBrancos.begin()->second);
+        solucao.cadeias[indiceInsercaoCadeia].insereVertice(indiceInsercao,candidatosBrancos.begin()->first.first,candidatosBrancos.begin()->first.second);
         candidatosBrancos.erase(candidatosBrancos.begin());
 
-        custoSolucaoInicial=0;
+        custoSolucao=0;
         cout << "Solucao Parcial: ";
         solucaoInicial.clear();
         for(int i=0; i<solucao.cadeias.size(); i++)
         {
             vector<int> cadeia = solucao.cadeias[i].getCadeia();
-            for(int j=0; j <cadeia.size()-1; j++)
+            for(int j=0; j <cadeia.size(); j++)
             {
-                cout << cadeia[j] << " ";
-                custoSolucaoInicial += matrizDistancia[cadeia[j]][cadeia[(j+1)]];
-                solucaoInicial.emplace_back(cadeia[j]);
+                if(j!=cadeia.size()-1)
+                {
+                    cout << cadeia[j] << " ";
+                    custoSolucao += matrizDistancia[cadeia[j]][cadeia[(j+1)]];
+                    solucaoInicial.emplace_back(cadeia[j]);
+                }
+
             }
 
         }
-        cout << endl << endl;
+        cout << endl << "Custo Parcial: "<< custoSolucao<< endl;
     }
 
-    custoSolucaoInicial=0;
+    custoSolucao=0;
     cout << "Solucao Final: ";
-    for(int i=0; i<solucaoInicial.size(); i++)
+
+    for(int i=0; i<solucao.cadeias.size(); i++)
     {
-        cout << solucaoInicial[i] << " ";
-        custoSolucaoInicial += matrizDistancia[solucaoInicial[i]][solucaoInicial[(i+1)%solucaoInicial.size()]];
+        vector<int> cadeia = solucao.cadeias[i].getCadeia();
+        for(int j=0; j <cadeia.size(); j++)
+        {
+            if(j!=cadeia.size()-1)
+            {
+                cout << cadeia[j] << " ";
+                custoSolucao += matrizDistancia[cadeia[j]][cadeia[(j+1)]];
+                solucaoInicial.emplace_back(cadeia[j]);
+            }
+            //else if(i==(solucao.cadeias.size()-1))
+                //custoSolucao+=matrizDistancia[cadeia[j]][solucao.cadeias[0].getCadeia()[0]];
+            //if(i==(solucao.cadeias.size()-2) && j==(cadeia.size()-2))
+                //custoSolucao+=matrizDistancia[cadeia[j]][0];
+        }
+
     }
-    cout << endl << "Custo Solucao Final: " << custoSolucaoInicial << endl;
+    cout << endl << "Custo Solucao Final: " << custoSolucao << endl;
 
 
 
-    sort(solucaoInicial.begin(),solucaoInicial.end());
-    for(int i=0; i<solucaoInicial.size(); i++)
-    {
-        cout << solucaoInicial[i] << " ";
-        custoSolucaoInicial += matrizDistancia[solucaoInicial[i]][solucaoInicial[(i+1)%solucaoInicial.size()]];
-    }
 
 
 
-    cout << "Cadeias:" << endl;
-    cout << "Solucao Parcial: ";
+    ///TESTE 1
+    cout << endl << "Cadeias:" << endl;
     solucaoInicial.clear();
     for(int i=0; i<solucao.cadeias.size(); i++)
     {
+        custoSolucao=0;
         vector<int> cadeia = solucao.cadeias[i].getCadeia();
         cout << "Cadeia " << i << ": ";
         for(int j=0; j <cadeia.size(); j++)
         {
             cout << cadeia[j] << " ";
-            custoSolucaoInicial += matrizDistancia[cadeia[j]][cadeia[(j+1)]];
-            solucaoInicial.emplace_back(cadeia[j]);
+            if(j!=cadeia.size()-1)
+            {
+                custoSolucao += matrizDistancia[cadeia[j]][cadeia[(j+1)]];
+                solucaoInicial.emplace_back(cadeia[j]);
+            }
         }
-        cout << endl << "Custo cadeia: " << solucao.cadeias[i].getComprimento();
-        cout << endl << "Quantidade de vertices na cadeia: " << solucao.cadeias[i].getCardinalidade() << " ou "<< solucao.cadeias[i].getQuantVertice() << endl;
+        cout << endl << "Custo cadeia: " << solucao.cadeias[i].getComprimento() << endl;
+        cout << "CUSTO SOLUCAO: " << custoSolucao << endl;
+        cout << "Quantidade de vertices na cadeia: " << solucao.cadeias[i].getCardinalidade() << " ou "<< solucao.cadeias[i].getQuantVertice() << endl;
 
     }
     cout << endl << endl;
 
+
+
+
+
+    ///TESTE 2
+    custoSolucao=0;
+    for(int i=0; i<solucaoInicial.size(); i++)
+    {
+        cout << solucaoInicial[i] << " ";
+        custoSolucao += matrizDistancia[solucaoInicial[i]][solucaoInicial[(i+1)%solucaoInicial.size()]];
+    }
+    cout << endl << "Custo Solucao Final: " << custoSolucao << endl;
 }
 
 
-/*
-///Função auxiliar usada como paramentro na ordenação da lista de candidatos pelo std::sort
-bool Grafo::ordenaCandidatos(pair<int, double> cand1, pair<int, double> cand2)
-{
-    return cand1.second < cand2.second;
-}
 
-
-
-
-
-bool pesoMinimo(const double& p1, const double& p2)
-{
-    return
-
-    return p1.age < p2.age;
-}*/
 
 void Grafo::algConstrutGulRandomizado()
 {
@@ -768,4 +801,21 @@ bool Grafo::viavel(Cadeia cadeia, double dist)
 {
     return (cadeia.comprimetoL + dist <= maxCusto) && (cadeia.comprimetoL+1 <=maxVertBranco);
 }
- */
+
+
+///Função auxiliar usada como paramentro na ordenação da lista de candidatos pelo std::sort
+bool Grafo::ordenaCandidatos(pair<int, double> cand1, pair<int, double> cand2)
+{
+    return cand1.second < cand2.second;
+}
+
+
+
+
+
+bool pesoMinimo(const double& p1, const double& p2)
+{
+    return
+
+    return p1.age < p2.age;
+}*/
