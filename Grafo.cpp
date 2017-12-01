@@ -587,7 +587,7 @@ void Grafo::algConstrutGuloso()
                     distAresta1 = matrizDistancia[itCand.first.first][arestaAux.first];
                     distAresta2 = matrizDistancia[itCand.first.first][arestaAux.second];
                     custoInsercao = distAresta1+distAresta2-matrizDistancia[arestaAux.first][arestaAux.second];
-                    if(custoInsercao<custo && distAresta1<maxCusto && distAresta2<maxCusto)
+                    if(custoInsercao<custo && distAresta1<maxCusto && distAresta2<maxCusto && (distAresta1 + distAresta2)<maxCusto &&solucao.cadeias[i].getCardinalidade()<maxVertBranco &&solucao.cadeias[i].getComprimento()+custoInsercao<maxCusto)
                     {
                         aresta.first = arestaAux.first;
                         aresta.second = arestaAux.second;
@@ -597,7 +597,8 @@ void Grafo::algConstrutGuloso()
                         viavel=true;
                     }
                 }
-
+                itCand.second.first = indiceInsercaoCadeia;
+                itCand.second.second = indiceInsercao;
             }
             cout << "Aresta escolhida: " << aresta.first << ", " << aresta.second << " Peso: " << matrizDistancia[aresta.first][aresta.second]<< endl;
             itCand.first.second = custo;
@@ -618,7 +619,8 @@ void Grafo::algConstrutGuloso()
         /// Insere o melhor vertice, com o menor custo de insercao na solucao inicial
         /// E o exclui da lista de candidatos
         //solucaoInicial.insert(solucaoInicial.begin()+indiceInsercao, candidatosPretos.begin()->first);
-        solucao.cadeias[indiceInsercaoCadeia].insereVertice(indiceInsercao,candidatosBrancos.begin()->first.first,candidatosBrancos.begin()->first.second);
+        //solucao.cadeias[indiceInsercaoCadeia].insereVertice(indiceInsercao,candidatosBrancos.begin()->first.first,candidatosBrancos.begin()->first.second);
+        solucao.cadeias[candidatosBrancos.begin()->second.first].insereVertice(candidatosBrancos.begin()->second.second,candidatosBrancos.begin()->first.first,candidatosBrancos.begin()->first.second);
         candidatosBrancos.erase(candidatosBrancos.begin());
 
         custoSolucao=0;
