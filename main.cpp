@@ -40,7 +40,6 @@ int main(int argc, char **argv)
 {
     cabecalho();
     int opcao;
-    bool digrafo;
     string inFileName;
     string outFileName;
     //argc=2;
