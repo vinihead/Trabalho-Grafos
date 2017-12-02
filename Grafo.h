@@ -60,29 +60,13 @@ public:
     unsigned int getOrdem();
     void saveGrafoAdjacencia(ofstream *outFile);
     void geraLinguagemDot();
-    Solucao algConstrutGuloso();
-    void algConstrutGulRandReativo();
-    void algConstrutGulRandomizado(float alfa);
-    void caixeiroViajante();
     void imprimeMatrizDistancia();
-    void caixeiroViajanteAux(int i, double &valorSolucaoAtual, double &valorMelhorSolucao, int *tempSolucao, int *melhorSolucao, bool *visitados);
-
-
-
-    //bool viabilidade(double dist);
-    //bool viabilidade(CadeiaTeste cadeia, double dist);
-    //bool viabilidade(Cadeia cadeia, double dist);
-
-
-
-
-
 
     Solucao randomizadoAuxiliar(float alfa);
-
+    void algConstrutGuloso();
+    void algConstrutGulRandReativo();
+    void algConstrutGulRandomizado(float alfa);
     bool viabilidade(double dist1, double dist2) const;
-    bool viabilidade(Cadeia *cadeia, double custoInsercao) const;
-
     bool viabilidade(Cadeia *cadeia, double custoInsercao, double dist1, double dist2) const;
 };
 

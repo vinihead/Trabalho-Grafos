@@ -150,12 +150,6 @@ int main(int argc, char **argv)
                 grafo.imprime();
                 break;
             }
-            case 7:
-            {
-                cout << "Caixeiro viajante Solucao normal" << endl;
-                grafo.caixeiroViajante();
-                break;
-            }
         }
     } while (opcao != 0);
     ///Fechando streams de entrada e saida
@@ -184,7 +178,6 @@ int menuShow()
         cout << "||     04 - Informacoes sobre a instancia                 ||" << endl;
         cout << "||     05 - Imprime Matriz de distancias                  ||" << endl;
         cout << "||     06 - Imprimir grafo                                ||" << endl;
-        cout << "||     07 - Algoritmo PCV                                 ||" << endl;
         cout << "|----------------------------------------------------------|" << endl << endl;
         if(passouMenu)
             cout << "Opcao Invalida.\nDigite uma opcao de 0 a 39: ";
@@ -195,7 +188,7 @@ int menuShow()
         }
         cin >> opc;
         cout << endl;
-    }while(opc < 0 || opc > 7);
+    }while(opc < 0 || opc > 6);
     return opc;
 }
 
