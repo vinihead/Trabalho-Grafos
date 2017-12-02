@@ -94,52 +94,66 @@ int main(int argc, char **argv)
             }
             case 1:
             {
-                grafo.saveGrafo(&outFile);
+                cout << "Chamando Algoritmo GULOSO." << endl;
+                grafo.algConstrutGuloso();
                 break;
             }
             case 2:
             {
-                grafo.saveGrafoAdjacencia(&outFile);
+                int opc=1;
+                do {
+                    cout << "|--------------- MENU ----------------|" << endl;
+                    cout << "|------ ESCOLHA O ALFA DESEJADO ------|" << endl;
+                    cout << "|-------------------------------------|" << endl;
+                    cout << "||     01 - Alfa 0.1                 ||" << endl;
+                    cout << "||     02 - Alfa 0.2                 ||" << endl;
+                    cout << "||     03 - Alfa 0.3                 ||" << endl;
+                    cout << "|-------------------------------------|" << endl;
+                    if(opc==1||opc==2||opc==3)
+                        cout << "Opcao: ";
+                    else
+                        cout <<"Digite a opcao adequadamente\nOpcao: ";
+                    cin >> opc;
+                    switch (opc){
+                        case 1:
+                            grafo.algConstrutGulRandomizado(0.1);
+                            break;
+                        case 2:
+                            grafo.algConstrutGulRandomizado(0.2);
+                            break;
+                        case 3:
+                            grafo.algConstrutGulRandomizado(0.3);
+                            break;
+                    }
+                }while(opc!=1&&opc!=2&&opc!=3);
                 break;
             }
             case 3:
+            {
+                cout << "Chamando Algoritmo GULOSO RANDOMIZADO REATIVO." << endl;
+                grafo.algConstrutGulRandReativo();
+                break;
+            }
+            case 4:
+            {
+
+                break;
+            }
+            case 5:
             {
                 cout << "Matriz de Distancias:" << endl;
                 grafo.imprimeMatrizDistancia();
                 break;
             }
-            case 4:
-            {
-                cout << "Chamando Algoritmo GULOSO." << endl;
-                grafo.algConstrutGuloso();
-                break;
-            }
-            case 5:
-            {
-                cout << "Chamando Algoritmo GULOSO RANDOMIZADO." << endl;
-                grafo.algConstrutGulRandomizado();
-                break;
-            }
             case 6:
             {
-                cout << "Chamando Algoritmo GULOSO RANDOMIZADO REATIVO." << endl;
-                grafo.algConstrutGulRandReativo();
+                grafo.imprime();
                 break;
             }
             case 7:
             {
                 cout << "Caixeiro viajante Solucao normal" << endl;
                 grafo.caixeiroViajante();
-                break;
-            }
-            case 8:
-            {
-                grafo.geraLinguagemDot();
-                break;
-            }
-            case 9:
-            {
-                grafo.imprime();
                 break;
             }
         }
@@ -160,21 +174,18 @@ int menuShow()
     {
         if(!passouMenu)
             pausarTela(true);
-        cout << "------ PROBLEMA DO CAIXEIRA VIAJANTE PRETO E BRANCO ------" << endl;
-        cout << "-------------------------- MENU --------------------------" << endl;
-        cout << "|     00 - Sair                                          |" << endl;
-        cout << "|     01 - Salvar grafo em arquivo                       |" << endl;
-        cout << "|     02 - Salvar grafo em modo lista de adjacencia      |" << endl;
-        cout << "|     03 - Imprime Matriz de distancias                  |" << endl;
-        cout << "|     04 - Algoritmo do PCVPB Guloso                     |" << endl;
-        cout << "|     05 - Algoritmo do PCVPB Guloso Randomizado         |" << endl;
-        cout << "|     06 - Algoritmo do PCVPB Guloso Randomizado Reativo |" << endl;
-        cout << "|     07 - Algoritmo PCV                                 |" << endl;
-        cout << "|     08 - Gerar Grafo em linguagem DOT                  |" << endl;
-        cout << "|     09 - Imprimir grafo                                |" << endl;
-        cout << "|     10 - Algoritmo Guloso Antigo (vizinho + proximo)   |" << endl;
-        cout << "|     11 - Informacoes sobre a instancia                 |" << endl;
-        cout << "----------------------------------------------------------" << endl << endl;
+        cout << "|----------------------------------------------------------|" << endl;
+        cout << "|------ PROBLEMA DO CAIXEIRA VIAJANTE PRETO E BRANCO ------|" << endl;
+        cout << "|-------------------------- MENU --------------------------|" << endl;
+        cout << "||     00 - Sair                                          ||" << endl;
+        cout << "||     01 - Algoritmo do PCVPB Guloso                     ||" << endl;
+        cout << "||     02 - Algoritmo do PCVPB Guloso Randomizado         ||" << endl;
+        cout << "||     03 - Algoritmo do PCVPB Guloso Randomizado Reativo ||" << endl;
+        cout << "||     04 - Informacoes sobre a instancia                 ||" << endl;
+        cout << "||     05 - Imprime Matriz de distancias                  ||" << endl;
+        cout << "||     06 - Imprimir grafo                                ||" << endl;
+        cout << "||     07 - Algoritmo PCV                                 ||" << endl;
+        cout << "|----------------------------------------------------------|" << endl << endl;
         if(passouMenu)
             cout << "Opcao Invalida.\nDigite uma opcao de 0 a 39: ";
         else
@@ -184,7 +195,7 @@ int menuShow()
         }
         cin >> opc;
         cout << endl;
-    }while(opc < 0 || opc > 10);
+    }while(opc < 0 || opc > 7);
     return opc;
 }
 

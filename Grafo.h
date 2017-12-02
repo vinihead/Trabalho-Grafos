@@ -60,9 +60,9 @@ public:
     unsigned int getOrdem();
     void saveGrafoAdjacencia(ofstream *outFile);
     void geraLinguagemDot();
-    void algConstrutGuloso();
+    Solucao algConstrutGuloso();
     void algConstrutGulRandReativo();
-    void algConstrutGulRandomizado();
+    void algConstrutGulRandomizado(float alfa);
     void caixeiroViajante();
     void imprimeMatrizDistancia();
     void caixeiroViajanteAux(int i, double &valorSolucaoAtual, double &valorMelhorSolucao, int *tempSolucao, int *melhorSolucao, bool *visitados);
@@ -78,7 +78,7 @@ public:
 
 
 
-    void randomizadoAuxiliar();
+    Solucao randomizadoAuxiliar(float alfa);
 
     bool viabilidade(double dist1, double dist2) const;
     bool viabilidade(Cadeia *cadeia, double custoInsercao) const;
