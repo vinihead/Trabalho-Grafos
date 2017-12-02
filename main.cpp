@@ -173,7 +173,7 @@ int menuShow()
         cout << "|     08 - Gerar Grafo em linguagem DOT                  |" << endl;
         cout << "|     09 - Imprimir grafo                                |" << endl;
         cout << "|     10 - Algoritmo Guloso Antigo (vizinho + proximo)   |" << endl;
-        cout << "|     11 - Informações sobre a instância                 |" << endl;
+        cout << "|     11 - Informacoes sobre a instancia                 |" << endl;
         cout << "----------------------------------------------------------" << endl << endl;
         if(passouMenu)
             cout << "Opcao Invalida.\nDigite uma opcao de 0 a 39: ";

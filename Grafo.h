@@ -69,9 +69,9 @@ public:
 
 
 
-    //bool viavel(double dist);
-    //bool viavel(CadeiaTeste cadeia, double dist);
-    //bool viavel(Cadeia cadeia, double dist);
+    //bool viabilidade(double dist);
+    //bool viabilidade(CadeiaTeste cadeia, double dist);
+    //bool viabilidade(Cadeia cadeia, double dist);
 
 
 
@@ -79,6 +79,11 @@ public:
 
 
     void randomizadoAuxiliar();
+
+    bool viabilidade(double dist1, double dist2) const;
+    bool viabilidade(Cadeia *cadeia, double custoInsercao) const;
+
+    bool viabilidade(Cadeia *cadeia, double custoInsercao, double dist1, double dist2) const;
 };
 
 
