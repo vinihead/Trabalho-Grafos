@@ -21,24 +21,23 @@ Consideramos um grafo nao direcionado e completo
  */
 
 #include <iostream>
+#include <ctime>
 #include "Grafo.h"
 
 using namespace std;
 
 int menuShow();
 void cabecalho();
-void escreveCabecalhoArquivo();
+void escreveCabecalhoArquivo(ofstream *outFile);
 void pausarTela(bool continuar);
 void finalizaPrograma();
 
-///Variaveis globais criadas para facilitar a escrita de arquivos, sem possibilidade de excluir ou incluir arestas e vertices
-///Como as instancias são comportadas não preciso me preocupar com algumas coisas que me preocupei na primeira fase
-ofstream outFile;
-ifstream inFile;
-
 int main(int argc, char **argv)
 {
+    srand(static_cast<unsigned int>(time(nullptr)));
     cabecalho();
+    ofstream outFile;
+    ifstream inFile;
     int opcao;
     string inFileName;
     string outFileName;
@@ -76,7 +75,7 @@ int main(int argc, char **argv)
         pausarTela(false);
         return -1;
     }
-    escreveCabecalhoArquivo();
+    escreveCabecalhoArquivo(&outFile);
     cout << "Arquivo de entrada: " << inFileName << endl;
     cout << "Arquivo de saida: " << outFileName << endl << endl;
 
@@ -213,13 +212,13 @@ void cabecalho()
 
 }
 
-void escreveCabecalhoArquivo()
+void escreveCabecalhoArquivo(ofstream *outFile)
 {
-    outFile << "Trabalho de Introducao a Teoria dos Grafos" << endl;
-    outFile << "Autores:" << endl;
-    outFile << "Vinicius Carlos de Oliveira - Matricula: 201635025" << endl;
-    outFile << "Ruan Lucas de Oliveira Rodrigues - Matricula: 201635005" << endl;
-    outFile << endl << "-> ANALISE DO GRAFO" << endl << endl;
+    *outFile << "Trabalho de Introducao a Teoria dos Grafos" << endl;
+    *outFile << "Autores:" << endl;
+    *outFile << "Vinicius Carlos de Oliveira - Matricula: 201635025" << endl;
+    *outFile << "Ruan Lucas de Oliveira Rodrigues - Matricula: 201635005" << endl;
+    *outFile << endl << "-> ANALISE DO GRAFO" << endl << endl;
 }
 
 void pausarTela(bool continuar)

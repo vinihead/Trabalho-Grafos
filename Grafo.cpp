@@ -13,6 +13,7 @@
 #include <climits>
 #include <cmath>
 #include <iomanip>
+#include <random>
 
 #define INFINITO LONG_MAX
 
@@ -403,9 +404,10 @@ void Grafo::imprimeMatrizDistancia() {
     }
 }
 
-///Heuristica da Insercao Mais Barata
-Grafo::Solucao Grafo::randomizadoAuxiliar(float alfa) {
-    srand(static_cast<unsigned int>(time(nullptr)));
+///Heuristica PCVPB - Insercao Mais Barata
+Grafo::Solucao Grafo::gulosoRandomizadoAuxiliar(float alfa)
+{
+    cout << rand() << " ";
     vector<pair<pair<int, double>, int>> candidatosPretos;
     vector<pair<pair<int, double>, pair<int, int>>> candidatosBrancos;
     vector<int> solucaoInicial;
@@ -417,6 +419,7 @@ Grafo::Solucao Grafo::randomizadoAuxiliar(float alfa) {
     pair<int, int> aresta;
     Solucao solucao;
     solucao.custo = 0;
+    solucao.alfa = alfa;
 
     ///Gera as listas de candidatos pretos e brancos
     for (auto itVert : vertices) {
@@ -438,7 +441,7 @@ Grafo::Solucao Grafo::randomizadoAuxiliar(float alfa) {
             }
         }
     }
-    cout << endl;
+    //cout << endl;
 
     solucaoInicial.emplace_back(aresta.first);
     solucaoInicial.emplace_back(aresta.second);
@@ -621,68 +624,207 @@ Grafo::Solucao Grafo::randomizadoAuxiliar(float alfa) {
             }
         }
     }
-    ///Imprime informações sobre a solução
-    /*cout.precision(10);
-    cout << endl << "-------------------------------------------------------" << endl;
-    cout << "Solucao Final:";
-    for (const auto &it : solucao.listVertices)
-        cout << " " << (it + 1);
-    cout << endl << "Custo Solucao Final: " << solucao.custo << endl;
-    cout << "-------------------------------------------------------" << endl;*/
     return solucao;
 }
 
 
 void Grafo::algConstrutGuloso()
 {
-    Solucao solucao = randomizadoAuxiliar(0);
-    ///Imprime informações sobre a solução
-    cout.precision(10);
-    cout << endl << "-------------------------------------------------------" << endl;
-    cout << "Solucao Final:";
-    for(const auto& it : solucao.listVertices)
-        cout << " "<< (it+1);
-    cout << endl << "Custo Solucao Final: " << solucao.custo << endl;
-    cout << "-------------------------------------------------------" << endl;
+    Solucao solucao = gulosoRandomizadoAuxiliar(0);
+    ofstream outFile;
+    imprimeSolucao(2, &solucao, &outFile);
 }
 
-
+/**
+ *
+ * @param alfa
+ */
 void Grafo::algConstrutGulRandomizado(float alfa)
 {
     ///Já roda o guloso para pegar a melhor solução para comparar com as soluções do randomizado
-    Solucao melhorSolucao = randomizadoAuxiliar(0);
-    for(int i=0; i<10; i++)
+    Solucao melhorSolucao = gulosoRandomizadoAuxiliar(0);
+    int numIteracoes = 100;
+    for(int i=0; i<numIteracoes; i++)
     {
-        Solucao solAux = randomizadoAuxiliar(alfa);
-        if(solAux.custo < melhorSolucao.custo)
-            melhorSolucao = solAux;
+        Solucao solucaoAtual = gulosoRandomizadoAuxiliar(alfa);
+        if(solucaoAtual.custo < melhorSolucao.custo && solucaoAtual.custo!=-1)
+                melhorSolucao = solucaoAtual;
     }
-    ///Imprime informações sobre a solução
-    cout.precision(10);
-    cout << endl << "-------------------------------------------------------" << endl;
-    cout << "Solucao Final:";
-    for (const auto &it : melhorSolucao.listVertices)
-        cout << " " << (it + 1);
-    cout << endl << "Custo Solucao Final: " << melhorSolucao.custo << endl;
-    cout << "-------------------------------------------------------" << endl;
+    ofstream outFile;
+    imprimeSolucao(2, &melhorSolucao, &outFile);
 }
 
 void Grafo::algConstrutGulRandReativo()
 {
     ///Já roda o guloso para pegar a melhor solução para comparar com as soluções do randomizado reativo
-    int numAlfas = 10, indiceAlfaAtual,op;
-    double alfas[numAlfas] = {0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50};
-    int max_interacoes = 210;   //escolhe alfa
+    cout.setf(ios::fixed);
+    Solucao melhorSolucao = gulosoRandomizadoAuxiliar(0);
+    const int numAlfas = 10;
+    int indiceAlfaAtual;//,op;
+    const float vetAlfas[numAlfas] = {0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50};
+    const int numIteracoes = 100;
+    const int iteracoesAtualizaProb = 20;
+
+
+    long somaAlfas[numAlfas] = {0};    //soma dos resultados obtidos com cada alpha
+    long qtdEscolhido[numAlfas] ={0};   //quantidade de vezes que cada alfa foi escolhido e executado
+    //Solucao melhorSolucao = randomizadoAuxiliar(0);//long melhorSolucao = INFINITO;  //F(S*)
+    int melhorSemente;
+   // /**USA ISSO?*/float delta = 1.0; // quanto o melhor resultado influencia  a novas probabilidades
+    //vector<float> p_i;   //probabilidade de escolher alfai
+    //long valorDaSolucaoAtual;
+    //float melhorAlfa;
+
+    //inicializa
+
+ /*   for(int i=0; i<numAlfas; i++){
+        cout << soma_i[i] << " ";
+        cout << qtdeUso_i[i] << " ";
+        cout << q_i[i] << " ";
+        //p_i.push_back(1.0/numAlfas);
+    }*/
+    discrete_distribution<> distribuicao = {0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1};//(p_i.begin(), p_i.end());   //cria variavel de escolher indice aleatorio
+    default_random_engine gerador((unsigned int)time(nullptr));  //gerador num aleatorios
+    for(int i=0; i<numIteracoes; i++)
+    {
+        cout << "it " << i << endl;
+        //escolhe alfa aleatoriamente atraves da distribuiçao de probabilidades
+        indiceAlfaAtual = distribuicao(gerador);
+        cout << "geradorHAHA:" << gerador << endl;
+        cout << "Indice alfa Atual: " << indiceAlfaAtual <<endl;
+        Solucao solucaoAtual = gulosoRandomizadoAuxiliar(vetAlfas[indiceAlfaAtual]);//valorDaSolucaoAtual = auxCVGR(alfas[indiceAlfaAtual],false);
+        somaAlfas[indiceAlfaAtual] += solucaoAtual.custo;//valorDaSolucaoAtual;   //soma dos resultados obtidos com esse alfa
+        qtdEscolhido[indiceAlfaAtual] += 1;  //num execuçao este alfa
+
+        //atualiza valores da melhor soluçao
+        if(solucaoAtual.custo < melhorSolucao.custo){
+            cout << "TROCA DE MELHOR SOLUCAO\n";
+            cout << "Melhor Solucao: " <<melhorSolucao.custo << endl;
+            cout << "Alfa melhor solucao: " << melhorSolucao.alfa << endl;
+            cout << "Solucao para troca: " << solucaoAtual.custo << endl;
+            cout << "Alfa solucao para troca: " << solucaoAtual.alfa << endl;
+            //solucaoAtual.alfa = vetAlfas[indiceAlfaAtual];
+            melhorSolucao = solucaoAtual;//valorDaSolucaoAtual;
+
+            //melhorSemente = i;
+        }
+
+        cout << "solucao atual: " << solucaoAtual.custo << endl;
+        cout << "alfa atual: " << solucaoAtual.alfa << endl;
+        cout << "Custo melhor solucao: " << melhorSolucao.custo << endl;
+        cout << "melhor alfa: " << melhorSolucao.alfa << endl;
+
+
+        //Reativo
+        if((i+1) % iteracoesAtualizaProb == 0){
+            double q_i[numAlfas] = {0}; ///Utilizado para gerar as novas probabilidades
+            cout << "Atualizacao de probabilidade\n";
+            float soma_qi = 0;
+            /**USA ISSO?*/float A_i = 0;     //media soma_i/qtdeUso_i
+
+            for(int j=0; j<numAlfas; j++){
+                //caso o alfa tenha sido utilizado
+                if(qtdEscolhido[j] > 0){
+                    A_i = somaAlfas[j] / qtdEscolhido[j]; //media dos resultados para alfa
+                    q_i[j] = pow(melhorSolucao.custo / A_i, 1.0); // 1.0 é o float delta = 1.0; // quanto o melhor resultado influencia  a novas probabilidades
+                    soma_qi += q_i[j];
+                }
+            }
+
+            cout << "Probabilidades da distribuicao: " << endl;
+            for(auto it : distribuicao.probabilities())
+                cout << it << " ";
+            cout << endl;
+
+
+            vector<float> auxNovaDistribuicao;
+            for(int j=0; j < numAlfas; j++){
+                auxNovaDistribuicao.push_back(1.0 * q_i[j] / soma_qi);  //1.0 necessario pra converter
+                //cout << auxNovaDistribuicao[j] << endl;
+            }
+
+
+
+            //atualiza distribuiçao
+            discrete_distribution<> novaDistribuicao(auxNovaDistribuicao.begin(), auxNovaDistribuicao.end());
+            distribuicao = novaDistribuicao;
+            cout << "Nova distribuicao\n";
+            cout << "Probabilidades da nova distribuicao: " << endl;
+            for(auto it : distribuicao.probabilities())
+                cout << it << " ";
+            cout << endl;
+
+        }
+    }
+    cout << "Min: " << distribuicao.min() << "\nMax: " << distribuicao.max() << endl;
+    ofstream outFile;
+    imprimeSolucao(3, &melhorSolucao, &outFile);
 }
 
-
+/**
+ *
+ * @param cadeia
+ * @param custoInsercao
+ * @param dist1
+ * @param dist2
+ * @return
+ */
 bool Grafo::viabilidade(Cadeia *cadeia, double custoInsercao, double dist1, double dist2) const
 {
     return viabilidade(dist1, dist2) && cadeia->getComprimento()+custoInsercao<=maxCusto && cadeia->getCardinalidade()<maxVertBranco;
 }
 
+/**
+ *
+ * @param dist1
+ * @param dist2
+ * @return
+ */
 bool Grafo::viabilidade(double dist1, double dist2) const
 {
     return dist1<maxCusto && dist2<maxCusto && dist1+dist2<maxCusto;
 }
 
+///Funcao imprime informacoes sobre a solucao na tela e no arquivo de saida
+/**
+ *
+ * @param algoritmo (1-Guloso, 2-Randomizado, 3-Reativo)
+ * @param melhorSolucao
+ * @param outFile
+ */
+void Grafo::imprimeSolucao(int algoritmo, Solucao *melhorSolucao, ofstream *outFile)
+{
+
+    cout << "Algoritmo Finalizado." << endl;
+    if (melhorSolucao->custo == -1)
+    {
+        cout << "Não encontrada solução viavel para a instancia." << endl;
+    }
+    else
+    {
+        cout << "Solucao construida." << endl;
+        cout << "Deseja visualizar informacoes sobre a solucao? (tecle \'1\' para SIM): ";
+        int opcao;
+        cin >> opcao;
+        if(opcao==1){
+            cout << endl << "-------------------------------------------------------------" << endl;
+            if(algoritmo == 1)
+                cout << "Algoritmo Construtivo Guloso." << endl;
+            else if(algoritmo == 2)
+            {
+                cout << "Algoritmo Contrutivo Guloso Randomizado." << endl;
+                cout << "Alfa utilizado: " << setprecision(2) << melhorSolucao->alfa << endl;
+            }
+            else if(algoritmo == 3)
+            {
+                cout << "Algoritmo Contrutivo Guloso Randomizado Reativo." << endl;
+                cout << "Melhor Alfa: " << fixed << setprecision(2) << melhorSolucao->alfa << endl;
+            }
+            cout << "Solucao final de melhor custo: " << fixed << setprecision(10) << melhorSolucao->custo << endl;
+            cout << "Ciclo Hamiltoniano de menor custo, obedecendo as restricoes do PCVPB:" << endl;
+            for (const auto &it : melhorSolucao->listVertices)
+                cout << (it + 1) << " ";
+            cout << endl << "-------------------------------------------------------------" << endl;
+        }
+    }
+}
