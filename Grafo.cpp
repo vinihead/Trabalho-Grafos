@@ -424,7 +424,7 @@ Grafo::Solucao Grafo::heuristicaGulosoRandomizado(float alfa)
 void Grafo::algConstrutGuloso(ofstream *outFile)
 {
     Solucao solucao = heuristicaGulosoRandomizado(0);
-    imprimeSolucao(2, &solucao, outFile);
+    imprimeSolucao(1, &solucao, outFile);
 }
 
 /**
@@ -574,6 +574,34 @@ bool Grafo::viabilidade(double dist1, double dist2) const
 void Grafo::imprimeSolucao(int algoritmo, Solucao *melhorSolucao, ofstream *outFile)
 {
     cout << "Algoritmo Finalizado." << endl;
+
+    if(melhorSolucao->custo != -1)
+    {
+        if(algoritmo == 1)
+        {
+            *outFile << endl << endl << "------------------------------------------------------" << endl;
+            *outFile << "Algoritmo Construtivo Guloso." << endl;
+        }
+        else if(algoritmo == 2)
+        {
+            *outFile << endl << endl << "-------------------------------------------------------" << endl;
+            *outFile << "Algoritmo Construtivo Guloso Randomizado." << endl;
+            *outFile << "Alfa utilizado: " << setprecision(2) << melhorSolucao->alfa << endl;
+        }
+        else if(algoritmo == 3)
+        {
+            *outFile << endl << endl << "-------------------------------------------------------" << endl;
+            *outFile << "Algoritmo Construtivo Guloso Randomizado Reativo." << endl;
+            *outFile << "Melhor Alfa: " << fixed << setprecision(2) << melhorSolucao->alfa << endl;
+        }
+        *outFile << "Solucao final de melhor custo: " << fixed << setprecision(10) << melhorSolucao->custo << endl;
+        *outFile << "Ciclo Hamiltoniano de menor custo, obedecendo as restricoes do PCVPB:" << endl;
+        for (const auto &it : melhorSolucao->listVertices)
+            *outFile << (it + 1) << " ";
+        *outFile << endl << "-------------------------------------------------------" << endl;
+
+    }
+
     if (melhorSolucao->custo == -1)
     {
         cout << "Não encontrada solução viavel para a instancia." << endl;
@@ -587,7 +615,9 @@ void Grafo::imprimeSolucao(int algoritmo, Solucao *melhorSolucao, ofstream *outF
         if(opcao==1){
             cout << endl << "-------------------------------------------------------------" << endl;
             if(algoritmo == 1)
+            {
                 cout << "Algoritmo Construtivo Guloso." << endl;
+            }
             else if(algoritmo == 2)
             {
                 cout << "Algoritmo Contrutivo Guloso Randomizado." << endl;

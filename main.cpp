@@ -87,8 +87,8 @@ int main(int argc, char **argv)
         return -1;
     }
 
-
     Grafo grafo(&inFile);
+    escreveCabecalhoArquivo(&outFile, &grafo, inFileName);
     int opcao;
     do {
         opcao = menuShow();
@@ -266,7 +266,7 @@ void informacoesInstancia(Grafo *grafo, string str)
 {
     cout << "GRAFO -> INSTANCIA PCVPB" << endl;
     cout << "Nome: " << str << endl;
-    cout << "Grafo completo, ponderado e com vértices pretos classificados em pretos e brancos." << endl;
+    cout << "Grafo completo, ponderado, com vértices classificados em pretos e brancos." << endl;
     cout << "Ordem do Grafo: " << grafo->getOrdem() << endl;
     cout << "Número de vértices pretos (P): " << grafo->getNumPretos() << endl;
     cout << "Número de vértices brancos (B): " << grafo->getOrdem()-grafo->getNumPretos() << endl;
