@@ -56,7 +56,6 @@ Grafo::Grafo(ifstream *inFile)
     this->ponderado = true;
     int vert, x, y;
     int numVertices;
-    //float peso = 1.0;
     int corPB;
     string line;
     stringstream copiaDados;
@@ -405,14 +404,13 @@ void Grafo::imprimeMatrizDistancia() {
 }
 
 ///Heuristica PCVPB - Insercao Mais Barata
-Grafo::Solucao Grafo::gulosoRandomizadoAuxiliar(float alfa)
+Grafo::Solucao Grafo::heuristicaGulosoRandomizado(float alfa)
 {
-    cout << rand() << " ";
     vector<pair<pair<int, double>, int>> candidatosPretos;
     vector<pair<pair<int, double>, pair<int, int>>> candidatosBrancos;
     vector<int> solucaoInicial;
-    int indiceInsercao;
-    int indiceInsercaoCadeia;
+    unsigned int indiceInsercao;
+    unsigned int indiceInsercaoCadeia;
     double melhorCusto;
     bool viavel;
     bool existeSolucao;
@@ -441,18 +439,18 @@ Grafo::Solucao Grafo::gulosoRandomizadoAuxiliar(float alfa)
             }
         }
     }
-    //cout << endl;
-
     solucaoInicial.emplace_back(aresta.first);
     solucaoInicial.emplace_back(aresta.second);
     solucao.custo += matrizDistancia[aresta.first][aresta.second] * 2;
 
-    ///Remove da lista de candidatos os dois vertices da aresta inicial
+         ///Remove da lista de candidatos os dois vertices da aresta inicial
     for (auto it = candidatosPretos.begin(); it != candidatosPretos.end();)
         if (it->first.first == aresta.first || it->first.first == aresta.second)
             it = candidatosPretos.erase(it);
         else
             it++;
+
+
 
     ///Loop para gerar a solucao inicial de pretos Pela Heuristica de Inserção Mais Barata do PCV
     ///Com a necessidade apenas de se preocupar com a restrição comprimento do PCVPB
@@ -497,7 +495,6 @@ Grafo::Solucao Grafo::gulosoRandomizadoAuxiliar(float alfa)
 
         if(alfa == 0)
         {
-            //cout << "ALFA GULOSO \\\\-0-//" << endl;
             /// Insere o melhor vertice, com o menor custo de insercao na solucao inicial
             solucaoInicial.insert(solucaoInicial.begin()+candidatosPretos.begin()->second, candidatosPretos.begin()->first.first);
             solucao.custo+=candidatosPretos.begin()->first.second;
@@ -506,16 +503,11 @@ Grafo::Solucao Grafo::gulosoRandomizadoAuxiliar(float alfa)
         }
         else
         {
-            //cout << "NAO GULOSO\n"  << endl;
             ///Pegar ate qual indice quero inserir e sortear nisso
             vector<pair<pair<int, double>, int>>::iterator itInsercao;
             auto escopoInsercaoMax = static_cast<int>(ceil(candidatosPretos.size() * alfa));
             int indiceEscolhido=rand()%(escopoInsercaoMax+1);
             itInsercao = candidatosPretos.begin()+indiceEscolhido;
-            /*cout << "NUMERO DE PRETOS: " << candidatosPretos.size() << endl;
-            cout << "ESCOPO DE INSERCAO MAXIMA(ALFA): " << escopoInsercaoMax << endl;
-            cout << "INDICE QUE VAI PEGAR NO VETOR: " << indiceEscolhido << endl;
-            cout << "Candidato PRETO a inserir: " << itInsercao->first.first << endl;*/
 
             /// Insere o vertice sorteado com base no alfa
             solucaoInicial.insert(solucaoInicial.begin()+itInsercao->second, itInsercao->first.first);
@@ -593,20 +585,8 @@ Grafo::Solucao Grafo::gulosoRandomizadoAuxiliar(float alfa)
             auto escopoInsercaoMax = static_cast<int>(ceil(candidatosBrancos.size() * alfa));
             int indiceEscolhido=rand()%(escopoInsercaoMax+1);
             itInsercao = candidatosBrancos.begin()+indiceEscolhido;
-            /*cout << "NUMERO DE BRANCOS: " << candidatosBrancos.size() << endl;
-            cout << "ESCOPO DE INSERCAO MAXIMA(ALFA): " << escopoInsercaoMax << endl;
-            cout << "INDICE QUE VAI PEGAR NO VETOR: " << indiceEscolhido << endl;
 
-            cout << "Candidato BRANCO a inserir: " << itInsercao->first.first << endl;
-            for(int i=0;i<candidatosBrancos.size();i++)
-                if(candidatosBrancos[i].first.first == itInsercao->first.first)
-                {
-                    cout << "Posicao do candidato branco: " << i << endl;
-                    break;
-                }
-    */
             /// Insere o vertice sorteado com base no alfa
-            //solucaoInicial.insert(solucaoInicial.begin()+itInsercao->second, itInsercao->first.first);
             solucao.cadeias[itInsercao->second.first].insereVertice(itInsercao->second.second,itInsercao->first.first,itInsercao->first.second);
             solucao.custo += itInsercao->first.second;
             /// Exclui o vertice da lista de candidatos que foi inserido na solução
@@ -630,7 +610,7 @@ Grafo::Solucao Grafo::gulosoRandomizadoAuxiliar(float alfa)
 
 void Grafo::algConstrutGuloso()
 {
-    Solucao solucao = gulosoRandomizadoAuxiliar(0);
+    Solucao solucao = heuristicaGulosoRandomizado(0);
     ofstream outFile;
     imprimeSolucao(2, &solucao, &outFile);
 }
@@ -642,11 +622,11 @@ void Grafo::algConstrutGuloso()
 void Grafo::algConstrutGulRandomizado(float alfa)
 {
     ///Já roda o guloso para pegar a melhor solução para comparar com as soluções do randomizado
-    Solucao melhorSolucao = gulosoRandomizadoAuxiliar(0);
+    Solucao melhorSolucao = heuristicaGulosoRandomizado(0);
     int numIteracoes = 100;
     for(int i=0; i<numIteracoes; i++)
     {
-        Solucao solucaoAtual = gulosoRandomizadoAuxiliar(alfa);
+        Solucao solucaoAtual = heuristicaGulosoRandomizado(alfa);
         if(solucaoAtual.custo < melhorSolucao.custo && solucaoAtual.custo!=-1)
                 melhorSolucao = solucaoAtual;
     }
@@ -658,32 +638,18 @@ void Grafo::algConstrutGulRandReativo()
 {
     ///Já roda o guloso para pegar a melhor solução para comparar com as soluções do randomizado reativo
     cout.setf(ios::fixed);
-    Solucao melhorSolucao = gulosoRandomizadoAuxiliar(0);
+    Solucao melhorSolucao = heuristicaGulosoRandomizado(0);
     const int numAlfas = 10;
     int indiceAlfaAtual;//,op;
     const float vetAlfas[numAlfas] = {0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50};
-    const int numIteracoes = 100;
-    const int iteracoesAtualizaProb = 20;
-
-
+    const int numIteracoes = 1000;
+    const int iteracoesAtualizaProb = 50;
     long somaAlfas[numAlfas] = {0};    //soma dos resultados obtidos com cada alpha
     long qtdEscolhido[numAlfas] ={0};   //quantidade de vezes que cada alfa foi escolhido e executado
-    //Solucao melhorSolucao = randomizadoAuxiliar(0);//long melhorSolucao = INFINITO;  //F(S*)
-    int melhorSemente;
-   // /**USA ISSO?*/float delta = 1.0; // quanto o melhor resultado influencia  a novas probabilidades
-    //vector<float> p_i;   //probabilidade de escolher alfai
-    //long valorDaSolucaoAtual;
-    //float melhorAlfa;
+    vector<float> vetProbabilidades = {0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1};//(p_i.begin(), p_i.end());   //cria variavel de escolher indice aleatorio
+    //int melhorSemente;
 
-    //inicializa
-
- /*   for(int i=0; i<numAlfas; i++){
-        cout << soma_i[i] << " ";
-        cout << qtdeUso_i[i] << " ";
-        cout << q_i[i] << " ";
-        //p_i.push_back(1.0/numAlfas);
-    }*/
-    discrete_distribution<> distribuicao = {0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1};//(p_i.begin(), p_i.end());   //cria variavel de escolher indice aleatorio
+    discrete_distribution<> distribuicao(vetProbabilidades.begin(),vetProbabilidades.end());// = {0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1};//(p_i.begin(), p_i.end());   //cria variavel de escolher indice aleatorio
     default_random_engine gerador((unsigned int)time(nullptr));  //gerador num aleatorios
     for(int i=0; i<numIteracoes; i++)
     {
@@ -692,7 +658,7 @@ void Grafo::algConstrutGulRandReativo()
         indiceAlfaAtual = distribuicao(gerador);
         cout << "geradorHAHA:" << gerador << endl;
         cout << "Indice alfa Atual: " << indiceAlfaAtual <<endl;
-        Solucao solucaoAtual = gulosoRandomizadoAuxiliar(vetAlfas[indiceAlfaAtual]);//valorDaSolucaoAtual = auxCVGR(alfas[indiceAlfaAtual],false);
+        Solucao solucaoAtual = heuristicaGulosoRandomizado(vetAlfas[indiceAlfaAtual]);//valorDaSolucaoAtual = auxCVGR(alfas[indiceAlfaAtual],false);
         somaAlfas[indiceAlfaAtual] += solucaoAtual.custo;//valorDaSolucaoAtual;   //soma dos resultados obtidos com esse alfa
         qtdEscolhido[indiceAlfaAtual] += 1;  //num execuçao este alfa
 
@@ -720,13 +686,14 @@ void Grafo::algConstrutGulRandReativo()
             double q_i[numAlfas] = {0}; ///Utilizado para gerar as novas probabilidades
             cout << "Atualizacao de probabilidade\n";
             float soma_qi = 0;
-            /**USA ISSO?*/float A_i = 0;     //media soma_i/qtdeUso_i
+            float mediaResultados = 0;//media soma_i/qtdeUso_i
+            float delta = 10.0;
 
             for(int j=0; j<numAlfas; j++){
                 //caso o alfa tenha sido utilizado
                 if(qtdEscolhido[j] > 0){
-                    A_i = somaAlfas[j] / qtdEscolhido[j]; //media dos resultados para alfa
-                    q_i[j] = pow(melhorSolucao.custo / A_i, 1.0); // 1.0 é o float delta = 1.0; // quanto o melhor resultado influencia  a novas probabilidades
+                    mediaResultados = somaAlfas[j] / qtdEscolhido[j]; //media dos resultados para alfa
+                    q_i[j] = pow(melhorSolucao.custo / mediaResultados, delta); // quanto o melhor resultado influencia  a novas probabilidades
                     soma_qi += q_i[j];
                 }
             }
@@ -737,16 +704,16 @@ void Grafo::algConstrutGulRandReativo()
             cout << endl;
 
 
-            vector<float> auxNovaDistribuicao;
-            for(int j=0; j < numAlfas; j++){
-                auxNovaDistribuicao.push_back(1.0 * q_i[j] / soma_qi);  //1.0 necessario pra converter
-                //cout << auxNovaDistribuicao[j] << endl;
+            //vector<double> auxNovaDistribuicao;
+            vetProbabilidades.clear();
+            for (auto itQi : q_i) {
+                vetProbabilidades.push_back(itQi / soma_qi); ///Atualiza a probabilidade do alfa i;
             }
 
 
 
             //atualiza distribuiçao
-            discrete_distribution<> novaDistribuicao(auxNovaDistribuicao.begin(), auxNovaDistribuicao.end());
+            discrete_distribution<> novaDistribuicao(vetProbabilidades.begin(), vetProbabilidades.end());
             distribuicao = novaDistribuicao;
             cout << "Nova distribuicao\n";
             cout << "Probabilidades da nova distribuicao: " << endl;

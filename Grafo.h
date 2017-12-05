@@ -48,10 +48,7 @@ public:
         vector<int> listVertices;
         double custo;
         float alfa;
-        //float alfaUsado;
     } Solucao;
-
-
     bool removeVertice(int idVert);
     explicit Grafo(ifstream *inFile);
     Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco);
@@ -64,17 +61,12 @@ public:
     void geraLinguagemDot();
     void imprimeMatrizDistancia();
 
-    Solucao gulosoRandomizadoAuxiliar(float alfa);
+    Solucao heuristicaGulosoRandomizado(float alfa);
     void algConstrutGuloso();
     void algConstrutGulRandReativo();
     void algConstrutGulRandomizado(float alfa);
     bool viabilidade(double dist1, double dist2) const;
     bool viabilidade(Cadeia *cadeia, double custoInsercao, double dist1, double dist2) const;
-
-    void imprimeSolucao(int algoritmo);
-
-    void imprimeSolucao(int algoritmo, Solucao *melhorSolucao);
-
     void imprimeSolucao(int algoritmo, Solucao *melhorSolucao, ofstream *outFile);
 };
 

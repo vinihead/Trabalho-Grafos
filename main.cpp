@@ -149,6 +149,8 @@ int main(int argc, char **argv)
                 grafo.imprime();
                 break;
             }
+            default:
+                break;
         }
     } while (opcao != 0);
     ///Fechando streams de entrada e saida
@@ -179,7 +181,7 @@ int menuShow()
         cout << "||     06 - Imprimir grafo                                ||" << endl;
         cout << "|----------------------------------------------------------|" << endl << endl;
         if(passouMenu)
-            cout << "Opcao Invalida.\nDigite uma opcao de 0 a 39: ";
+            cout << "Opcao Invalida.\nDigite uma opcao de 0 a 6: ";
         else
         {
             passouMenu = true;
