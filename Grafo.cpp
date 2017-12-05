@@ -364,6 +364,18 @@ void Grafo::geraLinguagemDot()
     outFile.close();
 }
 
+double Grafo::getMaxCusto() const {
+    return maxCusto;
+}
+
+int Grafo::getMaxVertBranco() const {
+    return maxVertBranco;
+}
+
+int Grafo::getNumPretos() const {
+    return numPretos;
+}
+
 
 list<Vertice>::iterator Grafo::getVertice(int idVert)
 {
@@ -723,7 +735,6 @@ void Grafo::algConstrutGulRandReativo()
 
         }
     }
-    cout << "Min: " << distribuicao.min() << "\nMax: " << distribuicao.max() << endl;
     ofstream outFile;
     imprimeSolucao(3, &melhorSolucao, &outFile);
 }
@@ -761,7 +772,6 @@ bool Grafo::viabilidade(double dist1, double dist2) const
  */
 void Grafo::imprimeSolucao(int algoritmo, Solucao *melhorSolucao, ofstream *outFile)
 {
-
     cout << "Algoritmo Finalizado." << endl;
     if (melhorSolucao->custo == -1)
     {

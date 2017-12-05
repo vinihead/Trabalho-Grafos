@@ -68,6 +68,12 @@ public:
     bool viabilidade(double dist1, double dist2) const;
     bool viabilidade(Cadeia *cadeia, double custoInsercao, double dist1, double dist2) const;
     void imprimeSolucao(int algoritmo, Solucao *melhorSolucao, ofstream *outFile);
+
+    double getMaxCusto() const;
+
+    int getMaxVertBranco() const;
+
+    int getNumPretos() const;
 };
 
 

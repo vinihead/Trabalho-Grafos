@@ -28,9 +28,10 @@ using namespace std;
 
 int menuShow();
 void cabecalho();
-void escreveCabecalhoArquivo(ofstream *outFile);
+void informacoesInstancia(Grafo *grafo, string str);
+void escreveCabecalhoArquivo(ofstream *outFile, Grafo *grafo, string str);
 void pausarTela(bool continuar);
-void finalizaPrograma();
+void finalizaPrograma(ifstream *inFile, ofstream *outFile);
 
 int main(int argc, char **argv)
 {
@@ -38,57 +39,54 @@ int main(int argc, char **argv)
     cabecalho();
     ofstream outFile;
     ifstream inFile;
-    int opcao;
+
     string inFileName;
-    string outFileName;
-    //argc=2;
+    string outFileName = "resultados_" + inFileName;
 
     if(argc == 2)
     {
         inFileName = argv[1];
-        //outFileName = argv[2];
-        //inFileName = "instancias\\12";
-        outFileName = "saida";
-        outFileName += ".txt";
-        inFileName += ".txt";
+        if (inFileName.compare(inFileName.size() - 4, 4, ".txt") != 0)
+            inFileName += ".txt";
         inFile.open(inFileName);
         outFile.open(outFileName);
         ///Testar se os arquivos foram inseridos corretamente
         if(!inFile || !outFile)
         {
             cerr << "ERRO! Tente novamente!" << endl;
-            cerr << "NAO eh necessario informat o \".txt\", informe apenas o nome do arquivo" << endl;
+            cerr << "Desculpe, mas aconteceu algo inesperado" << endl;
+            cerr << "A instancia digitada foi: " << inFileName << endl;
+            cerr << "VERIFIQUE se digitou o nome da instancia corretamente." << endl;
             if(!inFile)
                 cerr << "ERRO! O arquivo de ENTRADA \"" << inFileName << "\" NAO foi encontrado!" << endl;
             if(!outFile)
+            {
                 cerr << "ERRO! Nao foi possivel criar o arquivo de SAIDA \"" << outFileName << "\"!" << endl;
-            pausarTela(false);
-            exit(30);
+                cerr << "Erro na abertura/criação do arquivo de saida" << endl << endl;
+                cerr << "Verifique se a instancia foi digitada corretamente" << endl;
+            }
+            finalizaPrograma(&inFile, &outFile);
         }
     }
     else
     {
-        cerr << "Erro na chamada do programa. Informar corretamente o arquivo de entrada e de saida." << endl;
-        cerr << "Obs: nao eh necessario informar a extensao \".txt\" do arquivo." << endl;
+        cerr << "Erro na chamada do programa. Informar corretamente o nome da instancia (arquivo de entrada)." << endl;
+        cerr << "Pode-se digitar o nome da instancia com \".txt\" ou sem." << endl;
         cerr << "Formato a inserir na linha de comando para execucao do algoritmo:" << endl;
-        cerr << "<.\\executavel> <arqEntrada> <arqSaida>" << endl;
-        pausarTela(false);
+        cerr << "<./executavel> <arqEntrada>" << endl;
+        finalizaPrograma(&inFile, &outFile);
         return -1;
     }
-    escreveCabecalhoArquivo(&outFile);
-    cout << "Arquivo de entrada: " << inFileName << endl;
-    cout << "Arquivo de saida: " << outFileName << endl << endl;
+
 
     Grafo grafo(&inFile);
+    int opcao;
     do {
         opcao = menuShow();
         switch (opcao) {
             case 0:
             {
-                outFile << "\n\n---------------- GRAFO FINAL RESULTANTE ----------------" << endl;
-                grafo.saveGrafo(&outFile);
-                outFile << "\n------------------ ALGORITMO FINALIZADO ------------------" << endl;
-                finalizaPrograma();
+                finalizaPrograma(&inFile, &outFile);
                 break;
             }
             case 1:
@@ -135,7 +133,7 @@ int main(int argc, char **argv)
             }
             case 4:
             {
-
+                informacoesInstancia(&grafo, inFileName);
                 break;
             }
             case 5:
@@ -154,8 +152,6 @@ int main(int argc, char **argv)
         }
     } while (opcao != 0);
     ///Fechando streams de entrada e saida
-    inFile.close();
-    outFile.close();
     return 0;
 }
 
@@ -198,8 +194,7 @@ void cabecalho()
     cout << "   --------------------------------------------" << endl;
     cout << "   -------  -   Trabalho de Grafos   -  -------" << endl;
     cout << "   -------   ---      Fase 2      ---   -------" << endl;
-    cout << "   --------------------------------------------" << endl << endl;
-
+    cout << "   --------------------------------------------" << endl;
     cout << "--------------------------------------------------" << endl;
     cout << "---------       ---   GRUPO 5   ---      ---------" << endl;
     cout << "---------          -> AUTORES <-         ---------" << endl;
@@ -214,13 +209,23 @@ void cabecalho()
 
 }
 
-void escreveCabecalhoArquivo(ofstream *outFile)
+void escreveCabecalhoArquivo(ofstream *outFile, Grafo *grafo, string str)
 {
-    *outFile << "Trabalho de Introducao a Teoria dos Grafos" << endl;
+    *outFile << "Trabalho de Teoria dos Grafos" << endl;
     *outFile << "Autores:" << endl;
     *outFile << "Vinicius Carlos de Oliveira - Matricula: 201635025" << endl;
-    *outFile << "Ruan Lucas de Oliveira Rodrigues - Matricula: 201635005" << endl;
-    *outFile << endl << "-> ANALISE DO GRAFO" << endl << endl;
+    *outFile << "Ruan Lucas de Oliveira Rodrigues - Matricula: 201635005" << endl << endl;
+    *outFile  << endl << "Problema do Caixeiro Viajante Preto e Branco" << endl;
+    *outFile << "-> ANALISE DO GRAFO PCVPB" << endl << endl;
+
+    *outFile  << "Nome da instância: " << str << endl;
+    *outFile  << "Grafo completo, ponderado e com vértices pretos classificados em pretos e brancos." << endl;
+    *outFile  << "Ordem do Grafo: " << grafo->getOrdem() << endl;
+    *outFile  << "Número de vértices pretos (P): " << grafo->getNumPretos() << endl;
+    *outFile  << "Número de vértices brancos (B): " << grafo->getOrdem()-grafo->getNumPretos() << endl;
+    *outFile  << "Restrições (entre dois vértices pretos):\n";
+    *outFile  << "Máxima Cardinalidade (Q): " << grafo->getMaxVertBranco() << endl;
+    *outFile  << "Máximo Comprimento (L): " << grafo->getMaxCusto() << endl;
 }
 
 void pausarTela(bool continuar)
@@ -235,9 +240,30 @@ void pausarTela(bool continuar)
 
 }
 
-void finalizaPrograma()
+void finalizaPrograma(ifstream *inFile, ofstream *outFile)
 {
-    cout << "Algoritmo finalizado." << endl;
-    cout << "Os dados foram armazenados no arquivo de saida." << endl;
+
+    cout << "         --             FIM DO PROGRAMA            --" << endl;
+    cout << "           Os resultados dos testes foram salvos no" << endl;
+    cout << "        arquivo \"resultados_instancia_nomeDaInstancia\"" << endl;
+    cout << "\n------------------ ALGORITMO FINALIZADO ------------------" << endl;
+    inFile->close();
+    outFile->close();
     pausarTela(false);
+    exit(-1);
+}
+
+void informacoesInstancia(Grafo *grafo, string str)
+{
+    cout << "GRAFO -> INSTANCIA PCVPB" << endl;
+    cout << "Nome: " << str << endl;
+    cout << "Grafo completo, ponderado e com vértices pretos classificados em pretos e brancos." << endl;
+    cout << "Ordem do Grafo: " << grafo->getOrdem() << endl;
+    cout << "Número de vértices pretos (P): " << grafo->getNumPretos() << endl;
+    cout << "Número de vértices brancos (B): " << grafo->getOrdem()-grafo->getNumPretos() << endl;
+    cout << "Restrições (entre dois vértices pretos):\n";
+    cout << "Máxima Cardinalidade (Q): " << grafo->getMaxVertBranco() << endl;
+    cout << "Máximo Comprimento (L): " << grafo->getMaxCusto() << endl;
+    cout << "Arquivo de entrada: " << str << endl;
+    cout << "Arquivo de saida: " << ("resultados_" + str) << endl << endl;
 }
