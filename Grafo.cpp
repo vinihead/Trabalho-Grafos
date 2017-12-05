@@ -34,21 +34,6 @@ struct {
 } ordenaCusto;
 
 
-///Estrutura para guardar solução Parcial do PCVPB
-
-
-
-
-
-//Construtor padrão, para no caso de precisar criar um grafo vazio.
-Grafo::Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco)
-        : maxCusto(maxCusto), maxVertBranco(maxVertBranco){
-    this->digrafo = digrafo;
-    this->ponderado = ponderado;
-    this->ordem = 0;
-}
-
-
 //Já cria o grafo lendo do arquivo de entrada
 Grafo::Grafo(ifstream *inFile)
 {
@@ -64,12 +49,6 @@ Grafo::Grafo(ifstream *inFile)
     copiaDados >> numVertices >> numPretos >> maxVertBranco >> maxCusto;
     ordem = 0;
 
-    cout << "--------------------------------------" << endl;
-    cout << "Instanciando o grafo do PCVPB. . . . ." << endl;
-    cout << "--------------------------------------" << endl;
-
-    //if(inFile->good())
-    //{
     ///Adiciona os vertices primeiramente
     while(getline(*inFile, line) && !line.empty())
        {
@@ -79,14 +58,13 @@ Grafo::Grafo(ifstream *inFile)
            /**Ao adicionar o vertice subtraimos 1, pois como as instancias sao comportadas de 1 a n,
             podemos faze-la de 0 a n-1, facilitando na solucao, no uso de vetores e na busca na matriz distancia*/
            this->adicionaVertice((vert-2+1), x, y, corPB); }
-    //}
     ///No caso de termos um arquivo de entrada informando quantidade errada de vertices, o programa eh finalizado
     if(this->ordem != numVertices)
     {
-        cout << ordem << " " << numVertices << endl;
-        cout << "ERRO! Arquivo de entrada com quantidade de vertices errada." << endl;
-        cout << "Numero de vertices no arquivo de entrada eh " << ((ordem<numVertices)?"menor":"maior");
-        cout << " que a quantidade real.\nAlgo de errado aconteceu.\nAlgoritmo FINALIZADO." << endl;
+        cerr << ordem << " " << numVertices << endl;
+        cerr << "ERRO! Arquivo de entrada com quantidade de vertices errada." << endl;
+        cerr << "Numero de vertices no arquivo de entrada eh " << ((ordem<numVertices)?"menor":"maior");
+        cerr << " que a quantidade real.\nAlgo de errado aconteceu.\nAlgoritmo FINALIZADO." << endl;
         getchar();
         exit(-1);
     }
@@ -96,13 +74,9 @@ Grafo::Grafo(ifstream *inFile)
     ///Cria Arestas
     this->criaTodasArestas();
 
-    cout << "\n---------------------------------------" << endl;
-    cout << "Grafo Criado e instanciado com sucesso!" << endl;
-    cout << "Quantidade de Vertices: " << getOrdem() << endl;
-    cout << "Quantidade de Vertices Pretos: " << this->numPretos << endl;
-    cout << "Cardinalidade Maxima de Vertices Brancos (Q): " << this->maxVertBranco << endl;
-    cout << "Comprimento/Custo Maximo (L): " << this->maxCusto << endl;
-    cout << "---------------------------------------" << endl;
+    cout << "----------------------------------------------" << endl;
+    cout << "Grafo do PCVPB Criado e instanciado com sucesso!" << endl;
+    cout << "------------------------------------------------" << endl;
     vertices.sort();
 }
 
@@ -160,62 +134,6 @@ list<Vertice>::iterator Grafo::adicionaVertice(int id, int x, int y, int corPB)
     }
 }
 
-void Grafo::adicionaAresta(int idOrigem, int idDestino, float peso, int corPB)
-{
-    auto itOrigem = adicionaVertice(idOrigem, 0, 0, corPB);
-    auto itDestino = adicionaVertice(idDestino, 0, 0, 0);
-    itOrigem->adicionaAresta(itDestino, peso, digrafo);
-    if(!digrafo)
-    {
-        itDestino->adicionaAresta(itOrigem, peso, digrafo);
-        //itDestino->diminuiGrauEntrada();
-    }
-}
-
-bool Grafo::removeAresta(int idOrigem, int idDestino)
-{
-    auto itOrigem = getVertice(idOrigem);
-    auto itDestino = getVertice(idDestino);
-    bool arestaEncontrada=false;
-    if(itOrigem->getIdVertice()==idOrigem && itDestino->getIdVertice()==idDestino)
-    {
-        arestaEncontrada = itOrigem->removeAresta(itDestino, digrafo);
-        if(!digrafo)
-        {
-            itDestino->removeAresta(itOrigem, digrafo);
-        }
-    }
-    return arestaEncontrada;
-}
-
-bool Grafo::removeVertice(int idVert)
-{
-
-    if(procuraVertice(idVert))
-    {
-        for(auto itVert = vertices.begin(); itVert != vertices.end(); itVert++)
-        {
-            if(itVert->getIdVertice() == idVert)
-            {
-                for(auto itAdj : itVert->getAdjacencia())
-                    removeAresta(itVert->getIdVertice(), itAdj.getIdAdj());
-                //auto aux=itVert;
-                //itVert--;
-                itVert = vertices.erase(itVert);
-                ordem--;
-            }/*
-            else if(digrafo) //se for digrafo, tem que remover todas arestas  adjacentes ao vertice removido
-            {
-                for(auto itAdj : itVert->getAdjacencia())
-                    if(itAdj.getIdAdj() == idVert)
-                        removeAresta(itVert->getIdVertice(), idVert);
-            }*/
-        }
-        return true;
-    }
-    return false;
-}
-
 void Grafo::imprime()
 {
     cout << endl << "-----------------------------------" << endl;
@@ -231,137 +149,9 @@ void Grafo::imprime()
     cout << "-----------------------------------" << endl << endl;
 }
 
-void Grafo::saveGrafoAdjacencia(ofstream *outFile)
-{
-    cout << endl << "-------------------------------------------------------------" << endl;
-    cout << "Salvando grafo em modo de lista de adjacencias. . . . . ." << endl;
-    if(outFile->good()) {
-        *outFile << endl << "-----------------------------------" << endl;
-        *outFile << "Grafo em Estrutura de Adjacencias:" << endl;
-        *outFile << "Estilo [Vertice] -> Adjacencia|Peso(se existir) ..." << endl;
-        for (auto itVert : vertices) {
-            *outFile << "[" << itVert.getIdVertice() << "] ->  ";
-            *outFile << itVert.retornaListAdjacencia(ponderado) << endl;
-        }
-        *outFile << "-----------------------------------" << endl << endl;
-        cout << endl << "Grafo salvo com sucesso!" << endl;
-    } else
-        cout << "NAO FOI POSSIVEL SALVAR O GRAFO!" << endl;
-    cout << "-------------------------------------------------------------" << endl;
-}
-
-
 unsigned int Grafo::getOrdem()
 {
     return ordem;
-}
-
-Grafo *Grafo::retornaInstanciaGrafo() {
-    auto *grafoInstancia = new Grafo(this->digrafo, this->ponderado, this->maxCusto, this->maxVertBranco);
-    grafoInstancia->ordem = this->ordem;
-    grafoInstancia->vertices = this->vertices;
-    return grafoInstancia;
-}
-
-void Grafo::saveGrafo(ofstream *outFile)
-{
-    cout << endl << "--------------------------------------------------" << endl;
-    cout << "Salvando grafo. . . . . . . . . . . ." << endl;
-    if(outFile->good()) {
-        *outFile << endl <<"GRAFO, 1 LINHA QUANTIDADE DE VERTICES, AS OUTRAS SAO AS ARESTAS:" << endl << endl;
-        *outFile << this->ordem << endl;
-        if (digrafo) //Se for digrafo, eh mais facil salvar o grafo, pois nao precisa se preocupar com arestas duplicadas
-        {
-            for (auto itVert : vertices)
-                for (auto itAdj : itVert.getAdjacencia()) {
-                    if (ponderado)
-                        *outFile << itVert.getIdVertice() << " " << itAdj.getIdAdj() << " " << itAdj.getPeso() << endl;
-                    else
-                        *outFile << itVert.getIdVertice() << " " << itAdj.getIdAdj() << endl;
-                }
-            cout << endl;
-        } else {
-            Grafo *grafoCopy = retornaInstanciaGrafo();
-            for (auto itVertice = grafoCopy->vertices.begin(); !grafoCopy->vertices.empty(); itVertice++) {
-                for (auto itAdj : itVertice->getAdjacencia())//for(auto it = adj.begin(); it != adj.end(); it++) - iterator da lista ajacencia de um vertice "itVertice"
-                {
-                    if (ponderado)
-                        *outFile << itVertice->getIdVertice() << " " << itAdj.getIdAdj() << " " << itAdj.getPeso()
-                                 << endl;
-                    else
-                        *outFile << itVertice->getIdVertice() << " " << itAdj.getIdAdj() << endl;
-                }
-                int id = itVertice->getIdVertice();
-                itVertice--;
-                grafoCopy->removeVertice(id); //Remove o vertice, pois ele nao sera usado mais, ja foi salvo
-            }
-            delete grafoCopy;
-        }
-        cout << endl << "Grafo salvo com sucesso!" << endl;
-    }
-    else
-    {
-        cout << "NAO FOI POSSIVEL SALVAR O GRAFO!" << endl;
-    }
-    cout << "--------------------------------------------------" << endl;
-}
-
-void Grafo::geraLinguagemDot()
-{
-    string fileName;
-    ofstream outFile;
-    cout << endl << "---------------- SALVAR GRAFO EM LINGUAGEM DOT ----------------" << endl;
-    cout << "----------------   PODE SER USADO NO GRAPHVIZ  ----------------" << endl;
-    //cout << "Digite o nome do arquivo de saida desejado (sem a extensao do arquivo): ";
-    //cin >> fileName;
-    //fileName += ".dot";
-    outFile.open("graphViz.dot");
-    if(!outFile)
-        cout << endl << "ERRO! Nao foi possivel criar o arquivo de SAIDA \"" << fileName << "\"!" << endl;
-    cout << "Gerando em linguagem DOT. . . . . . . . . . . ." << endl;
-
-
-
-    if(outFile.good()) {
-        outFile << (digrafo ? "digraph G" : "graph G") << endl << "{" << endl;
-        if (digrafo) //Se for digrafo, eh mais facil salvar o grafo, pois nao precisa se preocupar com arestas duplicadas
-        {
-            for (auto itVert : vertices)
-                for (auto itAdj : itVert.getAdjacencia()) {
-                    if (ponderado)
-                        outFile << "\t" << itVert.getIdVertice() << " -> " << itAdj.getIdAdj() << " [label=\"" << itAdj.getPeso() << "\"];" << endl;
-                    else
-                        outFile << "\t" << itVert.getIdVertice() << " -> " << itAdj.getIdAdj() << ";" << endl;
-                }
-        } else
-        {
-            Grafo *grafoCopy = retornaInstanciaGrafo();
-            for (auto itVertice = grafoCopy->vertices.begin(); !grafoCopy->vertices.empty(); itVertice++) {
-                for (auto itAdj : itVertice->getAdjacencia())
-                {
-                    if (ponderado)
-                        outFile << "\t" << itVertice->getIdVertice() << " -- " << itAdj.getIdAdj() << " [label=\"" << itAdj.getPeso() << "\"];" << endl;
-                    else
-                        outFile << "\t" << itVertice->getIdVertice() << " -- " << itAdj.getIdAdj() << ";" << endl;
-                }
-                int id = itVertice->getIdVertice();
-                itVertice--;
-                grafoCopy->removeVertice(id); //Remove o vertice, pois ele nao sera usado mais, ja foi salvo
-            }
-            delete grafoCopy;
-        }
-        outFile << "}";
-        cout << endl << "Grafo gerado em Linguagem DOT com sucesso!" << endl;
-        cout << "Arquivo de Saida: " << fileName << endl;
-        cout << "Agora voce podera usar o arquivo na ferramenta GraphViz ou outro de preferencia." << endl;
-        cout << "Pelo terminal usando GraphViz, use o comando: dot -Kneato -Tpng demo2.dot -o demo2_dot.png" << endl; //Usar -Kneato ou -Kdot
-    }
-    else
-    {
-        cout << "NAO FOI POSSIVEL GERAR O GRAFO EM LINGUAGEM DOT!" << endl;
-    }
-    cout << "--------------------------------------------------" << endl;
-    outFile.close();
 }
 
 double Grafo::getMaxCusto() const {
@@ -375,7 +165,6 @@ int Grafo::getMaxVertBranco() const {
 int Grafo::getNumPretos() const {
     return numPretos;
 }
-
 
 list<Vertice>::iterator Grafo::getVertice(int idVert)
 {
@@ -415,7 +204,11 @@ void Grafo::imprimeMatrizDistancia() {
     }
 }
 
-///Heuristica PCVPB - Insercao Mais Barata
+/**
+ * Heuristica PCVPB - Insercao Mais Barata
+ * @param alfa
+ * @return
+ */
 Grafo::Solucao Grafo::heuristicaGulosoRandomizado(float alfa)
 {
     vector<pair<pair<int, double>, int>> candidatosPretos;
@@ -462,7 +255,13 @@ Grafo::Solucao Grafo::heuristicaGulosoRandomizado(float alfa)
         else
             it++;
 
-
+    /** Formada uma subrota inicial com dois vértices, aplicamos o metodo da
+      insercao mais barata para decidir qual cidade inserir entre cada
+      par de cidades i e j. A cidade k escolhida sera aquela que minimizar
+      custo(k) = d(i,k) + d(k,j) - d(i,j). No entanto, como temos vertices
+      pretos e brancos, primeiro geramos a solução inicial com pretos, e
+      depois usamos a mesma heuríticas para inserir os vértices brancos
+      entre os vertices pretos.*/
 
     ///Loop para gerar a solucao inicial de pretos Pela Heuristica de Inserção Mais Barata do PCV
     ///Com a necessidade apenas de se preocupar com a restrição comprimento do PCVPB
@@ -619,19 +418,20 @@ Grafo::Solucao Grafo::heuristicaGulosoRandomizado(float alfa)
     return solucao;
 }
 
-
-void Grafo::algConstrutGuloso()
+/**
+ *
+ */
+void Grafo::algConstrutGuloso(ofstream *outFile)
 {
     Solucao solucao = heuristicaGulosoRandomizado(0);
-    ofstream outFile;
-    imprimeSolucao(2, &solucao, &outFile);
+    imprimeSolucao(2, &solucao, outFile);
 }
 
 /**
  *
  * @param alfa
  */
-void Grafo::algConstrutGulRandomizado(float alfa)
+void Grafo::algConstrutGulRandomizado(float alfa, ofstream *outFile)
 {
     ///Já roda o guloso para pegar a melhor solução para comparar com as soluções do randomizado
     Solucao melhorSolucao = heuristicaGulosoRandomizado(0);
@@ -642,11 +442,13 @@ void Grafo::algConstrutGulRandomizado(float alfa)
         if(solucaoAtual.custo < melhorSolucao.custo && solucaoAtual.custo!=-1)
                 melhorSolucao = solucaoAtual;
     }
-    ofstream outFile;
-    imprimeSolucao(2, &melhorSolucao, &outFile);
+    imprimeSolucao(2, &melhorSolucao, outFile);
 }
 
-void Grafo::algConstrutGulRandReativo()
+/**
+ *
+ */
+void Grafo::algConstrutGulRandReativo(ofstream *outFile)
 {
     ///Já roda o guloso para pegar a melhor solução para comparar com as soluções do randomizado reativo
     cout.setf(ios::fixed);
@@ -735,8 +537,7 @@ void Grafo::algConstrutGulRandReativo()
 
         }
     }
-    ofstream outFile;
-    imprimeSolucao(3, &melhorSolucao, &outFile);
+    imprimeSolucao(3, &melhorSolucao, outFile);
 }
 
 /**

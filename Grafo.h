@@ -33,10 +33,7 @@ private:
     int maxVertBranco;
     double **matrizDistancia;
     int numPretos;
-    Grafo * retornaInstanciaGrafo();
     list<Vertice>::iterator adicionaVertice(int id, int x, int y, int corPB);
-    void adicionaAresta(int idOrigem, int idDestino, float peso, int corPB);
-    bool removeAresta(int v1, int v2);
     void criaMatrizPeso();
     void criaTodasArestas();
     double calculaPesoAresta(int id1, int id2);
@@ -49,30 +46,21 @@ public:
         double custo;
         float alfa;
     } Solucao;
-    bool removeVertice(int idVert);
     explicit Grafo(ifstream *inFile);
-    Grafo(bool digrafo, bool ponderado, double maxCusto, int maxVertBranco);
     void imprime();
-    void saveGrafo(ofstream *outFile);
     list<Vertice>::iterator getVertice(int idVert);
     bool procuraVertice(int idVert);
     unsigned int getOrdem();
-    void saveGrafoAdjacencia(ofstream *outFile);
-    void geraLinguagemDot();
     void imprimeMatrizDistancia();
-
     Solucao heuristicaGulosoRandomizado(float alfa);
-    void algConstrutGuloso();
-    void algConstrutGulRandReativo();
-    void algConstrutGulRandomizado(float alfa);
+    void algConstrutGuloso(ofstream *outFile);
+    void algConstrutGulRandReativo(ofstream *outFile);
+    void algConstrutGulRandomizado(float alfa, ofstream *outFile);
     bool viabilidade(double dist1, double dist2) const;
     bool viabilidade(Cadeia *cadeia, double custoInsercao, double dist1, double dist2) const;
     void imprimeSolucao(int algoritmo, Solucao *melhorSolucao, ofstream *outFile);
-
     double getMaxCusto() const;
-
     int getMaxVertBranco() const;
-
     int getNumPretos() const;
 };
 

@@ -39,15 +39,23 @@ int main(int argc, char **argv)
     cabecalho();
     ofstream outFile;
     ifstream inFile;
-
     string inFileName;
-    string outFileName = "resultados_" + inFileName;
+    string outFileName;
 
     if(argc == 2)
     {
         inFileName = argv[1];
         if (inFileName.compare(inFileName.size() - 4, 4, ".txt") != 0)
+        {
+            outFileName = inFileName + "_resultados.txt";
             inFileName += ".txt";
+        }
+        else
+        {
+            outFileName = inFileName;
+            outFileName.insert(inFileName.size()-4,"_resultados");
+        }// = inFileName + "_resultados";
+        cout << outFileName << endl;
         inFile.open(inFileName);
         outFile.open(outFileName);
         ///Testar se os arquivos foram inseridos corretamente
@@ -57,13 +65,14 @@ int main(int argc, char **argv)
             cerr << "Desculpe, mas aconteceu algo inesperado" << endl;
             cerr << "A instancia digitada foi: " << inFileName << endl;
             cerr << "VERIFIQUE se digitou o nome da instancia corretamente." << endl;
+            cerr << "Obs: a instancia precisa estar na mesma pasta de execucao do programa" << endl;
             if(!inFile)
                 cerr << "ERRO! O arquivo de ENTRADA \"" << inFileName << "\" NAO foi encontrado!" << endl;
             if(!outFile)
             {
                 cerr << "ERRO! Nao foi possivel criar o arquivo de SAIDA \"" << outFileName << "\"!" << endl;
-                cerr << "Erro na abertura/criação do arquivo de saida" << endl << endl;
-                cerr << "Verifique se a instancia foi digitada corretamente" << endl;
+                cerr << "Erro na abertura/criação do arquivo de saida" << endl;
+                cerr << "Verifique se a instancia foi digitada corretamente\n\n" << endl;
             }
             finalizaPrograma(&inFile, &outFile);
         }
@@ -91,12 +100,13 @@ int main(int argc, char **argv)
             }
             case 1:
             {
-                cout << "Chamando Algoritmo GULOSO." << endl;
-                grafo.algConstrutGuloso();
+                cout << "Algoritmo Guloso." << endl;
+                grafo.algConstrutGuloso(&outFile);
                 break;
             }
             case 2:
             {
+                cout << "Algoritmo Guloso Randomizado." << endl;
                 int opc=1;
                 do {
                     cout << "|--------------- MENU ----------------|" << endl;
@@ -113,13 +123,13 @@ int main(int argc, char **argv)
                     cin >> opc;
                     switch (opc){
                         case 1:
-                            grafo.algConstrutGulRandomizado(0.1);
+                            grafo.algConstrutGulRandomizado(0.1, &outFile);
                             break;
                         case 2:
-                            grafo.algConstrutGulRandomizado(0.2);
+                            grafo.algConstrutGulRandomizado(0.2, &outFile);
                             break;
                         case 3:
-                            grafo.algConstrutGulRandomizado(0.3);
+                            grafo.algConstrutGulRandomizado(0.3, &outFile);
                             break;
                     }
                 }while(opc!=1&&opc!=2&&opc!=3);
@@ -127,8 +137,8 @@ int main(int argc, char **argv)
             }
             case 3:
             {
-                cout << "Chamando Algoritmo GULOSO RANDOMIZADO REATIVO." << endl;
-                grafo.algConstrutGulRandReativo();
+                cout << "Algoritmo Guloso Randomizado Reativo." << endl;
+                grafo.algConstrutGulRandReativo(&outFile);
                 break;
             }
             case 4:
@@ -203,7 +213,6 @@ void cabecalho()
     cout << "----------  Vinicius Carlos de Oliveira  ---------" << endl;
     cout << "-------------- Matricula: 201635025 --------------" << endl;
     cout << "--------------------------------------------------" << endl << endl;
-
     cout << "Tecle <Enter> para continuar o algoritmo...." << endl;
     getchar();
 
@@ -246,7 +255,7 @@ void finalizaPrograma(ifstream *inFile, ofstream *outFile)
     cout << "         --             FIM DO PROGRAMA            --" << endl;
     cout << "           Os resultados dos testes foram salvos no" << endl;
     cout << "        arquivo \"resultados_instancia_nomeDaInstancia\"" << endl;
-    cout << "\n------------------ ALGORITMO FINALIZADO ------------------" << endl;
+    cout << "\n-------------------- ALGORITMO FINALIZADO -------------------" << endl;
     inFile->close();
     outFile->close();
     pausarTela(false);
