@@ -22,6 +22,7 @@ Consideramos um grafo nao direcionado e completo
 
 #include <iostream>
 #include <ctime>
+#include <iomanip>
 #include "Grafo.h"
 
 using namespace std;
@@ -29,65 +30,77 @@ using namespace std;
 int menuShow();
 void cabecalho();
 void informacoesInstancia(Grafo *grafo, string str);
-void escreveCabecalhoArquivo(ofstream *outFile, Grafo *grafo, string str);
+void escreveCabecalhoArquivo(ofstream *outFile, Grafo *grafo, const string &str);
 void pausarTela(bool continuar);
 void finalizaPrograma(ifstream *inFile, ofstream *outFile);
 
 int main(int argc, char **argv)
 {
     srand(static_cast<unsigned int>(time(nullptr)));
-    cabecalho();
+
+
+
+
+
+
+    //cabecalho();
     ofstream outFile;
     ifstream inFile;
     string inFileName;
     string outFileName;
-
-    if(argc == 2)
-    {
-        inFileName = argv[1];
-        if (inFileName.compare(inFileName.size() - 4, 4, ".txt") != 0)
-        {
-            outFileName = inFileName + "_resultados.txt";
-            inFileName += ".txt";
-        }
-        else
-        {
-            outFileName = inFileName;
-            outFileName.insert(inFileName.size()-4,"_resultados");
-        }// = inFileName + "_resultados";
-        cout << outFileName << endl;
-        inFile.open(inFileName);
-        outFile.open(outFileName);
-        ///Testar se os arquivos foram inseridos corretamente
-        if(!inFile || !outFile)
-        {
-            cerr << "ERRO! Tente novamente!" << endl;
-            cerr << "Desculpe, mas aconteceu algo inesperado" << endl;
-            cerr << "A instancia digitada foi: " << inFileName << endl;
-            cerr << "VERIFIQUE se digitou o nome da instancia corretamente." << endl;
-            cerr << "Obs: a instancia precisa estar na mesma pasta de execucao do programa" << endl;
-            if(!inFile)
-                cerr << "ERRO! O arquivo de ENTRADA \"" << inFileName << "\" NAO foi encontrado!" << endl;
-            if(!outFile)
-            {
-                cerr << "ERRO! Nao foi possivel criar o arquivo de SAIDA \"" << outFileName << "\"!" << endl;
-                cerr << "Erro na abertura/criação do arquivo de saida" << endl;
-                cerr << "Verifique se a instancia foi digitada corretamente\n\n" << endl;
-            }
-            finalizaPrograma(&inFile, &outFile);
-        }
-    }
-    else
+/*
+    if(argc != 2)
     {
         cerr << "Erro na chamada do programa. Informar corretamente o nome da instancia (arquivo de entrada)." << endl;
-        cerr << "Pode-se digitar o nome da instancia com \".txt\" ou sem." << endl;
         cerr << "Formato a inserir na linha de comando para execucao do algoritmo:" << endl;
         cerr << "<./executavel> <arqEntrada>" << endl;
         finalizaPrograma(&inFile, &outFile);
         return -1;
     }
+*/
+    inFileName = argv[1];
+    if (inFileName.compare(inFileName.size() - 4, 4, ".txt") != 0)
+    {
+        outFileName = inFileName + "_resultados.txt";
+        inFileName += ".txt";
+    }
+    else
+    {
+        outFileName = inFileName;
+        outFileName.insert(inFileName.size()-4,"_resultados");
+    }
+    inFile.open(inFileName);
+    ///Testar se os arquivos foram inseridos corretamente
+    if(!inFile) {
+        cerr << "ERRO! Tente novamente!" << endl;
+        cerr << "Desculpe, mas aconteceu algo inesperado." << endl;
+        cerr << "A instancia digitada foi: \"" << inFileName << "\"." << endl;
+        cerr << "VERIFIQUE se digitou o nome da instancia corretamente." << endl;
+        cerr << "Pode-se digitar o nome da instancia com \".txt\" ou sem." << endl;
+        cerr << "Obs: a instancia precisa estar na mesma pasta de execucao do programa" << endl;
+        finalizaPrograma(&inFile, &outFile);
+        return -1;
+    }
+    outFile.open(outFileName);
+    if(!outFile)
+    {
+        cerr << "ERRO! Nao foi possivel criar/editar o arquivo de SAIDA \"" << outFileName << "\"!" << endl;
+        cerr << "Erro na abertura/criação do arquivo de saida" << endl;
+        cerr << "Verifique se a instancia foi digitada corretamente\n";
+        cerr << "Ou se voce possui permissao para criar/editar o arquivo de saida\n\n" << endl;
+        finalizaPrograma(&inFile, &outFile);
+        return -1;
+    }
+
+
+
 
     Grafo grafo(&inFile);
+    grafo.algConstrutGulRandReativo(&outFile);
+    //cout << setprecision(10) << grafo.heuristicaGulosoRandomizado(atoi(argv[2])/10.0).custo << endl;
+
+
+    /*
     escreveCabecalhoArquivo(&outFile, &grafo, inFileName);
     int opcao;
     do {
@@ -160,7 +173,7 @@ int main(int argc, char **argv)
             default:
                 break;
         }
-    } while (opcao != 0);
+    } while (opcao != 0);*/
     ///Fechando streams de entrada e saida
     return 0;
 }
@@ -218,7 +231,7 @@ void cabecalho()
 
 }
 
-void escreveCabecalhoArquivo(ofstream *outFile, Grafo *grafo, string str)
+void escreveCabecalhoArquivo(ofstream *outFile, Grafo *grafo, const string &str)
 {
     *outFile << "Trabalho de Teoria dos Grafos" << endl;
     *outFile << "Autores:" << endl;
@@ -242,7 +255,7 @@ void pausarTela(bool continuar)
 
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
-    cout << endl << "Pressione <Enter> para " << (continuar ? "continuar" : "finalizar");
+    cout << endl << "Pressione <Enter> para " << (continuar ? "continuar" : "fechar");
     cout << " o algoritmo...." << endl << endl;
     clearerr(stdin);
     getchar();
@@ -252,9 +265,9 @@ void pausarTela(bool continuar)
 void finalizaPrograma(ifstream *inFile, ofstream *outFile)
 {
 
-    cout << "         --             FIM DO PROGRAMA            --" << endl;
+    cout << "\n\n         --             FIM DO PROGRAMA            --" << endl;
     cout << "           Os resultados dos testes foram salvos no" << endl;
-    cout << "        arquivo \"resultados_instancia_nomeDaInstancia\"" << endl;
+    cout << "           arquivo \"nomeDaInstancia_resultados.txt\"" << endl;
     cout << "\n-------------------- ALGORITMO FINALIZADO -------------------" << endl;
     inFile->close();
     outFile->close();
