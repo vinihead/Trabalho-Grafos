@@ -73,9 +73,9 @@ Grafo::Grafo(ifstream *inFile)
     ///Cria Arestas
     this->criaTodasArestas();
 
-    //cout << "----------------------------------------------" << endl;
-    //cout << "Grafo do PCVPB Criado e instanciado com sucesso!" << endl;
-    //cout << "------------------------------------------------" << endl;
+    cout << "------------------------------------------------" << endl;
+    cout << "Grafo do PCVPB Criado e instanciado com sucesso!" << endl;
+    cout << "------------------------------------------------" << endl;
     vertices.sort();
 }
 
@@ -269,7 +269,6 @@ Grafo::Solucao Grafo::heuristicaGulosoRandomizado(float alfa)
     while (!candidatosPretos.empty()) {
 
         auto escopoInsercaoMax = static_cast<int>(ceil(candidatosPretos.size() * alfa));
-        //int indiceEscolhido=rand()%escopoInsercaoMax;
         std::uniform_int_distribution<> generator(0, escopoInsercaoMax);
 
         /// Gerando custo de adicao dos candidatos
@@ -322,7 +321,6 @@ Grafo::Solucao Grafo::heuristicaGulosoRandomizado(float alfa)
         {
             ///Pegar ate qual indice quero inserir e sortear nisso
             vector<pair<pair<int, double>, int>>::iterator itInsercao;
-            //auto escopoInsercaoMax = static_cast<int>(ceil(candidatosPretos.size() * alfa));
             int indiceEscolhido=generator(eng);
             itInsercao = candidatosPretos.begin()+indiceEscolhido;
             /// Insere o vertice sorteado com base no alfa
@@ -346,7 +344,6 @@ Grafo::Solucao Grafo::heuristicaGulosoRandomizado(float alfa)
     viavel = false;
     while (!candidatosBrancos.empty()) {
         auto escopoInsercaoMax = static_cast<int>(ceil(candidatosBrancos.size() * alfa));
-        //int indiceEscolhido=rand()%escopoInsercaoMax;
         std::uniform_int_distribution<> generator(0, escopoInsercaoMax);
         viavel = false;
         for (auto &itCand : candidatosBrancos) {
@@ -401,7 +398,6 @@ Grafo::Solucao Grafo::heuristicaGulosoRandomizado(float alfa)
         {
             ///Pegar ate qual indice quero inserir e sortear nisso
             vector<pair<pair<int, double>, pair<int, int>>>::iterator itInsercao;
-            //auto escopoInsercaoMax = static_cast<int>(ceil(candidatosPretos.size() * alfa));
             int indiceEscolhido=generator(eng);
             itInsercao = candidatosBrancos.begin()+indiceEscolhido;
 
@@ -511,37 +507,20 @@ void Grafo::algConstrutGulRandReativo(ofstream *outFile)
     default_random_engine gerador((unsigned int)time(nullptr));  ///gerador de numeros aleatorios, usado na distribuicao
     for(int i=0; i<numIteracoes; i++)
     {
-        //cout << flush;
-        //cout << i/10 << "%"<< endl;
-
-        //cout << "it " << i << endl;
         ///escolhe alfaatraves da distribuiçao de probabilidades aleatorio pelo gerador
         indiceAlfaAtual = distribuicao(gerador); /// A distribuicao discreta, retorna um indice de 0 a 9 aleatorio de acordo com as prob
-        //cout << "Indice alfa Atual: " << indiceAlfaAtual <<endl;
         Solucao solucaoAtual = heuristicaGulosoRandomizado(vetAlfas[indiceAlfaAtual]);
         somaResultsPorAlfas[indiceAlfaAtual] += solucaoAtual.custo;///soma dos resultados obtidos com esse alfa
         qtdEscolhido[indiceAlfaAtual] += 1;  //numero de execuçoes deste alfa
 
         ///atualiza valores da melhor soluçao
-        if(solucaoAtual.custo < melhorSolucao.custo){
-            //cout << "TROCA DE MELHOR SOLUCAO\n";
-            //cout << "Melhor Solucao: " <<melhorSolucao.custo << endl;
-           // cout << "Alfa melhor solucao: " << melhorSolucao.alfa << endl;
-           // cout << "Solucao para troca: " << solucaoAtual.custo << endl;
-           // cout << "Alfa solucao para troca: " << solucaoAtual.alfa << endl;
+        if(solucaoAtual.custo < melhorSolucao.custo && solucaoAtual.custo!=-1){
             melhorSolucao = solucaoAtual;
         }
-
-       // cout << "solucao atual: " << solucaoAtual.custo << endl;
-      //  cout << "alfa atual: " << solucaoAtual.alfa << endl;
-       // cout << "Custo melhor solucao: " << melhorSolucao.custo << endl;
-      //  cout << "melhor alfa: " << melhorSolucao.alfa << endl;
-
 
         ///Parte do Reativo: a cada 50 iteracoes atualiza a distribuicao de probabilidades
         if((i+1) % iteracoesAtualizaProb == 0){
             double qi[numAlfas] = {0}; ///Utilizado para gerar as novas probabilidades
-          //  cout << "Atualizacao de probabilidade\n";
             float somaQi = 0;
             float mediaResultados = 0;
             float delta = 10.0; ///Valor de delta testado, que mais nos agradou
@@ -554,12 +533,6 @@ void Grafo::algConstrutGulRandReativo(ofstream *outFile)
                 }
             }
 
-           // cout << "Probabilidades da distribuicao: " << endl;
-          //  for(auto it : distribuicao.probabilities())
-          //      cout << it << " ";
-          //  cout << endl;
-
-
             ///Atualiza o vetor de probabilidades para cada alfa
             vetProbabilidades.clear();
             for (auto itQi : qi) {
@@ -569,20 +542,14 @@ void Grafo::algConstrutGulRandReativo(ofstream *outFile)
             ///atualiza distribuiçao de probabilidades
             discrete_distribution<> novaDistribuicao(vetProbabilidades.begin(), vetProbabilidades.end());
             distribuicao = novaDistribuicao;
-           // cout << "Nova distribuicao\n";
-          //  cout << "Probabilidades da nova distribuicao: " << endl;
-            //for(auto it : distribuicao.probabilities())
-            //    cout << it << " ";
-            ///cout << endl;
-
         }
     }
-    //imprimeSolucao(3, &melhorSolucao, outFile);
-    cout << melhorSolucao.custo << " " << melhorSolucao.alfa << endl;
+    imprimeSolucao(3, &melhorSolucao, outFile);
 }
 
 /**
- *
+ * funcao que testa a viabilidade de se inserir um vertice entre dois
+ * vertices na cadeia, afim de objetivar as restrições
  * @param cadeia
  * @param custoInsercao
  * @param dist1
@@ -595,7 +562,9 @@ bool Grafo::viabilidade(Cadeia *cadeia, double custoInsercao) const
 }
 
 /**
- *
+ * funcao para testar a viabilidade da entrada de um vertice preto na solucao
+ * portanto so precisamos considerar o comprimento, pois a cardinalidade diz
+ * respeito a vertices brancos
  * @param dist1
  * @param dist2
  * @return
@@ -605,9 +574,8 @@ bool Grafo::viabilidade(double dist1, double dist2) const
     return dist1<maxCusto && dist2<maxCusto;
 }
 
-///Funcao imprime informacoes sobre a solucao na tela e no arquivo de saida
 /**
- *
+ * Funcao imprime informacoes sobre a solucao na tela e no arquivo de saida
  * @param algoritmo (1-Guloso, 2-Randomizado, 3-Reativo)
  * @param melhorSolucao
  * @param outFile

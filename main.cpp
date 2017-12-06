@@ -11,7 +11,7 @@
  Para COMPILAR, uitlize:
  g++ *.cpp -o TrabalhoGrafos
  Para EXECUTAR, utilize:
- <.\executavel> <arqEntrada> <arqSaida>
+ <.\executavel> <arqEntrada>
  obs: sem utilizar ".txt", apenas o nome do arquivo
  */
 
@@ -21,7 +21,6 @@ Consideramos um grafo nao direcionado e completo
  */
 
 #include <iostream>
-#include <ctime>
 #include <iomanip>
 #include "Grafo.h"
 
@@ -29,26 +28,19 @@ using namespace std;
 
 int menuShow();
 void cabecalho();
-void informacoesInstancia(Grafo *grafo, string str);
+void informacoesInstancia(Grafo *grafo, const string &in, const string &out);
 void escreveCabecalhoArquivo(ofstream *outFile, Grafo *grafo, const string &str);
 void pausarTela(bool continuar);
 void finalizaPrograma(ifstream *inFile, ofstream *outFile);
 
 int main(int argc, char **argv)
 {
-    srand(static_cast<unsigned int>(time(nullptr)));
-
-
-
-
-
-
-    //cabecalho();
+    cabecalho();
     ofstream outFile;
     ifstream inFile;
     string inFileName;
     string outFileName;
-/*
+
     if(argc != 2)
     {
         cerr << "Erro na chamada do programa. Informar corretamente o nome da instancia (arquivo de entrada)." << endl;
@@ -57,7 +49,7 @@ int main(int argc, char **argv)
         finalizaPrograma(&inFile, &outFile);
         return -1;
     }
-*/
+
     inFileName = argv[1];
     if (inFileName.compare(inFileName.size() - 4, 4, ".txt") != 0)
     {
@@ -96,11 +88,6 @@ int main(int argc, char **argv)
 
 
     Grafo grafo(&inFile);
-    grafo.algConstrutGulRandReativo(&outFile);
-    //cout << setprecision(10) << grafo.heuristicaGulosoRandomizado(atoi(argv[2])/10.0).custo << endl;
-
-
-    /*
     escreveCabecalhoArquivo(&outFile, &grafo, inFileName);
     int opcao;
     do {
@@ -156,10 +143,10 @@ int main(int argc, char **argv)
             }
             case 4:
             {
-                informacoesInstancia(&grafo, inFileName);
+                informacoesInstancia(&grafo, inFileName, outFileName);
                 break;
             }
-            case 5:
+            /*case 5:
             {
                 cout << "Matriz de Distancias:" << endl;
                 grafo.imprimeMatrizDistancia();
@@ -169,11 +156,11 @@ int main(int argc, char **argv)
             {
                 grafo.imprime();
                 break;
-            }
+            }*/
             default:
                 break;
         }
-    } while (opcao != 0);*/
+    } while (opcao != 0);
     ///Fechando streams de entrada e saida
     return 0;
 }
@@ -196,8 +183,8 @@ int menuShow()
         cout << "||     02 - Algoritmo do PCVPB Guloso Randomizado         ||" << endl;
         cout << "||     03 - Algoritmo do PCVPB Guloso Randomizado Reativo ||" << endl;
         cout << "||     04 - Informacoes sobre a instancia                 ||" << endl;
-        cout << "||     05 - Imprime Matriz de distancias                  ||" << endl;
-        cout << "||     06 - Imprimir grafo                                ||" << endl;
+        //cout << "||     05 - Imprime Matriz de distancias                  ||" << endl;
+        //cout << "||     06 - Imprimir grafo                                ||" << endl;
         cout << "|----------------------------------------------------------|" << endl << endl;
         if(passouMenu)
             cout << "Opcao Invalida.\nDigite uma opcao de 0 a 6: ";
@@ -208,7 +195,7 @@ int menuShow()
         }
         cin >> opc;
         cout << endl;
-    }while(opc < 0 || opc > 6);
+    }while(opc < 0 || opc > 4); //6
     return opc;
 }
 
@@ -226,9 +213,9 @@ void cabecalho()
     cout << "----------  Vinicius Carlos de Oliveira  ---------" << endl;
     cout << "-------------- Matricula: 201635025 --------------" << endl;
     cout << "--------------------------------------------------" << endl << endl;
-    cout << "Tecle <Enter> para continuar o algoritmo...." << endl;
-    getchar();
-
+    //cout << "Tecle <Enter> para continuar o algoritmo...." << endl;
+    //getchar();
+    //pausarTela(true);
 }
 
 void escreveCabecalhoArquivo(ofstream *outFile, Grafo *grafo, const string &str)
@@ -241,7 +228,7 @@ void escreveCabecalhoArquivo(ofstream *outFile, Grafo *grafo, const string &str)
     *outFile << "-> ANALISE DO GRAFO PCVPB" << endl << endl;
 
     *outFile  << "Nome da instância: " << str << endl;
-    *outFile  << "Grafo completo, ponderado e com vértices pretos classificados em pretos e brancos." << endl;
+    *outFile  << "Grafo completo, ponderado e com vértices classificados em pretos e brancos." << endl;
     *outFile  << "Ordem do Grafo: " << grafo->getOrdem() << endl;
     *outFile  << "Número de vértices pretos (P): " << grafo->getNumPretos() << endl;
     *outFile  << "Número de vértices brancos (B): " << grafo->getOrdem()-grafo->getNumPretos() << endl;
@@ -275,10 +262,10 @@ void finalizaPrograma(ifstream *inFile, ofstream *outFile)
     exit(-1);
 }
 
-void informacoesInstancia(Grafo *grafo, string str)
+void informacoesInstancia(Grafo *grafo, const string &in, const string &out)
 {
     cout << "GRAFO -> INSTANCIA PCVPB" << endl;
-    cout << "Nome: " << str << endl;
+    cout << "Nome: " << in << endl;
     cout << "Grafo completo, ponderado, com vértices classificados em pretos e brancos." << endl;
     cout << "Ordem do Grafo: " << grafo->getOrdem() << endl;
     cout << "Número de vértices pretos (P): " << grafo->getNumPretos() << endl;
@@ -286,6 +273,6 @@ void informacoesInstancia(Grafo *grafo, string str)
     cout << "Restrições (entre dois vértices pretos):\n";
     cout << "Máxima Cardinalidade (Q): " << grafo->getMaxVertBranco() << endl;
     cout << "Máximo Comprimento (L): " << grafo->getMaxCusto() << endl;
-    cout << "Arquivo de entrada: " << str << endl;
-    cout << "Arquivo de saida: " << ("resultados_" + str) << endl << endl;
+    cout << "Arquivo de entrada: " << in << endl;
+    cout << "Arquivo de saida: " << out << endl << endl;
 }

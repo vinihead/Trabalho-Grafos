@@ -1,6 +1,11 @@
-//
-// Created by rrodri on 26/11/17.
-//
+/*
+ *******************************************************************
+ *         -----------    TRABALHO GRAFOS    -------------         *
+ *               --------     AUTORES     --------                 *
+ *     Ruan Lucas de Oliveira Rodrigues - Matricula: 201635005     *
+ *        Vinicius Carlos de Oliveira - Matricula: 201635025       *
+ *******************************************************************
+ */
 
 #ifndef TRABALHOGRAFOS_CADEIA_H
 #define TRABALHOGRAFOS_CADEIA_H
