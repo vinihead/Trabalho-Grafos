@@ -101,7 +101,7 @@ int main(int argc, char **argv)
             case 1:
             {
                 cout << "Algoritmo Guloso." << endl;
-		cout << "Gerando solução, por favor aguarde se for necessário." << endl;
+		cout << "Gerando solucao, por favor aguarde se for necesario." << endl;
                 grafo.algConstrutGuloso(&outFile);
                 break;
             }
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
                         cout <<"Digite a opcao adequadamente\nOpcao: ";
                     cin >> opc;
 		    if(opc==1||opc==2||opc==3)
-			cout << "Gerando solucao, por favor aguarde se for necessário." << endl;
+			cout << "Gerando solucao, por favor aguarde se for necessario." << endl;
                     switch (opc){
                         case 1:
                             grafo.algConstrutGulRandomizado(0.1, &outFile);
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
             case 3:
             {
                 cout << "Algoritmo Guloso Randomizado Reativo." << endl;
-		cout << "Gerando solução, por favor aguarde se for necessário." << endl;
+		cout << "Gerando solucao, por favor aguarde se for necessario." << endl;
                 grafo.algConstrutGulRandReativo(&outFile);
                 break;
             }
@@ -231,14 +231,14 @@ void escreveCabecalhoArquivo(ofstream *outFile, Grafo *grafo, const string &str)
     *outFile  << endl << "Problema do Caixeiro Viajante Preto e Branco" << endl;
     *outFile << "-> ANALISE DO GRAFO PCVPB" << endl << endl;
 
-    *outFile  << "Nome da instância: " << str << endl;
+    *outFile  << "Nome da instancia: " << str << endl;
     *outFile  << "Grafo completo, ponderado e com vértices classificados em pretos e brancos." << endl;
     *outFile  << "Ordem do Grafo: " << grafo->getOrdem() << endl;
-    *outFile  << "Número de vértices pretos (P): " << grafo->getNumPretos() << endl;
-    *outFile  << "Número de vértices brancos (B): " << grafo->getOrdem()-grafo->getNumPretos() << endl;
-    *outFile  << "Restrições (entre dois vértices pretos):\n";
-    *outFile  << "Máxima Cardinalidade (Q): " << grafo->getMaxVertBranco() << endl;
-    *outFile  << "Máximo Comprimento (L): " << grafo->getMaxCusto() << endl;
+    *outFile  << "Numero de vértices pretos (P): " << grafo->getNumPretos() << endl;
+    *outFile  << "Numero de vértices brancos (B): " << grafo->getOrdem()-grafo->getNumPretos() << endl;
+    *outFile  << "Restricoes (entre dois vertices pretos):\n";
+    *outFile  << "Maxima Cardinalidade (Q): " << grafo->getMaxVertBranco() << endl;
+    *outFile  << "Maximo Comprimento (L): " << grafo->getMaxCusto() << endl;
 }
 
 void pausarTela(bool continuar)
@@ -272,11 +272,11 @@ void informacoesInstancia(Grafo *grafo, const string &in, const string &out)
     cout << "Nome: " << in << endl;
     cout << "Grafo completo, ponderado, com vértices classificados em pretos e brancos." << endl;
     cout << "Ordem do Grafo: " << grafo->getOrdem() << endl;
-    cout << "Número de vértices pretos (P): " << grafo->getNumPretos() << endl;
-    cout << "Número de vértices brancos (B): " << grafo->getOrdem()-grafo->getNumPretos() << endl;
-    cout << "Restrições (entre dois vértices pretos):\n";
-    cout << "Máxima Cardinalidade (Q): " << grafo->getMaxVertBranco() << endl;
-    cout << "Máximo Comprimento (L): " << grafo->getMaxCusto() << endl;
+    cout << "Número de vertices pretos (P): " << grafo->getNumPretos() << endl;
+    cout << "Número de vertices brancos (B): " << grafo->getOrdem()-grafo->getNumPretos() << endl;
+    cout << "Restricoes (entre dois vertices pretos):\n";
+    cout << "Maxima Cardinalidade (Q): " << grafo->getMaxVertBranco() << endl;
+    cout << "Maximo Comprimento (L): " << grafo->getMaxCusto() << endl;
     cout << "Arquivo de entrada: " << in << endl;
     cout << "Arquivo de saida: " << out << endl << endl;
 }
