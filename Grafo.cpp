@@ -590,6 +590,7 @@ void Grafo::imprimeSolucao(int algoritmo, Solucao *melhorSolucao, ofstream *outF
         {
             *outFile << endl << endl << "------------------------------------------------------" << endl;
             *outFile << "Algoritmo Construtivo Guloso." << endl;
+			*outFile << "Neste o alfa é 0.0, pois o algoritmo é extritamente gulos." << endl;
         }
         else if(algoritmo == 2)
         {

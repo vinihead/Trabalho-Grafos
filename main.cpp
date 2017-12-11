@@ -101,6 +101,7 @@ int main(int argc, char **argv)
             case 1:
             {
                 cout << "Algoritmo Guloso." << endl;
+		cout << "Gerando solução, por favor aguarde se for necessário." << endl;
                 grafo.algConstrutGuloso(&outFile);
                 break;
             }
@@ -121,6 +122,8 @@ int main(int argc, char **argv)
                     else
                         cout <<"Digite a opcao adequadamente\nOpcao: ";
                     cin >> opc;
+		    if(opc==1||opc==2||opc==3)
+			cout << "Gerando solucao, por favor aguarde se for necessário." << endl;
                     switch (opc){
                         case 1:
                             grafo.algConstrutGulRandomizado(0.1, &outFile);
@@ -138,6 +141,7 @@ int main(int argc, char **argv)
             case 3:
             {
                 cout << "Algoritmo Guloso Randomizado Reativo." << endl;
+		cout << "Gerando solução, por favor aguarde se for necessário." << endl;
                 grafo.algConstrutGulRandReativo(&outFile);
                 break;
             }
